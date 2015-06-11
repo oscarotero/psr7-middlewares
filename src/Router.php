@@ -1,5 +1,5 @@
 <?php
-namespace App\Middlewares;
+namespace Fol\HttpMiddlewares;
 
 use Aura\Router\RouterContainer;
 
