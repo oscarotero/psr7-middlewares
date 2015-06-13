@@ -1,10 +1,10 @@
 {
-	"name": "fol/http-middlewares",
+	"name": "psr7-middlewares/psr7-middlewares",
 	"type": "library",
-	"description": "Collection of PSR-7 middlewares",
+	"description": "Collection of HTTP middlewares compatible with PSR-7",
 	"keywords": ["PSR-7", "http", "middlewares", "psr-messages"],
 	"homepage": "https://github.com/fol-project/http-middlewares",
-	"license": "AGPL-3.0",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "Oscar Otero",
@@ -18,12 +18,14 @@
 		"issues": "https://github.com/fol-project/http-middlewares/issues"
 	},
 	"require": {
-		"php": ">=5.5.0",
-		"aura/router": "3.x-dev"
+		"php": ">=5.5.0"
+	},
+	"suggest": {
+		"aura/router": "If you want to use the AuraRouter middleware"
 	},
 	"autoload": {
 		"psr-4": {
-			"Fol\\HttpMiddlewares\\": "src/"
+			"Psr7Middlewares\\": "src/"
 		}
 	}
 }
