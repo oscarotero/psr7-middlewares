@@ -22,25 +22,6 @@ class AuraRouter
 	}
 
 	/**
-	 * Returns the route
-	 * 
-	 * @throws RuntimeException If the route cannot be fetched
-	 * @return RouterContainer
-	 */
-	protected function getRouter()
-	{
-		if (is_callable($this->router)) {
-			$this->router = call_user_func($this->router);
-		}
-
-		if ($this->router instanceof RouterContainer) {
-			return $this->router;
-		}
-
-		throw new RuntimeException('No RouterContainer instance has been provided');
-	}
-
-	/**
 	 * Execute the middleware
 	 * 
 	 * @param ServerRequestInterface $request
@@ -59,5 +40,24 @@ class AuraRouter
         }
 
         return $next($request, $response);
+	}
+
+	/**
+	 * Returns the route
+	 * 
+	 * @throws RuntimeException If the route cannot be fetched
+	 * @return RouterContainer
+	 */
+	protected function getRouter()
+	{
+		if (is_callable($this->router)) {
+			$this->router = call_user_func($this->router);
+		}
+
+		if ($this->router instanceof RouterContainer) {
+			return $this->router;
+		}
+
+		throw new RuntimeException('No RouterContainer instance has been provided');
 	}
 }
