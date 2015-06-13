@@ -1,5 +1,5 @@
 <?php
-namespace App\Middlewares;
+namespace Psr7Middlewares;
 
 use RuntimeException;
 use Aura\Router\RouterContainer;
@@ -12,7 +12,7 @@ class AuraRouter
 
 	/**
 	 * Constructor
-	 * You can specify the RouterContainer instance or a callable to fetch in lazy mode
+	 * You can specify the RouterContainer instance or a callable to fetch it in lazy mode
 	 * 
 	 * @param RouterContainer|callable $router
 	 */
