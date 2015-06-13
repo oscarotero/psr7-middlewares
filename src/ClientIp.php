@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ClientIp
 {
-	protected $headers = [
+    protected $headers = [
         'Client-Ip',
         'X-Forwarded-For',
         'X-Forwarded',
@@ -30,16 +30,16 @@ class ClientIp
         }
     }
 
-	/**
-	 * Execute the middleware
-	 * 
-	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface      $response
-	 * 
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-	{
+    /**
+     * Execute the middleware
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
         $ips = $this->getIps($request);
 
         $request = $request
@@ -47,7 +47,7 @@ class ClientIp
             ->withAttribute('CLIENT_IP', isset($ips[0]) ? $ips[0] : null);
 
         return $next($request, $response);
-	}
+    }
 
     /**
      * Detect and return all ips found.

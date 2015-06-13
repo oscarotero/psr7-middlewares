@@ -9,11 +9,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 class DigestAuthentication
 {
-	protected $users;
+    protected $users;
     protected $realm;
     protected $nonce;
 
-	/**
+    /**
      * Constructor. Defines de users.
      *
      * @param array  $users [username => password]
@@ -27,26 +27,26 @@ class DigestAuthentication
         $this->nonce = $nonce ?: uniqid();
     }
 
-	/**
-	 * Execute the middleware
-	 * 
-	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface      $response
-	 * 
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-	{
-		if ($this->login($request)) {
-        	return $next($request, $response);
-		}
+    /**
+     * Execute the middleware
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
+        if ($this->login($request)) {
+            return $next($request, $response);
+        }
 
-		return $response
-			->withStatus(401)
-			->withHeader('WWW-Authenticate', 'Digest realm="'.$this->realm.'",qop="auth",nonce="'.$this->nonce.'",opaque="'.md5($this->realm).'"');
-	}
+        return $response
+            ->withStatus(401)
+            ->withHeader('WWW-Authenticate', 'Digest realm="'.$this->realm.'",qop="auth",nonce="'.$this->nonce.'",opaque="'.md5($this->realm).'"');
+    }
 
-	/**
+    /**
      * Login or check the user credentials
      *
      * @param Request $request
@@ -92,7 +92,7 @@ class DigestAuthentication
         return ($authorization['response'] === $validResponse);
     }
 
-	/**
+    /**
      * Parses the authorization header for a basic authentication.
      *
      * @param string $header

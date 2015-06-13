@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ClientLanguage
 {
-	protected $languages = [];
+    protected $languages = [];
 
     /**
      * Constructor. Defines de available languages.
@@ -23,16 +23,16 @@ class ClientLanguage
         }
     }
 
-	/**
-	 * Execute the middleware
-	 * 
-	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface      $response
-	 * 
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-	{
+    /**
+     * Execute the middleware
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
         $languages = static::parseLanguagesHeader($request->getHeaderLine('Accept-Language'));
 
         $request = $request
@@ -40,7 +40,7 @@ class ClientLanguage
             ->withAttribute('CLIENT_PREFERRED_LANGUAGE', $this->getPreferredLanguage($languages));
 
         return $next($request, $response);
-	}
+    }
 
     /**
      * Get the preferred language
@@ -68,9 +68,9 @@ class ClientLanguage
 
     /**
      * Parses the Accept-Languages header
-     * 
+     *
      * @param string $header
-     * 
+     *
      * @return array
      */
     protected static function parseLanguagesHeader($header)
@@ -90,7 +90,7 @@ class ClientLanguage
                 }
             }
 
-            //sort list based on value 
+            //sort list based on value
             arsort($langs, SORT_NUMERIC);
 
             return $langs;

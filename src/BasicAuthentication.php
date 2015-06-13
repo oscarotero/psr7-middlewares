@@ -9,10 +9,10 @@ use Psr\Http\Message\ResponseInterface;
  */
 class BasicAuthentication
 {
-	protected $users;
+    protected $users;
     protected $realm;
 
-	/**
+    /**
      * Constructor. Defines de users.
      *
      * @param array  $users [username => password]
@@ -24,26 +24,26 @@ class BasicAuthentication
         $this->realm = $realm;
     }
 
-	/**
-	 * Execute the middleware
-	 * 
-	 * @param ServerRequestInterface $request
-	 * @param ResponseInterface      $response
-	 * 
-	 * @return ResponseInterface
-	 */
-	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-	{
-		$authorization = static::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
+    /**
+     * Execute the middleware
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return ResponseInterface
+     */
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
+        $authorization = static::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
 
-		if ($authorization && $this->checkUserPassword($authorization['username'], $authorization['password'])) {
+        if ($authorization && $this->checkUserPassword($authorization['username'], $authorization['password'])) {
             return $next($request, $response);
         }
 
         return $response
             ->withStatus(401)
             ->withHeader('WWW-Authenticate', 'Basic realm="'.$this->realm.'"');
-	}
+    }
 
     /**
      * Validate the user and password.
@@ -62,7 +62,7 @@ class BasicAuthentication
         return true;
     }
 
-	/**
+    /**
      * Parses the authorization header for a basic authentication.
      *
      * @param string $header
