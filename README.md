@@ -31,6 +31,7 @@ $dispatcher = new Relay([
     	'user2' => 'pass2']
     ),
     new Psr7Middlewares\ClientIp(),
+    new Psr7Middlewares\ClientLanguage(['gl', 'es', 'en']),
     new Psr7Middlewares\AuraRouter(function () {
     	$router = new RouterContainer();
 
@@ -50,3 +51,5 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * **AuraRouter** To execute the [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You must use the 3.x version, compatible with psr-7
 * **BasicAuthentication** Implements the basic http authentication.
 * **DigestAuthentication** Implements the digest http authentication.
+* **ClientIp** Detects the client ip(s) and create two attributes in the request instance: `CLIENT_IPS` (array with all ips found) and `CLIENT_IP` (the first ip)
+* **ClientLanguage** Detects the client language using the Accept-Language header and calculate the most preferred language to use. Create two attributes in the request instance: `CLIENT_LANGUAGES` (array with all languages found) and `CLIENT_PREFERRED_LANGUAGE` (the preferred language according with the array of available languages that you can set in the constructor)
