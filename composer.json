@@ -20,6 +20,10 @@
 	"require": {
 		"php": ">=5.5.0"
 	},
+	"require-dev": {
+		"zendframework/zend-diactoros": "1.*",
+		"relay/relay": "1.x-dev"
+	},
 	"suggest": {
 		"aura/router": "If you want to use the AuraRouter middleware"
 	},

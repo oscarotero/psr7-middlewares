@@ -65,7 +65,7 @@ class ClientIp
 
             if (!empty($header)) {
                 foreach (array_map('trim', explode(',', $header)) as $ip) {
-                    if (filter_var($ip, FILTER_VALIDATE_IP)) {
+                    if ((array_search($ip, $ips) === false) && filter_var($ip, FILTER_VALIDATE_IP)) {
                         $ips[] = $ip;
                     }
                 }
