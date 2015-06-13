@@ -1,5 +1,5 @@
 {
-	"name": "psr7-middlewares/psr7-middlewares",
+	"name": "oscarotero/psr7-middlewares",
 	"type": "library",
 	"description": "Collection of HTTP middlewares compatible with PSR-7",
 	"keywords": ["PSR-7", "http", "middlewares", "psr-messages"],
