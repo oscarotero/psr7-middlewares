@@ -26,18 +26,18 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 $dispatcher = new Relay([
-    new Psr7Middlewares\DigestAuthentication([
-    	'user1' => 'pass1',
-    	'user2' => 'pass2']
-    ),
+    new Psr7Middlewares\DigestAuthentication(['user1' => 'pass1','user2' => 'pass2']),
     new Psr7Middlewares\ClientIp(),
     new Psr7Middlewares\ClientLanguage(['gl', 'es', 'en']),
     new Psr7Middlewares\AuraRouter(function () {
     	$router = new RouterContainer();
 
     	$router->getMap()->get('home', '/', function ($request, $response) {
-    		$clientIp = $request->getAttribute('CLIENT_IP');
-    		$response->getBody()->write('hello, your ip is: ' + $clientIp);
+            $ip = $request->getAttribute('CLIENT_IP');
+    		$language = $request->getAttribute('CLIENT_PREFERRED_LANGUAGE');
+
+    		$response->getBody()->write("hello, your ip is {$ip} and language {$language}");
+
             return $response;
     	});
     }),
