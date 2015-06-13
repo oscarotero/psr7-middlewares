@@ -30,11 +30,13 @@ $dispatcher = new Relay([
     	'user1' => 'pass1',
     	'user2' => 'pass2']
     ),
+    new Psr7Middlewares\ClientIp(),
     new Psr7Middlewares\AuraRouter(function () {
     	$router = new RouterContainer();
 
     	$router->getMap()->get('home', '/', function ($request, $response) {
-    		$response->getBody()->write('hello world');
+    		$clientIp = $request->getAttribute('CLIENT_IP');
+    		$response->getBody()->write('hello, your ip is: ' + $clientIp);
             return $response;
     	});
     }),
@@ -46,5 +48,5 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 ## Available middlewares
 
 * **AuraRouter** To execute the [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You must use the 3.x version, compatible with psr-7
-* **BasicAuthentication** To provide the basic http authentication.
-* **DigestAuthentication** To provide the digest http authentication.
+* **BasicAuthentication** Implements the basic http authentication.
+* **DigestAuthentication** Implements the digest http authentication.
