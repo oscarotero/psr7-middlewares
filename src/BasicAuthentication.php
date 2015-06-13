@@ -18,7 +18,7 @@ class BasicAuthentication
      * @param array  $users [username => password]
      * @param string $realm
      */
-    public function __construct(array $users = null, $realm = 'Login')
+    public function __construct(array $users, $realm = 'Login')
     {
         $this->users = $users;
         $this->realm = $realm;
@@ -36,11 +36,13 @@ class BasicAuthentication
 	{
 		$authorization = static::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
 
-		if (!$authorization || !$this->checkUserPassword($authorization['username'], $authorization['password'])) {
-			return $response->withHeader('WWW-Authenticate', 'Basic realm="'.$this->realm.'"');
+		if ($authorization && $this->checkUserPassword($authorization['username'], $authorization['password'])) {
+            return $next($request, $response);
         }
 
-        return $next($request, $response);
+        return $response
+            ->withStatus(401)
+            ->withHeader('WWW-Authenticate', 'Basic realm="'.$this->realm.'"');
 	}
 
     /**
