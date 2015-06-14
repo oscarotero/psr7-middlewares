@@ -30,6 +30,7 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 $dispatcher = new Relay([
+    Middleware::ExceptionHandler(),
     Middleware::BasePath('/my-site/web'),
     Middleware::DigestAuthentication(['username' => 'password']),
     Middleware::ClientIp(),
@@ -62,4 +63,4 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 ### Misc
 
 * **BasePath** Strip off the prefix from the uri path of the request. This is useful if the root of the website is in a subdirectory.
-
+* **ExceptionHandler** Cath any exception throwed by the next middlewares and returns a response with it.
