@@ -61,7 +61,7 @@ class DigestAuthentication
     /**
      * Login or check the user credentials
      *
-     * @param Request $request
+     * @param ServerRequestInterface $request
      *
      * @return boolean
      */
