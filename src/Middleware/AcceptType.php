@@ -113,7 +113,7 @@ class AcceptType
     {
         foreach (array_keys($accept) as $mime) {
             foreach (static::$mimes as $extension => $mimetypes) {
-                if (in_array($extension, $this->formats)) {
+                if (!in_array($extension, $this->formats)) {
                     continue;
                 }
 
@@ -135,16 +135,16 @@ class AcceptType
      */
     protected static function parseAcceptHeader($header)
     {
-        preg_match_all('/([a-z]{1,8}(-[a-z]{1,8})?)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', $header, $lang_parse);
+        preg_match_all('/([\w\*-]+\/[\w\*+-]+)\s*(;\s*q\s*=\s*(1|0\.[0-9]+))?/i', $header, $accept_parse);
 
-        if (count($lang_parse[1])) {
-            //create a list like "en" => 0.8
-            $langs = array_combine(array_map(function ($lang) {
-                return strtolower(substr($lang, 0, 2));
-            }, $lang_parse[1]), $lang_parse[4]);
+        if (count($accept_parse[1])) {
+            //create a list like "text/html" => 0.9
+            $accept = array_combine(array_map(function ($mime) {
+                return strtolower($mime);
+            }, $accept_parse[1]), $accept_parse[3]);
 
             //set default to 1 for any without q factor
-            foreach ($langs as &$val) {
+            foreach ($accept as &$val) {
                 if ($val === '') {
                     $val = 1;
                 } else {
@@ -153,9 +153,9 @@ class AcceptType
             }
 
             //sort list based on value
-            arsort($langs, SORT_NUMERIC);
+            arsort($accept, SORT_NUMERIC);
 
-            return $langs;
+            return $accept;
         }
 
         return [];
