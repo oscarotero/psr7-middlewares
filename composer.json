@@ -22,10 +22,12 @@
 	},
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",
-		"relay/relay": "1.x-dev"
+		"relay/relay": "1.x-dev",
+		"nikic/fast-route": "0.*"
 	},
 	"suggest": {
-		"aura/router": "If you want to use the AuraRouter middleware"
+		"aura/router": "If you want to use the AuraRouter middleware",
+		"nikic/fast-route": "If you want to use the FastRoute middleware"
 	},
 	"autoload": {
 		"psr-4": {
