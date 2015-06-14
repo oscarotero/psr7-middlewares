@@ -1,5 +1,5 @@
 <?php
-namespace Psr7Middlewares;
+namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -14,17 +14,29 @@ class DigestAuthentication
     protected $nonce;
 
     /**
+     * Creates an instance of this middleware
+     * 
+     * @param array  $users
+     * @param string $realm
+     * @param string $nonce
+     */
+    public static function create(array $users, $realm = 'Login', $nonce = null)
+    {
+        return new static($users, $realm, $nonce ?: uniqid());
+    }
+
+    /**
      * Constructor. Defines de users.
      *
      * @param array  $users [username => password]
      * @param string $realm
      * @param string $nonce
      */
-    public function __construct(array $users, $realm = 'Login', $nonce = null)
+    public function __construct(array $users, $realm, $nonce)
     {
         $this->users = $users;
         $this->realm = $realm;
-        $this->nonce = $nonce ?: uniqid();
+        $this->nonce = $nonce;
     }
 
     /**

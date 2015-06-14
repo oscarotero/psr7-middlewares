@@ -1,5 +1,5 @@
 <?php
-namespace Psr7Middlewares;
+namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -13,12 +13,23 @@ class BasicAuthentication
     protected $realm;
 
     /**
+     * Creates an instance of this middleware
+     * 
+     * @param array  $users
+     * @param string $realm
+     */
+    public static function create(array $users, $realm = 'Login')
+    {
+        return new static($users, $realm);
+    }
+
+    /**
      * Constructor. Defines de users.
      *
      * @param array  $users [username => password]
      * @param string $realm
      */
-    public function __construct(array $users, $realm = 'Login')
+    public function __construct(array $users, $realm)
     {
         $this->users = $users;
         $this->realm = $realm;

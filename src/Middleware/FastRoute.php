@@ -1,5 +1,5 @@
 <?php
-namespace Psr7Middlewares;
+namespace Psr7Middlewares\Middleware;
 
 use RuntimeException;
 use FastRoute\Dispatcher;
@@ -8,17 +8,32 @@ use Psr\Http\Message\ResponseInterface;
 
 class FastRoute
 {
+    use RouterTrait;
+
     protected $dispatcher;
+
+    /**
+     * Creates an instance of this middleware
+     * 
+     * @param Dispatcher|callable $dispatcher
+     * @param null|array  $extraArguments
+     */
+    public static function create($dispatcher, array $extraArguments = array())
+    {
+        return new static($dispatcher, $extraArguments);
+    }
 
     /**
      * Constructor
      * You can specify the Dispatcher instance or a callable to fetch it in lazy mode
      *
-     * @param Dispatcher|callable $router
+     * @param Dispatcher|callable $dispatcher
+     * @param array $extraArguments
      */
-    public function __construct($dispatcher)
+    public function __construct($dispatcher, $extraArguments)
     {
         $this->dispatcher = $dispatcher;
+        $this->extraArguments = $extraArguments;
     }
 
     /**
@@ -46,7 +61,7 @@ class FastRoute
             $request = $request->withAttribute($name, $value);
         }
 
-        $response = call_user_func($route[1], $request, $response);
+        $response = self::executeTarget($route[1], $request, $response);
 
         return $next($request, $response);
     }

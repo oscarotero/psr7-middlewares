@@ -1,5 +1,5 @@
 <?php
-namespace Psr7Middlewares;
+namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -7,14 +7,24 @@ use Psr\Http\Message\ResponseInterface;
 /**
  * Middleware returns the client preferred language
  */
-class ClientLanguage
+class AcceptLanguage
 {
     protected $languages = [];
 
     /**
+     * Creates an instance of this middleware
+     * 
+     * @param null|array $languages
+     */
+    public static function create(array $languages = null)
+    {
+        return new static($languages);
+    }
+
+    /**
      * Constructor. Defines de available languages.
      *
-     * @param null|array $headers
+     * @param null|array $languages
      */
     public function __construct(array $languages = null)
     {
@@ -36,8 +46,8 @@ class ClientLanguage
         $languages = static::parseLanguagesHeader($request->getHeaderLine('Accept-Language'));
 
         $request = $request
-            ->withAttribute('CLIENT_LANGUAGES', $languages)
-            ->withAttribute('CLIENT_PREFERRED_LANGUAGE', $this->getPreferredLanguage($languages));
+            ->withAttribute('ACCEPT_LANGUAGE', $languages)
+            ->withAttribute('PREFERRED_LANGUAGE', $this->getPreferredLanguage($languages));
 
         return $next($request, $response);
     }

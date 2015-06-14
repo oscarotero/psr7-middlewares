@@ -19,28 +19,20 @@ All middlewares follow this pattern:
 ## Usage example:
 
 ```php
+use Psr7Middlewares\Middleware;
+
 use Relay\Relay;
-use Psr7Middlewares;
 use Aura\Router\RouterContainer;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
 $dispatcher = new Relay([
-    new Psr7Middlewares\DigestAuthentication(['user1' => 'pass1','user2' => 'pass2']),
-    new Psr7Middlewares\ClientIp(),
-    new Psr7Middlewares\ClientLanguage(['gl', 'es', 'en']),
-    new Psr7Middlewares\AuraRouter(function () {
-    	$router = new RouterContainer();
-
-    	$router->getMap()->get('home', '/', function ($request, $response) {
-            $ip = $request->getAttribute('CLIENT_IP');
-    		$language = $request->getAttribute('CLIENT_PREFERRED_LANGUAGE');
-
-    		$response->getBody()->write("hello, your ip is {$ip} and language {$language}");
-
-            return $response;
-    	});
-    }),
+    Middleware::BasePath('/my-site/web'),
+    Middleware::DigestAuthentication(['username' => 'password']),
+    Middleware::ClientIp(),
+    Middleware::AcceptLanguage(['gl', 'es', 'en']),
+    Middleware::AcceptType(),
+    Middleware::AuraRouter($routerContainer)
 ]);
 
 $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
@@ -61,4 +53,10 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 ### Client info
 
 * **ClientIp** Detects the client ip(s) and create two attributes in the request instance: `CLIENT_IPS` (array with all ips found) and `CLIENT_IP` (the first ip)
-* **ClientLanguage** Detects the client language using the Accept-Language header and calculate the most preferred language to use. Create two attributes in the request instance: `CLIENT_LANGUAGES` (array with all languages found) and `CLIENT_PREFERRED_LANGUAGE` (the preferred language according with the array of available languages that you can set in the constructor)
+* **AcceptLanguage** Detects the client language using the Accept-Language header and calculate the most preferred language to use. Create two attributes in the request instance: `ACCEPT_LANGUAGE` (array with all languages accepted by the client) and `PREFERRED_LANGUAGE` (the preferred language according with the array of available languages that you can set in the constructor)
+* **AcceptType** Detects the client content-type using the Accept header and calculate the most preferred format to use. Create three attributes in the request instance: `ACCEPT_TYPE` (array with all formats accepted by the client), `PREFERRED_TYPE` (the preferred mime-type according with the array of available languages that you can set in the constructor) and `PREFERRED_FORMAT` (the format name, for example: html or json, instead the mime types "text/html", "application/json"). This middleware uses also the path extension to choose the preferred type, for example, if the request uri is "/post/12.json", the preferred format is "json".
+
+### Misc
+
+* **BasePath** Strip off the prefix from the uri path of the request. This is useful if the root of the website is in a subdirectory.
+

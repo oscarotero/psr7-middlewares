@@ -1,5 +1,5 @@
 <?php
-namespace Psr7Middlewares;
+namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -17,6 +17,16 @@ class ClientIp
         'Forwarded-For',
         'Forwarded',
     ];
+
+    /**
+     * Creates an instance of this middleware
+     * 
+     * @param null|array $headers
+     */
+    public static function create(array $headers = null)
+    {
+        return new static($headers);
+    }
 
     /**
      * Constructor. Defines de available headers.
