@@ -1,5 +1,7 @@
 # psr7-middlewares
 
+[![Build Status](https://travis-ci.org/oscarotero/psr7-middlewares.svg)](https://travis-ci.org/oscarotero/psr7-middlewares)
+
 Collection of PSR-7 middlewares
 
 ## Requirements
