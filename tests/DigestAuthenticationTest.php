@@ -9,7 +9,7 @@ class DigestAuthenticationTest extends PHPUnit_Framework_TestCase
     public function testIps()
     {
         $dispatcher = new Relay([
-            Middleware::DigestAuthentication([], 'Login', 'xxx')
+            Middleware::DigestAuthentication([], 'Login', 'xxx'),
         ]);
 
         $response = $dispatcher(new ServerRequest(), new Response());

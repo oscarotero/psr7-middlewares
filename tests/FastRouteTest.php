@@ -9,7 +9,7 @@ class FastRouteTest extends PHPUnit_Framework_TestCase
 {
     public function testFastRoute()
     {
-        $dispatcher = \FastRoute\simpleDispatcher(function(\FastRoute\RouteCollector $r) {
+        $dispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
             $r->addRoute('GET', '/user/{name}/{id:[0-9]+}', function ($request, $response) {
                 $this->assertEquals('oscarotero', $request->getAttribute('name'));
                 $this->assertEquals('35', $request->getAttribute('id'));
@@ -21,7 +21,7 @@ class FastRouteTest extends PHPUnit_Framework_TestCase
         });
 
         $dispatcher = new Relay([
-            Middleware::FastRoute($dispatcher)
+            Middleware::FastRoute($dispatcher),
         ]);
 
         $request = (new ServerRequest())

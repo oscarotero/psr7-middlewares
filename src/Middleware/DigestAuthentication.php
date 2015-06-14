@@ -15,7 +15,7 @@ class DigestAuthentication
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param array  $users
      * @param string $realm
      * @param string $nonce

@@ -20,7 +20,7 @@ class ClientIp
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param null|array $headers
      */
     public static function create(array $headers = null)

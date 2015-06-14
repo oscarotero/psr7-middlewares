@@ -9,16 +9,16 @@ use Psr\Http\Message\ResponseInterface;
  * Base functions used by router middlewares
  */
 trait RouterTrait
-{   
+{
     protected $extraArguments = [];
 
     /**
      * Execute the target
-     * 
-     * @param mixed $target
+     *
+     * @param mixed                  $target
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     * 
+     *
      * @return ResponseInterface
      */
     protected function executeTarget($target, ServerRequestInterface $request, ResponseInterface $response)
@@ -54,7 +54,7 @@ trait RouterTrait
      * @param array $construct_args
      *
      * @throws RuntimeException If the target is not callable
-     * 
+     *
      * @return callable
      */
     protected static function getCallable($target, array $construct_args)

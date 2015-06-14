@@ -23,7 +23,7 @@ class AuraRouterTest extends PHPUnit_Framework_TestCase
         });
 
         $dispatcher = new Relay([
-            Middleware::AuraRouter($router)
+            Middleware::AuraRouter($router),
         ]);
 
         $request = (new ServerRequest())

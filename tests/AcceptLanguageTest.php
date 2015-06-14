@@ -17,7 +17,7 @@ class AcceptLanguageTest extends PHPUnit_Framework_TestCase
                 $response->getBody()->write('Ok');
 
                 return $response;
-            }
+            },
         ]);
 
         $request = (new ServerRequest())
@@ -65,9 +65,9 @@ class AcceptLanguageTest extends PHPUnit_Framework_TestCase
             'es'
         );
         $this->makeTest(
-            '', 
-            ['en', 'es'], 
-            [], 
+            '',
+            ['en', 'es'],
+            [],
             'en'
         );
     }

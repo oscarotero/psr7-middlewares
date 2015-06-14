@@ -19,7 +19,7 @@ class AcceptTypeTest extends PHPUnit_Framework_TestCase
                 $response->getBody()->write('Ok');
 
                 return $response;
-            }
+            },
         ]);
 
         $request = (new ServerRequest())

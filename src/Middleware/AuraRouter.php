@@ -14,9 +14,9 @@ class AuraRouter
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param RouterContainer|callable $router
-     * @param null|array  $extraArguments
+     * @param null|array               $extraArguments
      */
     public static function create($router, array $extraArguments = array())
     {
@@ -28,7 +28,7 @@ class AuraRouter
      * You can specify the RouterContainer instance or a callable to fetch it in lazy mode
      *
      * @param RouterContainer|callable $router
-     * @param array $extraArguments
+     * @param array                    $extraArguments
      */
     public function __construct($router, $extraArguments)
     {

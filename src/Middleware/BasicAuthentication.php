@@ -14,7 +14,7 @@ class BasicAuthentication
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param array  $users
      * @param string $realm
      */

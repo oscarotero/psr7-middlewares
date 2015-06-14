@@ -17,7 +17,7 @@ class ClientIpTest extends PHPUnit_Framework_TestCase
                 $response->getBody()->write('Ok');
 
                 return $response;
-            }
+            },
         ]);
 
         $request = (new ServerRequest());
@@ -35,7 +35,7 @@ class ClientIpTest extends PHPUnit_Framework_TestCase
     {
         $this->makeTest([
                 'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
-                'X-Forwarded' => '123.234.123.10'
+                'X-Forwarded' => '123.234.123.10',
             ],
             ['123.234.123.10'],
             '123.234.123.10'
@@ -43,7 +43,7 @@ class ClientIpTest extends PHPUnit_Framework_TestCase
 
         $this->makeTest([
                 'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
-                'X-Forwarded' => '123.234.123.11'
+                'X-Forwarded' => '123.234.123.11',
             ],
             ['123.234.123.10', '123.234.123.11'],
             '123.234.123.10'

@@ -34,9 +34,9 @@ class AcceptType
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param null|array $formats
-     * @param string $default
+     * @param string     $default
      */
     public static function create(array $formats = null, $default = 'html')
     {
@@ -50,7 +50,7 @@ class AcceptType
     /**
      * Constructor. Defines de available formats and the default
      *
-     * @param array $formats
+     * @param array  $formats
      * @param string $default
      */
     public function __construct(array $formats, $default)

@@ -13,7 +13,7 @@ class AcceptLanguage
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param null|array $languages
      */
     public static function create(array $languages = null)

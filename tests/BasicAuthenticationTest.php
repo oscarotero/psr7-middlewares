@@ -9,7 +9,7 @@ class BasicAuthenticationTest extends PHPUnit_Framework_TestCase
     public function testIps()
     {
         $dispatcher = new Relay([
-            Middleware::BasicAuthentication([], 'Login')
+            Middleware::BasicAuthentication([], 'Login'),
         ]);
 
         $response = $dispatcher(new ServerRequest(), new Response());

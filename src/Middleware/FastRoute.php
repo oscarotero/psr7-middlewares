@@ -14,9 +14,9 @@ class FastRoute
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param Dispatcher|callable $dispatcher
-     * @param null|array  $extraArguments
+     * @param null|array          $extraArguments
      */
     public static function create($dispatcher, array $extraArguments = array())
     {
@@ -28,7 +28,7 @@ class FastRoute
      * You can specify the Dispatcher instance or a callable to fetch it in lazy mode
      *
      * @param Dispatcher|callable $dispatcher
-     * @param array $extraArguments
+     * @param array               $extraArguments
      */
     public function __construct($dispatcher, $extraArguments)
     {

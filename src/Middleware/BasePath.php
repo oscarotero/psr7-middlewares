@@ -13,7 +13,7 @@ class BasePath
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param string $prefix
      */
     public static function create($prefix)
