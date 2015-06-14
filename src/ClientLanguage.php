@@ -87,6 +87,8 @@ class ClientLanguage
             foreach ($langs as &$val) {
                 if ($val === '') {
                     $val = 1;
+                } else {
+                    $val = floatval($val);
                 }
             }
 

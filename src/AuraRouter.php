@@ -36,6 +36,10 @@ class AuraRouter
         $route = $matcher->match($request);
 
         if ($route) {
+            foreach ($route->attributes as $name => $value) {
+                $request = $request->withAttribute($name, $value);
+            }
+
             $response = call_user_func($route->handler, $request, $response);
         }
 
