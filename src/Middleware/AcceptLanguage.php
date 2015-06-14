@@ -55,7 +55,7 @@ class AcceptLanguage
     /**
      * Get the preferred language
      *
-     * @param Request $request
+     * @param array $languages
      *
      * @return null|string
      */

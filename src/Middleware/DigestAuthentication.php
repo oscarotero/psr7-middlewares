@@ -111,16 +111,16 @@ class DigestAuthentication
      *
      * @return false|array
      */
-    protected static function parseAuthorizationHeader($authorization)
+    protected static function parseAuthorizationHeader($header)
     {
-        if (strpos($authorization, 'Digest') !== 0) {
+        if (strpos($header, 'Digest') !== 0) {
             return false;
         }
 
         $needed_parts = ['nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1];
         $data = [];
 
-        preg_match_all('@('.implode('|', array_keys($needed_parts)).')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', substr($authorization, 7), $matches, PREG_SET_ORDER);
+        preg_match_all('@('.implode('|', array_keys($needed_parts)).')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', substr($header, 7), $matches, PREG_SET_ORDER);
 
         foreach ($matches as $m) {
             $data[$m[1]] = $m[3] ? $m[3] : $m[4];
