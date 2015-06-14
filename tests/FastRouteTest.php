@@ -1,5 +1,5 @@
 <?php
-use Psr7Middlewares\FastRoute;
+use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
@@ -21,7 +21,7 @@ class FastRouteTest extends PHPUnit_Framework_TestCase
         });
 
         $dispatcher = new Relay([
-            new FastRoute($dispatcher)
+            Middleware::FastRoute($dispatcher)
         ]);
 
         $request = (new ServerRequest())

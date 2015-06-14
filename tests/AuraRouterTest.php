@@ -1,5 +1,5 @@
 <?php
-use Psr7Middlewares\AuraRouter;
+use Psr7Middlewares\Middleware;
 use Aura\Router\RouterContainer;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
@@ -23,7 +23,7 @@ class AuraRouterTest extends PHPUnit_Framework_TestCase
         });
 
         $dispatcher = new Relay([
-            new AuraRouter($router)
+            Middleware::AuraRouter($router)
         ]);
 
         $request = (new ServerRequest())

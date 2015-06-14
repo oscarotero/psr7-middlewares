@@ -1,18 +1,18 @@
 <?php
-use Psr7Middlewares\ClientLanguage;
+use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Relay\Relay;
 
-class ClientLanguageTest extends PHPUnit_Framework_TestCase
+class AcceptLanguageTest extends PHPUnit_Framework_TestCase
 {
     protected function makeTest($header, array $availables, array $client_languages, $client_preferred_language)
     {
         $dispatcher = new Relay([
-            new ClientLanguage($availables),
+            Middleware::AcceptLanguage($availables),
             function ($request, $response, $next) use ($client_languages, $client_preferred_language) {
-                $this->assertEquals($client_languages, $request->getAttribute('CLIENT_LANGUAGES'));
-                $this->assertEquals($client_preferred_language, $request->getAttribute('CLIENT_PREFERRED_LANGUAGE'));
+                $this->assertEquals($client_languages, $request->getAttribute('ACCEPT_LANGUAGE'));
+                $this->assertEquals($client_preferred_language, $request->getAttribute('PREFERRED_LANGUAGE'));
 
                 $response->getBody()->write('Ok');
 

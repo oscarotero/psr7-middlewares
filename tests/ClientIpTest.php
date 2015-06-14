@@ -1,5 +1,5 @@
 <?php
-use Psr7Middlewares\ClientIp;
+use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Relay\Relay;
@@ -9,7 +9,7 @@ class ClientIpTest extends PHPUnit_Framework_TestCase
     protected function makeTest(array $headers, array $client_ips, $client_ip)
     {
         $dispatcher = new Relay([
-            new ClientIp(),
+            Middleware::ClientIp(),
             function ($request, $response, $next) use ($client_ips, $client_ip) {
                 $this->assertEquals($client_ips, $request->getAttribute('CLIENT_IPS'));
                 $this->assertEquals($client_ip, $request->getAttribute('CLIENT_IP'));

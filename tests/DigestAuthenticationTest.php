@@ -1,5 +1,5 @@
 <?php
-use Psr7Middlewares\DigestAuthentication;
+use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Relay\Relay;
@@ -9,7 +9,7 @@ class DigestAuthenticationTest extends PHPUnit_Framework_TestCase
     public function testIps()
     {
         $dispatcher = new Relay([
-            new DigestAuthentication([], 'Login', 'xxx')
+            Middleware::DigestAuthentication([], 'Login', 'xxx')
         ]);
 
         $response = $dispatcher(new ServerRequest(), new Response());
