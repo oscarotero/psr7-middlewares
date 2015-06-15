@@ -15,6 +15,8 @@ class BasePath
      * Creates an instance of this middleware
      *
      * @param string $prefix
+     * 
+     * @return BasePath
      */
     public static function create($prefix)
     {

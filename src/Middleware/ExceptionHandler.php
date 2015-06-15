@@ -10,30 +10,14 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ExceptionHandler
 {
-    protected $handler;
-
     /**
      * Creates an instance of this middleware
      *
-     * @param callable|null $handler
+     * @return ExceptionHandler
      */
-    public static function create(callable $handler = null)
+    public static function create()
     {
-        if (!$handler) {
-            $handler = __CLASS__.'::defaultHandler';
-        }
-
-        return new static($handler);
-    }
-
-    /**
-     * Constructor. Set the path prefix
-     *
-     * @param callable $handler
-     */
-    public function __construct(callable $handler)
-    {
-        $this->handler = $handler;
+        return new static();
     }
 
     /**
@@ -49,25 +33,9 @@ class ExceptionHandler
         try {
             $response = $next($request, $response);
         } catch (Exception $exception) {
-            $response = call_user_func($this->handler, $exception, $request, $response);
+            $response = $response->withStatus(500);
+            $response->getBody()->write($exception->getMessage());
         }
-
-        return $response;
-    }
-
-    /**
-     * Default handler if none has been provided
-     *
-     * @param Exception              $exception
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     *
-     * @return ResponseInterface
-     */
-    protected static function defaultHandler(Exception $exception, ServerRequestInterface $request, ResponseInterface $response)
-    {
-        $response = $response->withStatus(500);
-        $response->getBody()->write($exception->getMessage());
 
         return $response;
     }

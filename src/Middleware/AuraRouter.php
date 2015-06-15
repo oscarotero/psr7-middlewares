@@ -17,6 +17,8 @@ class AuraRouter
      *
      * @param RouterContainer|callable $router
      * @param null|array               $extraArguments
+     * 
+     * @return AuraRouter
      */
     public static function create($router, array $extraArguments = array())
     {

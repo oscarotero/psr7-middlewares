@@ -18,7 +18,8 @@
 		"issues": "https://github.com/fol-project/http-middlewares/issues"
 	},
 	"require": {
-		"php": ">=5.5.0"
+		"php": ">=5.5.0",
+		"willdurand/negotiation": "~1.3"
 	},
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",
