@@ -7,9 +7,9 @@ Collection of PSR-7 middlewares
 
 ## Requirements
 
-* PHP >= 5.4
+* PHP >= 5.5
 * A PSR-7 HTTP Message implementation, for example [zend-diactoros](https://github.com/zendframework/zend-diactoros)
-* A PSR-7 middleware dispatcher. It can bee [Relay](https://github.com/relayphp/Relay.Relay) or any other compatible with it.
+* A PSR-7 middleware dispatcher. For example [Relay](https://github.com/relayphp/Relay.Relay) or any other similar.
 
 ## Usage example:
 
