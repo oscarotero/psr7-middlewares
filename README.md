@@ -34,8 +34,9 @@ $dispatcher = new Relay([
     Middleware::BasePath('/my-site/web'),
     Middleware::DigestAuthentication(['username' => 'password']),
     Middleware::ClientIp(),
-    Middleware::AcceptLanguage(['gl', 'es', 'en']),
-    Middleware::AcceptType(),
+    Middleware::Firewall('127.0.0.1'),
+    Middleware::LanguageNegotiator(['gl', 'es', 'en']),
+    Middleware::FormatNegotiator(),
     Middleware::AuraRouter($routerContainer)
 ]);
 
@@ -44,23 +45,152 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 
 ## Available middlewares
 
-### Routers
+### AuraRouter
 
-* **AuraRouter** To execute [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You must use the 3.x version, compatible with psr-7
-* **FastRoute** To execute [FastRoute](https://github.com/nikic/FastRoute) as middleware.
+To use [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You must use the 3.x version, compatible with psr-7:
 
-### Authentication
+```php
+use Aura\Router\RouterContainer;
 
-* **BasicAuthentication** Implements the basic http authentication.
-* **DigestAuthentication** Implements the digest http authentication.
+//Create the router
+$routerContainer = new RouterContainer();
 
-### Client info
+$map = $routerContainer->getMap();
+$map->get('blog.read', '/blog/{id}', 'blogReadHandler');
 
-* **ClientIp** Detects the client ip(s) and create two attributes in the request instance: `CLIENT_IPS` (array with all ips found) and `CLIENT_IP` (the first ip)
-* **AcceptLanguage** Detects the client language using the Accept-Language header and calculate the most preferred language to use. Create two attributes in the request instance: `ACCEPT_LANGUAGE` (array with all languages accepted by the client) and `PREFERRED_LANGUAGE` (the preferred language according with the array of available languages that you can set in the constructor)
-* **AcceptType** Detects the client content-type using the Accept header and calculate the most preferred format to use. Create three attributes in the request instance: `ACCEPT_TYPE` (array with all formats accepted by the client), `PREFERRED_TYPE` (the preferred mime-type according with the array of available languages that you can set in the constructor) and `PREFERRED_FORMAT` (the format name, for example: html or json, instead the mime types "text/html", "application/json"). This middleware uses also the path extension to choose the preferred type, for example, if the request uri is "/post/12.json", the preferred format is "json".
+//Add to the dispatcher
+$dispatcher = new Relay([
+    Middleware::AuraRouter($routerContainer)
+]);
+```
 
-### Misc
+### FastRoute
+To use [FastRoute](https://github.com/nikic/FastRoute) as a middleware.
 
-* **BasePath** Strip off the prefix from the uri path of the request. This is useful if the root of the website is in a subdirectory.
-* **ExceptionHandler** Cath any exception throwed by the next middlewares and returns a response with it.
+```php
+$router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
+    $r->addRoute('GET', '/blog/{id:[0-9]+}', 'blogReadHandler');
+});
+
+$dispatcher = new Relay([
+    Middleware::FastRoute($router)
+]);
+```
+
+### BasicAuthentication
+
+Implements the [basic http authentication](http://php.net/manual/en/features.http-auth.php). It has two arguments:
+
+* users: An array with all users and passwords allowed
+* realm: (optional) The realm used in the authentication
+
+```php
+$dispatcher = new Relay([
+    Middleware::BasicAuthentication([
+    	'username1' => 'password1',
+    	'username2' => 'password2'
+    ])
+]);
+```
+
+### DigestAuthentication
+
+Implements the [digest http authentication](http://php.net/manual/en/features.http-auth.php). It has three arguments:
+
+* users: An array with all users and passwords allowed
+* realm: (optional) The realm used in the authentication
+* nonce: (optional) The nonce value used in the authentication
+
+```php
+$dispatcher = new Relay([
+    Middleware::DigestAuthentication([
+    	'username1' => 'password1',
+    	'username2' => 'password2'
+    ])
+]);
+```
+
+### LanguageNegotiation
+
+Uses the fantastic [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. Store the language in the `LANGUAGE` attribute. You must provide an array with all available languages:
+
+```php
+$dispatcher = new Relay([
+    Middleware::LanguageNegotiation(['gl', 'en', 'es']),
+
+    function ($request, $response, $next) {
+    	$response->getBody()->write('Your preferred language is '.$request->getAttribute('LANGUAGE'));
+
+    	return $next($request, $response);
+	}
+]);
+```
+
+### FormatNegotiation
+
+Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. Stores the format in the `FORMAT` attribute. You must provide an array with the format priorities:
+
+```php
+$dispatcher = new Relay([
+    Middleware::FormatNegotiation(['html', 'json', 'png']),
+
+    function ($request, $response, $next) {
+    	$response->getBody()->write('You have requested the format '.$request->getAttribute('FORMAT'));
+
+    	return $next($request, $response);
+	}
+]);
+```
+
+### ClientIp
+
+Detects the client ip(s) and create two attributes in the request instance: `CLIENT_IPS` (array with all ips found) and `CLIENT_IP` (the first ip)
+
+```php
+$dispatcher = new Relay([
+    Middleware::ClientIp(),
+
+    function ($request, $response, $next) {
+    	$ip = $request->getAttribute('CLIENT_IP');
+    	$all_ips = array_implode(', ', $request->getAttribute('CLIENT_IPS'));
+
+    	$response->getBody()->write("Your ip is {$ip} but we also found {$all_ips}";
+
+    	return $next($request, $response);
+	}
+]);
+```
+
+### Firewall
+
+Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide a IP filtering. This middleware deppends of **ClientIp** (to extract the ips from the headers). You can provide two arguments:
+
+* trusted: string/array with all ips allowed. [See the ip formats allowed](https://github.com/M6Web/Firewall#entries-formats)
+* untrusted: (optional) string/array with the ips not allowed.
+
+```php
+$dispatcher = new Relay([
+    Middleware::ClientIp(),
+    Middleware::Firewall('123.0.0.*')
+]);
+```
+
+### BasePath
+
+Strip off the prefix from the uri path of the request. This is useful to combine with routers if the root of the website is in a subdirectory. For example, if the root of your website is `/web/public`, a request with the uri `/web/public/post/34` will be converted to `/post/34`.
+
+```php
+$dispatcher = new Relay([
+    Middleware::BasePath('/web/public'),
+]);
+```
+
+### ExceptionHandler
+
+Cath any exception throwed by the next middlewares and returns a response with it.
+
+```php
+$dispatcher = new Relay([
+    Middleware::exceptionHandler(),
+]);
+```
