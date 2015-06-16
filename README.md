@@ -7,17 +7,9 @@ Collection of PSR-7 middlewares
 
 ## Requirements
 
+* PHP >= 5.4
 * A PSR-7 HTTP Message implementation, for example [zend-diactoros](https://github.com/zendframework/zend-diactoros)
-* A PSR-7 middleware dispatcher, for example [Relay](https://github.com/relayphp/Relay.Relay)
-
-All middlewares follow this pattern:
-
-* Receive the incoming request and response objects from the previous middleware as parameters, along with the next middleware as a callable.
-* Optionally modify the received request and response as desired.
-* Optionally invoke the next middleware with the request and response, receiving a new response in return.
-* Optionally modify the returned response as desired.
-* Return the response to the previous middleware.
-
+* A PSR-7 middleware dispatcher. It can bee [Relay](https://github.com/relayphp/Relay.Relay) or any other compatible with it.
 
 ## Usage example:
 
