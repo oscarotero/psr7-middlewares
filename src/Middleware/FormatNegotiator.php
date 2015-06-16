@@ -2,7 +2,6 @@
 namespace Psr7Middlewares\Middleware;
 
 use Negotiation\FormatNegotiator as Negotiator;
-
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -17,7 +16,7 @@ class FormatNegotiator
      * Creates an instance of this middleware
      *
      * @param null|array $formats
-     * 
+     *
      * @return FormatNegotiator
      */
     public static function create(array $formats = null)

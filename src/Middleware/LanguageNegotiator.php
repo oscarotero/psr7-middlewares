@@ -16,7 +16,7 @@ class LanguageNegotiator
      * Creates an instance of this middleware
      *
      * @param null|array $languages
-     * 
+     *
      * @return LanguageNegotiator
      */
     public static function create(array $languages = null)

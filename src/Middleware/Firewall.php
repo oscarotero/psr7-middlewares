@@ -19,7 +19,7 @@ class Firewall
      *
      * @param string|array|null $trusted
      * @param string|array|null $untrusted
-     * 
+     *
      * @return Firewall
      */
     public static function create($trusted = null, $untrusted = null)

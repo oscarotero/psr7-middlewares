@@ -10,7 +10,7 @@ class FirewallTest extends PHPUnit_Framework_TestCase
     {
         $dispatcher = new Relay([
             Middleware::ClientIp(),
-            Middleware::Firewall($trusted, $untrusted)
+            Middleware::Firewall($trusted, $untrusted),
         ]);
 
         $request = (new ServerRequest());

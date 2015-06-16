@@ -19,7 +19,7 @@ class DigestAuthentication
      * @param array  $users
      * @param string $realm
      * @param string $nonce
-     * 
+     *
      * @return DigestAuthentication
      */
     public static function create(array $users, $realm = 'Login', $nonce = null)

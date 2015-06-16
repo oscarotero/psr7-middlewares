@@ -17,7 +17,7 @@ class BasicAuthentication
      *
      * @param array  $users
      * @param string $realm
-     * 
+     *
      * @return BasicAuthentication
      */
     public static function create(array $users, $realm = 'Login')

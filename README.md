@@ -87,8 +87,8 @@ Implements the [basic http authentication](http://php.net/manual/en/features.htt
 ```php
 $dispatcher = new Relay([
     Middleware::BasicAuthentication([
-    	'username1' => 'password1',
-    	'username2' => 'password2'
+        'username1' => 'password1',
+        'username2' => 'password2'
     ])
 ]);
 ```
@@ -104,8 +104,8 @@ Implements the [digest http authentication](http://php.net/manual/en/features.ht
 ```php
 $dispatcher = new Relay([
     Middleware::DigestAuthentication([
-    	'username1' => 'password1',
-    	'username2' => 'password2'
+        'username1' => 'password1',
+        'username2' => 'password2'
     ])
 ]);
 ```
@@ -119,10 +119,10 @@ $dispatcher = new Relay([
     Middleware::LanguageNegotiation(['gl', 'en', 'es']),
 
     function ($request, $response, $next) {
-    	$response->getBody()->write('Your preferred language is '.$request->getAttribute('LANGUAGE'));
+        $response->getBody()->write('Your preferred language is '.$request->getAttribute('LANGUAGE'));
 
-    	return $next($request, $response);
-	}
+        return $next($request, $response);
+    }
 ]);
 ```
 
@@ -135,10 +135,10 @@ $dispatcher = new Relay([
     Middleware::FormatNegotiation(['html', 'json', 'png']),
 
     function ($request, $response, $next) {
-    	$response->getBody()->write('You have requested the format '.$request->getAttribute('FORMAT'));
+        $response->getBody()->write('You have requested the format '.$request->getAttribute('FORMAT'));
 
-    	return $next($request, $response);
-	}
+        return $next($request, $response);
+    }
 ]);
 ```
 
@@ -151,13 +151,13 @@ $dispatcher = new Relay([
     Middleware::ClientIp(),
 
     function ($request, $response, $next) {
-    	$ip = $request->getAttribute('CLIENT_IP');
-    	$all_ips = array_implode(', ', $request->getAttribute('CLIENT_IPS'));
+        $ip = $request->getAttribute('CLIENT_IP');
+        $all_ips = array_implode(', ', $request->getAttribute('CLIENT_IPS'));
 
-    	$response->getBody()->write("Your ip is {$ip} but we also found {$all_ips}";
+        $response->getBody()->write("Your ip is {$ip} but we also found {$all_ips}";
 
-    	return $next($request, $response);
-	}
+        return $next($request, $response);
+    }
 ]);
 ```
 

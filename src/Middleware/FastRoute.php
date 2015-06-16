@@ -17,7 +17,7 @@ class FastRoute
      *
      * @param Dispatcher|callable $dispatcher
      * @param null|array          $extraArguments
-     * 
+     *
      * @return FastRoute
      */
     public static function create($dispatcher, array $extraArguments = array())
