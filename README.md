@@ -35,17 +35,17 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 
 ## Available middlewares
 
-* [AuraRouter](#AuraRouter)
-* [AuraSession](#AuraSession)
-* [BasePath](#BasePath)
-* [BasicAuthentication](#BasicAuthentication)
-* [ClientIp](#ClientIp)
-* [DigestAuthentication](#DigestAuthentication)
-* [ExceptionHandler](#ExceptionHandler)
-* [FastRoute](#FastRoute)
-* [Firewall](#Firewall)
-* [FormatNegotiation](#FormatNegotiation)
-* [LanguageNegotiation](#LanguageNegotiation)
+* [AuraRouter](#aurarouter)
+* [AuraSession](#aurasession)
+* [BasePath](#basepath)
+* [BasicAuthentication](#basicauthentication)
+* [ClientIp](#clientip)
+* [DigestAuthentication](#digestauthentication)
+* [ExceptionHandler](#exceptionhandler)
+* [FastRoute](#fastroute)
+* [Firewall](#firewall)
+* [FormatNegotiation](#formatnegotiation)
+* [LanguageNegotiation](#languagenegotiation)
 
 ### AuraRouter
 
