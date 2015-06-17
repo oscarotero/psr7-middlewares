@@ -1,7 +1,6 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
-use RuntimeException;
 use Aura\Session\SessionFactory;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
