@@ -27,10 +27,12 @@
 		"relay/relay": "1.x-dev",
 		"nikic/fast-route": "0.*",
 		"aura/router": "3.x-dev",
+		"aura/session": "2.*",
 		"phpunit/phpunit": "~4.0"
 	},
 	"suggest": {
 		"aura/router": "If you want to use the AuraRouter middleware",
+		"aura/session": "If you want to use the AuraSession middleware",
 		"nikic/fast-route": "If you want to use the FastRoute middleware"
 	},
 	"autoload": {

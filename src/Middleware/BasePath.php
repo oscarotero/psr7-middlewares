@@ -47,7 +47,7 @@ class BasePath
         $path = $uri->getPath();
 
         if (strpos($path, $this->prefix) === 0) {
-            $path = substr($path, strlen($this->prefix));
+            $path = substr($path, strlen($this->prefix)) ?: '';
             $request = $request->withUri($uri->withPath($path));
         }
 
