@@ -46,6 +46,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
 * [LanguageNegotiation](#languagenegotiation)
+* [SaveResponse](#saveresponse)
 
 ### AuraRouter
 
@@ -207,5 +208,15 @@ $dispatcher = new Relay([
 
         return $next($request, $response);
     }
+]);
+```
+
+### SaveResponse
+
+Saves the response content into a file. Useful for cache purposes.
+
+```php
+$dispatcher = new Relay([
+    Middleware::SaveResponse('path/to/document/root')
 ]);
 ```
