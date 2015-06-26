@@ -181,14 +181,20 @@ $dispatcher = new Relay([
 
 ### FormatNegotiation
 
-Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. Stores the format in the `FORMAT` attribute. You must provide an array with the format priorities:
+Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. Stores the format in the `FORMAT` attribute. The middleware add also the `Content-Type` header to the response if it's missing.
 
 ```php
 $dispatcher = new Relay([
-    Middleware::FormatNegotiation(['html', 'json', 'png']),
+    Middleware::FormatNegotiation(),
 
     function ($request, $response, $next) {
-        $response->getBody()->write('You have requested the format '.$request->getAttribute('FORMAT'));
+        $format = $request->getAttribute('FORMAT');
+
+        if ($format === 'json') {
+            $response->getBody()->write(json_encode(['Your content']));
+        } else {
+            $response->getBody()->write('Your content');
+        }
 
         return $next($request, $response);
     }

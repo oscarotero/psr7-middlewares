@@ -7,10 +7,10 @@ use Relay\Relay;
 
 class FormatNegotiatorTest extends PHPUnit_Framework_TestCase
 {
-    protected function makeTest($path, $header, array $availables, $format)
+    protected function makeTest($path, $header, $format)
     {
         $dispatcher = new Relay([
-            Middleware::FormatNegotiator($availables),
+            Middleware::FormatNegotiator(),
             function ($request, $response, $next) use ($format) {
                 $this->assertEquals($format, $request->getAttribute('FORMAT'));
 
@@ -34,35 +34,30 @@ class FormatNegotiatorTest extends PHPUnit_Framework_TestCase
         $this->makeTest(
             '/',
             'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
-            ['html', 'json'],
-            'html'
+            'xml'
         );
 
         $this->makeTest(
             '/test.json',
             '',
-            ['html', 'json', 'xml'],
             'json'
         );
 
         $this->makeTest(
             '/test.json',
             '',
-            ['html', 'json', 'xml'],
             'json'
         );
 
         $this->makeTest(
             '/',
             '',
-            ['html', 'json', 'xml'],
             null
         );
 
         $this->makeTest(
             '/',
             'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
-            ['xml', 'html', 'json'],
             'xml'
         );
     }

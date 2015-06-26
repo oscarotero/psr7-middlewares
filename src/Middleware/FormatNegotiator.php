@@ -10,30 +10,55 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FormatNegotiator
 {
-    protected $formats = [];
+    protected $negotiator;
+
+    protected static $formats = [
+        'atom' => ['application/atom+xml'],
+        'css' => ['text/css'],
+        'html' => ['text/html', 'application/xhtml+xml'],
+        'gif' => ['image/gif'],
+        'jpg' => ['image/jpeg', 'image/jpg'],
+        'jpeg' => ['image/jpeg', 'image/jpg'],
+        'js'  => ['text/javascript', 'application/javascript', 'application/x-javascript'],
+        'jsonp'  => ['text/javascript', 'application/javascript', 'application/x-javascript'],
+        'json' => ['application/json', 'text/json', 'application/x-json'],
+        'png' => ['image/png',  'image/x-png'],
+        'pdf' => ['application/pdf', 'application/x-download'],
+        'rdf' => ['application/rdf+xml'],
+        'rss' => ['application/rss+xml'],
+        'txt' => ['text/plain'],
+        'xml' => ['text/xml', 'application/xml', 'application/x-xml'],
+        'zip' => ['application/zip', 'application/x-zip', 'application/x-zip-compressed'],
+    ];
 
     /**
      * Creates an instance of this middleware
-     *
-     * @param null|array $formats
+     * 
+     * @param Negotiator|null $negotiator
      *
      * @return FormatNegotiator
      */
-    public static function create(array $formats = null)
+    public static function create(Negotiator $negotiator = null)
     {
-        return new static($formats);
+        if ($negotiator === null) {
+            $negotiator = new Negotiator();
+
+            foreach (static::$formats as $name => $mimeTypes) {
+                $negotiator->registerFormat($name, $mimeTypes, true);
+            }
+        }
+
+        return new static($negotiator);
     }
 
     /**
      * Constructor. Defines de available formats.
-     *
-     * @param null|array $formats
+     * 
+     * @param Negotiator $negotiator
      */
-    public function __construct(array $formats = null)
+    public function __construct(Negotiator $negotiator)
     {
-        if ($formats !== null) {
-            $this->formats = $formats;
-        }
+        $this->negotiator = $negotiator;
     }
 
     /**
@@ -46,18 +71,22 @@ class FormatNegotiator
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $negotiator = new Negotiator();
-
         //Calculate using the extension
         $format = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 
-        if ($negotiator->normalizePriorities([$format])) {
-            return $next($request->withAttribute('FORMAT', $format), $response);
+        if ($this->negotiator->normalizePriorities([$format])) {
+            $response = $next($request->withAttribute('FORMAT', $format), $response);
+        } else {
+            //Calculate using the header
+            $format = $this->negotiator->getBestFormat($request->getHeaderLine('Accept'));
+            $response = $next($request->withAttribute('FORMAT', $format), $response);
         }
 
-        //Calculate using the header
-        $format = $negotiator->getBestFormat($request->getHeaderLine('Accept'), $this->formats);
+        //Set the content-type to the response
+        if (!$response->hasHeader('Content-Type') && ($mime = $this->negotiator->normalizePriorities([$format]))) {
+            return $response->withHeader('Content-Type', $mime[0].'; charset=utf-8');
+        }
 
-        return $next($request->withAttribute('FORMAT', $format), $response);
+        return $response;
     }
 }
