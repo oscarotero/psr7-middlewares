@@ -33,7 +33,7 @@ class FormatNegotiator
 
     /**
      * Creates an instance of this middleware
-     * 
+     *
      * @param Negotiator|null $negotiator
      *
      * @return FormatNegotiator
@@ -53,7 +53,7 @@ class FormatNegotiator
 
     /**
      * Constructor. Defines de available formats.
-     * 
+     *
      * @param Negotiator $negotiator
      */
     public function __construct(Negotiator $negotiator)
