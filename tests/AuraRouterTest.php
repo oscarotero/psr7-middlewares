@@ -4,7 +4,7 @@ use Aura\Router\RouterContainer;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class AuraRouterTest extends PHPUnit_Framework_TestCase
 {
@@ -22,7 +22,8 @@ class AuraRouterTest extends PHPUnit_Framework_TestCase
             return $response;
         });
 
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::AuraRouter($router),
         ]);
 

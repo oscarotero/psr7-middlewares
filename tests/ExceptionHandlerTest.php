@@ -2,13 +2,14 @@
 use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class ExceptionHandlerTest extends PHPUnit_Framework_TestCase
 {
     public function testException()
     {
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::ExceptionHandler(),
             function ($request, $response, $next) {
                 throw new \Exception("Error Processing Request");

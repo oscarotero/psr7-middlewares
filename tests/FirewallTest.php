@@ -2,13 +2,14 @@
 use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class FirewallTest extends PHPUnit_Framework_TestCase
 {
     protected function makeTest(array $headers, $trusted, $untrusted, $status)
     {
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::ClientIp(),
             Middleware::Firewall($trusted, $untrusted),
         ]);

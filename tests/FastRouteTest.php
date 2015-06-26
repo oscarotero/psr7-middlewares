@@ -3,7 +3,7 @@ use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class FastRouteTest extends PHPUnit_Framework_TestCase
 {
@@ -20,7 +20,8 @@ class FastRouteTest extends PHPUnit_Framework_TestCase
             });
         });
 
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::FastRoute($dispatcher),
         ]);
 

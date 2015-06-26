@@ -2,13 +2,14 @@
 use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class LanguageNegotiatorTest extends PHPUnit_Framework_TestCase
 {
     protected function makeTest($header, array $availables, $language)
     {
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::LanguageNegotiator($availables),
             function ($request, $response, $next) use ($language) {
                 $this->assertEquals($language, $request->getAttribute('LANGUAGE'));

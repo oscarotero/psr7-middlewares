@@ -2,13 +2,14 @@
 use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class BasicAuthenticationTest extends PHPUnit_Framework_TestCase
 {
     public function testIps()
     {
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::BasicAuthentication([], 'Login'),
         ]);
 

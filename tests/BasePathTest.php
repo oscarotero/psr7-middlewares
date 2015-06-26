@@ -3,13 +3,14 @@ use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class BasePathTest extends PHPUnit_Framework_TestCase
 {
     protected function makeTest($url, $basepath, $result)
     {
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::BasePath($basepath),
             function ($request, $response, $next) use ($result) {
                 $this->assertEquals($result, (string) $request->getUri());

@@ -2,13 +2,14 @@
 use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class ClientIpTest extends PHPUnit_Framework_TestCase
 {
     protected function makeTest(array $headers, array $client_ips, $client_ip)
     {
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::ClientIp(),
             function ($request, $response, $next) use ($client_ips, $client_ip) {
                 $this->assertEquals($client_ips, $request->getAttribute('CLIENT_IPS'));

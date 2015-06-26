@@ -3,13 +3,14 @@ use Psr7Middlewares\Middleware;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
-use Relay\Relay;
+use Relay\RelayBuilder;
 
 class FormatNegotiatorTest extends PHPUnit_Framework_TestCase
 {
     protected function makeTest($path, $header, $format)
     {
-        $dispatcher = new Relay([
+        $relayBuilder = new RelayBuilder();
+        $dispatcher = $relayBuilder->newInstance([
             Middleware::FormatNegotiator(),
             function ($request, $response, $next) use ($format) {
                 $this->assertEquals($format, $request->getAttribute('FORMAT'));
