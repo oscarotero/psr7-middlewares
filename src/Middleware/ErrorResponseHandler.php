@@ -1,8 +1,6 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
-use RuntimeException;
-use Aura\Router\RouterContainer;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -16,8 +14,8 @@ class ErrorResponseHandler
     /**
      * Creates an instance of this middleware
      *
-     * @param callable    $handler
-     * @param null|array  $extraArguments
+     * @param callable   $handler
+     * @param null|array $extraArguments
      *
      * @return ErrorResponseHandler
      */

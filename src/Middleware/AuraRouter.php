@@ -56,7 +56,7 @@ class AuraRouter
         if (!$route) {
             $failedRoute = $matcher->getFailedRoute();
 
-             switch ($failedRoute->failedRule) {
+            switch ($failedRoute->failedRule) {
                 case 'Aura\Router\Rule\Allows':
                     return $response->withStatus(405); // 405 METHOD NOT ALLOWED
 
