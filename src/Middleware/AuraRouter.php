@@ -53,8 +53,21 @@ class AuraRouter
         $route = $matcher->match($request);
 
         if (!$route) {
-            return $response->withStatus(404);
+            $failedRoute = $matcher->getFailedRoute();
+
+             switch ($failedRoute->failedRule) {
+                case 'Aura\Router\Rule\Allows':
+                    return $response->withStatus(405); // 405 METHOD NOT ALLOWED
+
+                case 'Aura\Router\Rule\Accepts':
+                    return $response->withStatus(406); // 406 NOT ACCEPTABLE
+
+                default:
+                    return $response->withStatus(404); // 404 NOT FOUND
+            }
         }
+
+        $request = $request->withAttribute('ROUTE', $route);
 
         foreach ($route->attributes as $name => $value) {
             $request = $request->withAttribute($name, $value);
