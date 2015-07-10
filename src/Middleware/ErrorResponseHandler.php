@@ -51,7 +51,8 @@ class ErrorResponseHandler
         try {
             $response = $next($request, $response);
         } catch (\Exception $exception) {
-            $response = $response->withStatus(500)->withAttribute('EXCEPTION', $exception);
+            $request = $request->withAttribute('EXCEPTION', $exception);
+            $response = $response->withStatus(500);
         }
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
