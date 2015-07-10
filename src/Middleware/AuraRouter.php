@@ -11,6 +11,7 @@ class AuraRouter
     use RouterTrait;
 
     protected $router;
+    protected $extraArguments;
 
     /**
      * Creates an instance of this middleware
@@ -73,7 +74,7 @@ class AuraRouter
             $request = $request->withAttribute($name, $value);
         }
 
-        $response = self::executeTarget($route->handler, $request, $response);
+        $response = self::executeTarget($route->handler, $this->extraArguments, $request, $response);
 
         return $next($request, $response);
     }

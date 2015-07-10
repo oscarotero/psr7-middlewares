@@ -41,6 +41,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [BasicAuthentication](#basicauthentication)
 * [ClientIp](#clientip)
 * [DigestAuthentication](#digestauthentication)
+* [ErrorResponseHandler](#errorresponsehandler)
 * [ExceptionHandler](#exceptionhandler)
 * [FastRoute](#fastroute)
 * [Firewall](#firewall)
@@ -139,6 +140,45 @@ $dispatcher = new Relay([
         'username1' => 'password1',
         'username2' => 'password2'
     ])
+]);
+```
+
+### ErrorResponseHandler
+
+Execute a handler if the response returned by the next middlewares has any error (status code 400-599). It also catch any exception and handle it as an error 500.
+
+```php
+function errorHandler($request, $response) {
+    switch ($response->getStatusCode()) {
+        case 404:
+            return 'Page not found';
+
+        case 500:
+            //you can get the exception catched
+            $exception = $request->getAttribute('EXCEPTION');
+
+            return 'Server error: '.$exception->getMessage();
+
+        default:
+            return 'There was an error'
+    }
+}
+
+$dispatcher = new Relay([
+    Middleware::ErrorResponseHandler('errorHandler'),
+]);
+```
+
+### FastRoute
+To use [FastRoute](https://github.com/nikic/FastRoute) as a middleware.
+
+```php
+$router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
+    $r->addRoute('GET', '/blog/{id:[0-9]+}', 'blogReadHandler');
+});
+
+$dispatcher = new Relay([
+    Middleware::FastRoute($router)
 ]);
 ```
 

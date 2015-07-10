@@ -10,23 +10,22 @@ use Psr\Http\Message\ResponseInterface;
  */
 trait RouterTrait
 {
-    protected $extraArguments = [];
-
     /**
      * Execute the target
      *
      * @param mixed                  $target
+     * @param array                  $extraArguments
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
      *
      * @return ResponseInterface
      */
-    protected function executeTarget($target, ServerRequestInterface $request, ResponseInterface $response)
+    protected static function executeTarget($target, $extraArguments = [], ServerRequestInterface $request, ResponseInterface $response)
     {
         try {
             ob_start();
 
-            $arguments = array_merge([$request, $response], $this->extraArguments);
+            $arguments = array_merge([$request, $response], $extraArguments);
             $target = static::getCallable($target, $arguments);
             $return = call_user_func_array($target, $arguments);
 

@@ -11,6 +11,7 @@ class FastRoute
     use RouterTrait;
 
     protected $dispatcher;
+    protected $extraArguments;
 
     /**
      * Creates an instance of this middleware
@@ -63,7 +64,7 @@ class FastRoute
             $request = $request->withAttribute($name, $value);
         }
 
-        $response = self::executeTarget($route[1], $request, $response);
+        $response = self::executeTarget($route[1], $this->extraArguments, $request, $response);
 
         return $next($request, $response);
     }
