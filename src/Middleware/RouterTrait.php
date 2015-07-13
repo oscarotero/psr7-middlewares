@@ -34,7 +34,12 @@ trait RouterTrait
                 $return = '';
             }
 
-            $response->getBody()->write(ob_get_contents().$return);
+            $return = ob_get_contents().$return;
+            $body = $response->getBody();
+
+            if ($return !== '' && $body->isWritable()) {
+                $body->write($return);
+            }
 
             return $response;
         } catch (\Exception $exception) {
