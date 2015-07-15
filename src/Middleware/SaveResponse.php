@@ -39,11 +39,16 @@ class SaveResponse
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
+     * @param callable               $next
      *
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
+        if (!$this->mustWrite($request, $response)) {
+            return $next($request, $response);
+        }
+
         $file = $this->documentRoot.$request->getUri()->getPath();
 
         $parts = pathinfo($request->getUri()->getPath());
@@ -64,6 +69,28 @@ class SaveResponse
         $this->writeFile($response->getBody(), $this->documentRoot.$path.'/'.$filename);
 
         return $next($request, $response);
+    }
+
+    /**
+     * Check whether the response has to be written or not
+     *
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     *
+     * @return boolean
+     */
+    protected function mustWrite(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        if ($response->getStatusCode() !== 200) {
+            return false;
+        }
+
+        //Do not save requests with query parameters
+        if (count($request->getQueryParams())) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
