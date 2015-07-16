@@ -259,10 +259,17 @@ $dispatcher = new Relay([
 
 ### SaveResponse
 
-Saves the response content into a file. Useful for cache purposes.
+Saves the response content into a file if all of the following conditions are met:
+
+* The status code is `200`
+* The `Cache-Control` header does not contain `no-cache` value
+* The request has not query parameters.
+
+This is useful for cache purposes
 
 ```php
 $dispatcher = new Relay([
     Middleware::SaveResponse('path/to/document/root')
 ]);
 ```
+
