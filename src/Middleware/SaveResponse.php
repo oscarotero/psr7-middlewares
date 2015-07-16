@@ -90,6 +90,13 @@ class SaveResponse
             return false;
         }
 
+        //Check http headers
+        $cacheHeader = $response->getHeaderLine('Cache-Control');
+
+        if (stripos($cacheHeader, 'no-cache') !== false) {
+            return false;
+        }
+
         return true;
     }
 
