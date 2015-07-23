@@ -48,6 +48,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [FormatNegotiation](#formatnegotiation)
 * [LanguageNegotiation](#languagenegotiation)
 * [SaveResponse](#saveresponse)
+* [TrailingSlash](#trailingslash)
 
 ### AuraRouter
 
@@ -270,6 +271,16 @@ This is useful for cache purposes
 ```php
 $dispatcher = new Relay([
     Middleware::SaveResponse('path/to/document/root')
+]);
+```
+
+### TrailingSlash
+
+Removes the trailing slash of the path. Useful if you have problems with the router
+
+```php
+$dispatcher = new Relay([
+    Middleware::TrailingSlash()
 ]);
 ```
 
