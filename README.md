@@ -80,7 +80,10 @@ Creates a new [Aura.Session](https://github.com/auraphp/Aura.Session) instance w
 
 ```php
 $dispatcher = new Relay([
-    Middleware::exceptionHandler(),
+    Middleware::AuraSession(),
+    function ($request, $reponse, $next) {
+        $session = $request->getAttribute('SESSION');
+    }
 ]);
 ```
 
@@ -172,19 +175,6 @@ $dispatcher = new Relay([
 ]);
 ```
 
-### FastRoute
-To use [FastRoute](https://github.com/nikic/FastRoute) as a middleware.
-
-```php
-$router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/blog/{id:[0-9]+}', 'blogReadHandler');
-});
-
-$dispatcher = new Relay([
-    Middleware::FastRoute($router)
-]);
-```
-
 ### ExceptionHandler
 
 Cath any exception throwed by the next middlewares and returns a response with it.
@@ -246,7 +236,7 @@ $dispatcher = new Relay([
 
 ### LanguageNegotiation
 
-Uses the fantastic [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. Store the language in the `LANGUAGE` attribute. You must provide an array with all available languages:
+Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. Store the language in the `LANGUAGE` attribute. You must provide an array with all available languages:
 
 ```php
 $dispatcher = new Relay([
@@ -262,9 +252,9 @@ $dispatcher = new Relay([
 
 ### Minify
 
-Uses the [mrclay/minify](https://github.com/mrclay/minify) library to minify html, css and js responses. The available arguments are:
+Uses [mrclay/minify](https://github.com/mrclay/minify) to minify the html, css and js code from the responses. The available arguments are:
 
-* streamCreator (callable): You must provide a callable that returns an instance of `Psr\Http\Message\StreamInterface` used to store the minified code
+* streamCreator (callable): A callable that returns an instance of `Psr\Http\Message\StreamInterface` used to store the minified code
 * forCache (boolean): Set true to check the same conditions like [SaveResponse](#saveresponse) middleware.
 
 ```php
