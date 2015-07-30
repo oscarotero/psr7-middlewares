@@ -74,19 +74,19 @@ class FormatNegotiator
         //Calculate using the extension
         $format = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 
-        if ($this->negotiator->normalizePriorities([$format])) {
-            $response = $next($request->withAttribute('FORMAT', $format), $response);
-        } else {
-            //Calculate using the header
+        //Calculate using the header
+        if (!$this->negotiator->normalizePriorities([$format])) {
             $format = $this->negotiator->getBestFormat($request->getHeaderLine('Accept'));
-            $response = $next($request->withAttribute('FORMAT', $format), $response);
         }
+
+        //Save the format as attribute
+        $request = $request->withAttribute('FORMAT', $format);
 
         //Set the content-type to the response
-        if (!$response->hasHeader('Content-Type') && ($mime = $this->negotiator->normalizePriorities([$format]))) {
-            return $response->withHeader('Content-Type', $mime[0].'; charset=utf-8');
+        if (($mime = $this->negotiator->normalizePriorities([$format]))) {
+            return $next($request, $response->withHeader('Content-Type', $mime[0].'; charset=utf-8'));
         }
 
-        return $response;
+        return $next($request, $response);
     }
 }

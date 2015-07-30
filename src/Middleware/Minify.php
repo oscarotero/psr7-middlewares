@@ -47,8 +47,6 @@ class Minify
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $response = $next($request, $response);
-
         if ($this->forCache && !SaveResponse::mustWrite($request, $response)) {
             return $response;
         }
@@ -57,18 +55,18 @@ class Minify
         $extension = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 
         if ($extension === 'css' || strpos($header, 'txt/css') !== false) {
-            return $this->minityCss($response);
+            return $next($request, $this->minifyCss($response));
         }
 
         if ($extension === 'js' || strpos($header, '/javascript') !== false) {
-            return $this->minityJs($response);
+            return $next($request, $this->minifyJs($response));
         }
 
         if ($extension === 'html' || strpos($header, 'html') !== false) {
-            return $this->minityHtml($response);
+            return $next($request, $this->minifyHtml($response));
         }
 
-        return $response;
+        return $next($request, $response);
     }
 
     /**
