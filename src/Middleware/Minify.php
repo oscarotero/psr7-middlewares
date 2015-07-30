@@ -12,6 +12,7 @@ use Psr\Http\Message\StreamInterface;
 class Minify
 {
     protected $streamCreator;
+    protected $forCache;
 
     /**
      * Creates an instance of this middleware
@@ -20,9 +21,9 @@ class Minify
      *
      * @return Minify
      */
-    public static function create(callable $streamCreator)
+    public static function create(callable $streamCreator, $forCache = false)
     {
-        return new static($streamCreator);
+        return new static($streamCreator, $forCache);
     }
 
     /**
@@ -30,9 +31,10 @@ class Minify
      *
      * @param array $options
      */
-    public function __construct(callable $streamCreator)
+    public function __construct(callable $streamCreator, $forCache)
     {
         $this->streamCreator = $streamCreator;
+        $this->forCache = $forCache;
     }
 
     /**
@@ -46,6 +48,11 @@ class Minify
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $response = $next($request, $response);
+
+        if ($this->forCache && !SaveResponse::mustWrite($request, $response)) {
+            return $response;
+        }
+
         $header = $response->getHeaderLine('Content-Type');
         $extension = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 

@@ -45,7 +45,7 @@ class SaveResponse
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$this->mustWrite($request, $response)) {
+        if (!static::mustWrite($request, $response)) {
             return $next($request, $response);
         }
 
@@ -79,7 +79,7 @@ class SaveResponse
      *
      * @return boolean
      */
-    protected function mustWrite(ServerRequestInterface $request, ResponseInterface $response)
+    public static function mustWrite(ServerRequestInterface $request, ResponseInterface $response)
     {
         if ($response->getStatusCode() !== 200) {
             return false;

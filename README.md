@@ -27,7 +27,8 @@ $dispatcher = new Relay([
     Middleware::ClientIp(),
     Middleware::Firewall('127.0.0.1'),
     Middleware::LanguageNegotiator(['gl', 'es', 'en']),
-    Middleware::FormatNegotiator()
+    Middleware::FormatNegotiator(),
+    Middleware::Minify()
 ]);
 
 $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
@@ -47,6 +48,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
 * [LanguageNegotiation](#languagenegotiation)
+* [Minify](#minify)
 * [SaveResponse](#saveresponse)
 * [TrailingSlash](#trailingslash)
 
@@ -255,6 +257,22 @@ $dispatcher = new Relay([
 
         return $next($request, $response);
     }
+]);
+```
+
+### Minify
+
+Uses the [mrclay/minify](https://github.com/mrclay/minify) library to minify html, css and js responses. The available arguments are:
+
+* streamCreator (callable): You must provide a callable that returns an instance of `Psr\Http\Message\StreamInterface` used to store the minified code
+* forCache (boolean): Set true to check the same conditions like [SaveResponse](#saveresponse) middleware.
+
+```php
+$dispatcher = new Relay([
+    Middleware::Minify(function () {
+        return new Stream('php://temp', 'r+');
+    }, true),
+    Middleware::saveResponse('public') //saves the stream content in a file
 ]);
 ```
 
