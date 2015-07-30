@@ -79,7 +79,20 @@ class Minify
     protected function minifyHtml(ResponseInterface $response)
     {
         $stream = call_user_func($this->streamCreator);
-        $stream->write(HtmlMinify::minify((string) $response->getBody()));
+        $cssMinify = new CssMinify();
+
+        $stream->write(HtmlMinify::minify(
+            (string) $response->getBody(),
+            [
+                'jsCleanComments' => true,
+                'cssMinifier' => function ($css) use ($cssMinify) {
+                    return $cssMinify->run($css);
+                },
+                'jsMinifier' => function ($js) {
+                    return JsMinify::minify($js);
+                }
+            ]
+        ));
 
         return $response->withBody($stream);
     }
