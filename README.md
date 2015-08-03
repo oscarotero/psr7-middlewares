@@ -255,13 +255,18 @@ $dispatcher = new Relay([
 Uses [mrclay/minify](https://github.com/mrclay/minify) to minify the html, css and js code from the responses. The available arguments are:
 
 * streamCreator (callable): A callable that returns an instance of `Psr\Http\Message\StreamInterface` used to store the minified code
-* forCache (boolean): Set true to check the same conditions like [SaveResponse](#saveresponse) middleware.
+* options (array): Options to configure the minification:
+  * forCache (bool): Set true to check the same conditions like [SaveResponse](#saveresponse) middleware.
+  * inlineCss (bool): True to minify inline css (true by default)
+  * inlineJs (bool): True to minify inline javascript (true by default)
 
 ```php
 $dispatcher = new Relay([
     Middleware::Minify(function () {
         return new Stream('php://temp', 'r+');
-    }, true),
+    }, [
+        'forCache' => true,
+    ]),
     Middleware::saveResponse('public') //saves the stream content in a file
 ]);
 ```

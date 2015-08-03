@@ -12,7 +12,11 @@ use Psr\Http\Message\StreamInterface;
 class Minify
 {
     protected $streamCreator;
-    protected $forCache;
+    protected $options = [
+        'forCache' => false,
+        'inlineCss' => true,
+        'inlineJs' => true
+    ];
 
     /**
      * Creates an instance of this middleware
@@ -21,9 +25,9 @@ class Minify
      *
      * @return Minify
      */
-    public static function create(callable $streamCreator, $forCache = false)
+    public static function create(callable $streamCreator, array $options = array())
     {
-        return new static($streamCreator, $forCache);
+        return new static($streamCreator, $options);
     }
 
     /**
@@ -31,10 +35,10 @@ class Minify
      *
      * @param array $options
      */
-    public function __construct(callable $streamCreator, $forCache)
+    public function __construct(callable $streamCreator, array $options)
     {
         $this->streamCreator = $streamCreator;
-        $this->forCache = $forCache;
+        $this->options = $options + $this->options;
     }
 
     /**
@@ -47,7 +51,7 @@ class Minify
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->forCache && !SaveResponse::mustWrite($request, $response)) {
+        if ($this->options['forCache'] && !SaveResponse::mustWrite($request, $response)) {
             return $response;
         }
 
@@ -78,21 +82,24 @@ class Minify
      */
     protected function minifyHtml(ResponseInterface $response)
     {
-        $stream = call_user_func($this->streamCreator);
-        $cssMinify = new CssMinify();
+        $options = ['jsCleanComments' => true];
 
-        $stream->write(HtmlMinify::minify(
-            (string) $response->getBody(),
-            [
-                'jsCleanComments' => true,
-                'cssMinifier' => function ($css) use ($cssMinify) {
-                    return $cssMinify->run($css);
-                },
-                'jsMinifier' => function ($js) {
-                    return JsMinify::minify($js);
-                }
-            ]
-        ));
+        if ($this->options['inlineCss']) {
+            $cssMinify = new CssMinify();
+
+            $options['cssMinifier'] = function ($css) use ($cssMinify) {
+                return $cssMinify->run($css);
+            };
+        }
+
+        if ($this->options['inlineJs']) {
+            $options['jsMinifier'] = function ($js) {
+                return JsMinify::minify($js);
+            };
+        }
+
+        $stream = call_user_func($this->streamCreator);
+        $stream->write(HtmlMinify::minify((string) $response->getBody(), $options));
 
         return $response->withBody($stream);
     }
