@@ -30,9 +30,13 @@ trait CacheTrait
         }
 
         //Check http headers
-        $cacheHeader = $response->getHeaderLine('Cache-Control');
+        $cache = static::parseCacheControl($response->getHeaderLine('Cache-Control'));
 
-        if (stripos($cacheHeader, 'no-cache') !== false) {
+        if (in_array('no-cache', $cache)) {
+            return false;
+        }
+
+        if (in_array('private', $cache)) {
             return false;
         }
 
@@ -64,5 +68,57 @@ trait CacheTrait
         }
 
         return $path.'/'.$filename;
+    }
+
+    /**
+     * Write the stream to the given path
+     *
+     * @param StreamInterface $stream
+     * @param string          $path
+     */
+    protected static function writeStream(StreamInterface $stream, $path)
+    {
+        $dir = dirname($path);
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $handle = fopen($path, 'wb+');
+
+        if (false === $handle) {
+            throw new RuntimeException('Unable to write to designated path');
+        }
+
+        $stream->rewind();
+
+        while (!$stream->eof()) {
+            fwrite($handle, $stream->read(4096));
+        }
+
+        fclose($handle);
+    }
+
+    /**
+     * Parses and returns the cache-control header values
+     *
+     * @param string $header
+     *
+     * @return array
+     */
+    protected static function parseCacheControl($header)
+    {
+        $cache = [];
+
+        foreach (array_map('trim', explode(',', strtolower($header))) as $part) {
+            if (strpos($part, '=')) {
+                $part = array_map('trim', explode($part, $part, 2));
+                $cache[$part[0]] = $part[1];
+            } else {
+                $cache[$part] = true;
+            }
+        }
+
+        return $cache;
     }
 }

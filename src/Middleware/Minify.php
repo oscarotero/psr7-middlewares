@@ -2,14 +2,11 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\CacheTrait;
-
 use Minify_HTML as HtmlMinify;
 use CSSmin as CssMinify;
 use JSMinPlus as JsMinify;
-
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
 class Minify
 {
@@ -19,13 +16,14 @@ class Minify
     protected $options = [
         'forCache' => false,
         'inlineCss' => true,
-        'inlineJs' => true
+        'inlineJs' => true,
     ];
 
     /**
      * Creates an instance of this middleware
      *
      * @param callable $streamCreator
+     * @param array    $options
      *
      * @return Minify
      */
@@ -37,7 +35,8 @@ class Minify
     /**
      * Constructor
      *
-     * @param array $options
+     * @param callable $streamCreator
+     * @param array    $options
      */
     public function __construct(callable $streamCreator, array $options)
     {
@@ -79,7 +78,7 @@ class Minify
 
     /**
      * Minify html code
-     * 
+     *
      * @param ResponseInterface $response
      *
      * @return ResponseInterface
@@ -110,7 +109,7 @@ class Minify
 
     /**
      * Minify css code
-     * 
+     *
      * @param ResponseInterface $response
      *
      * @return ResponseInterface
@@ -125,7 +124,7 @@ class Minify
 
     /**
      * Minify js code
-     * 
+     *
      * @param ResponseInterface $response
      *
      * @return ResponseInterface
