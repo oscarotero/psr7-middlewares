@@ -1,12 +1,12 @@
 <?php
-namespace Psr7Middlewares\Middleware;
+namespace Psr7Middlewares\Utils;
 
 use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Base functions used by router middlewares
+ * Utilities used by cache related middlewares
  */
 trait RouterTrait
 {

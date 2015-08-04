@@ -1,10 +1,11 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
-use RuntimeException;
+use Psr7Middlewares\Utils\RouterTrait;
 use Aura\Router\RouterContainer;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 class AuraRouter
 {

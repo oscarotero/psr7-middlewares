@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils\CacheTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -10,6 +11,8 @@ use Psr\Http\Message\StreamInterface;
  */
 class SaveResponse
 {
+    use CacheTrait;
+
     protected $documentRoot;
 
     /**
@@ -45,59 +48,13 @@ class SaveResponse
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!static::mustWrite($request, $response)) {
+        if (!static::isCacheable($request, $response)) {
             return $next($request, $response);
         }
 
-        $file = $this->documentRoot.$request->getUri()->getPath();
-
-        $parts = pathinfo($request->getUri()->getPath());
-        $path = '/'.(isset($parts['dirname']) ? $parts['dirname'] : '');
-        $filename = isset($parts['basename']) ? $parts['basename'] : '';
-
-        //if it's a directory, append "/index.html"
-        if (empty($parts['extension'])) {
-            if ($path === '/') {
-                $path .= $filename;
-            } else {
-                $path .= '/'.$filename;
-            }
-
-            $filename = 'index.'.($request->getAttribute('FORMAT') ?: 'html');
-        }
-
-        $this->writeFile($response->getBody(), $this->documentRoot.$path.'/'.$filename);
+        $this->writeFile($response->getBody(), $this->documentRoot.static::getCacheFilename($request));
 
         return $next($request, $response);
-    }
-
-    /**
-     * Check whether the response has to be written or not
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     *
-     * @return boolean
-     */
-    public static function mustWrite(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        if ($response->getStatusCode() !== 200) {
-            return false;
-        }
-
-        //Do not save requests with query parameters
-        if (count($request->getQueryParams())) {
-            return false;
-        }
-
-        //Check http headers
-        $cacheHeader = $response->getHeaderLine('Cache-Control');
-
-        if (stripos($cacheHeader, 'no-cache') !== false) {
-            return false;
-        }
-
-        return true;
     }
 
     /**

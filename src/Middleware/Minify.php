@@ -1,6 +1,8 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils\CacheTrait;
+
 use Minify_HTML as HtmlMinify;
 use CSSmin as CssMinify;
 use JSMinPlus as JsMinify;
@@ -11,6 +13,8 @@ use Psr\Http\Message\StreamInterface;
 
 class Minify
 {
+    use CacheTrait;
+
     protected $streamCreator;
     protected $options = [
         'forCache' => false,
@@ -51,8 +55,8 @@ class Minify
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->options['forCache'] && !SaveResponse::mustWrite($request, $response)) {
-            return $response;
+        if ($this->options['forCache'] && !static::isCacheable($request, $response)) {
+            return $next($request, $response);
         }
 
         $header = $response->getHeaderLine('Content-Type');
