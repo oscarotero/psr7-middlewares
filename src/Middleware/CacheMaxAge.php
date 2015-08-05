@@ -6,9 +6,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to cache the response
+ * Middleware to cache the response using Cache-Control: max-age directive
  */
-class Cache
+class CacheMaxAge
 {
     use CacheTrait;
 
