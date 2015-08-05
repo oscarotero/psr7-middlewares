@@ -42,10 +42,10 @@ class FormatNegotiator
 
     /**
      * Add a new format
-     * 
+     *
      * @param string $format
      * @param array  $mimeTypes
-     * 
+     *
      * @return self
      */
     public function addFormat($format, array $mimeTypes)
@@ -88,7 +88,7 @@ class FormatNegotiator
 
     /**
      * Returns the negotiator
-     * 
+     *
      * @return Negotiator
      */
     protected function getNegotiator()

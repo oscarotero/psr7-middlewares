@@ -15,7 +15,7 @@ class BasicAuthentication
     /**
      * Constructor. Defines de users.
      *
-     * @param array  $users [username => password]
+     * @param array $users [username => password]
      */
     public function __construct(array $users)
     {
@@ -24,9 +24,9 @@ class BasicAuthentication
 
     /**
      * Set the realm value
-     * 
+     *
      * @param string $realm
-     * 
+     *
      * @return self
      */
     public function realm($realm)

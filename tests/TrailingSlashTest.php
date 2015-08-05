@@ -1,39 +1,35 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Uri;
-use Relay\RelayBuilder;
 
-class TrailingSlashTest extends PHPUnit_Framework_TestCase
+class TrailingSlashTest extends Base
 {
-    protected function makeTest($path, $result)
+    public function pathsProvider()
     {
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::trailingSlash(),
-            function ($request, $response, $next) use ($result) {
-                $this->assertEquals($result, $request->getUri()->getPath());
-
-                $response->getBody()->write('Ok');
-
-                return $response;
-            },
-        ]);
-
-        $request = (new ServerRequest())
-            ->withUri(new Uri($path));
-
-        $response = $dispatcher($request, new Response());
-
-        $this->assertEquals('Ok', (string) $response->getBody());
+        return [
+            ['/foo/bar', '/foo/bar'],
+            ['/foo/bar/', '/foo/bar'],
+            ['/', '/'],
+            ['', '']
+        ];
     }
 
-    public function testTrailingSlash()
+    /**
+     * @dataProvider pathsProvider
+     */
+    public function testTrailingSlash($url, $result)
     {
-        $this->makeTest('/foo/bar', '/foo/bar');
-        $this->makeTest('/foo/bar/', '/foo/bar');
-        $this->makeTest('/', '/');
-        $this->makeTest('', '');
+        $response = $this->execute(
+            [
+                Middleware::trailingSlash(),
+                function ($request, $response, $next) {
+                    $response->getBody()->write($request->getUri()->getPath());
+
+                    return $response;
+                },
+            ],
+            $url
+        );
+
+        $this->assertEquals($result, (string) $response->getBody());
     }
 }

@@ -28,9 +28,9 @@ class Cache
 
     /**
      * Set the max-age value
-     * 
+     *
      * @param int $maxAge
-     * 
+     *
      * @return self
      */
     public function maxAge($maxAge)
@@ -42,9 +42,9 @@ class Cache
 
     /**
      * Set the directory value
-     * 
+     *
      * @param string $path
-     * 
+     *
      * @return self
      */
     public function directory($path)

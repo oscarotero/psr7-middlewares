@@ -1,21 +1,17 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Relay\RelayBuilder;
 
-class BasicAuthenticationTest extends PHPUnit_Framework_TestCase
+class BasicAuthenticationTest extends Base
 {
-    public function testIps()
+    public function testAuthentication()
     {
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::BasicAuthentication([], 'Login'),
-        ]);
-
-        $response = $dispatcher(new ServerRequest(), new Response());
+        $response = $this->execute(
+            [
+                Middleware::BasicAuthentication([])->realm('My realm'),
+            ]
+        );
 
         $this->assertSame(401, $response->getStatusCode());
-        $this->assertSame('Basic realm="Login"', $response->getHeaderLine('WWW-Authenticate'));
+        $this->assertSame('Basic realm="My realm"', $response->getHeaderLine('WWW-Authenticate'));
     }
 }

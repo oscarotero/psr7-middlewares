@@ -22,9 +22,9 @@ class AuraSession
 
     /**
      * Set the session name
-     * 
+     *
      * @param string $name
-     * 
+     *
      * @return self
      */
     public function name($name)

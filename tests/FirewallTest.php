@@ -1,75 +1,71 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Relay\RelayBuilder;
 
-class FirewallTest extends PHPUnit_Framework_TestCase
+class FirewallTest extends Base
 {
-    protected function makeTest(array $headers, $trusted, $untrusted, $status)
+    public function ipsProvider()
     {
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::ClientIp(),
-            Middleware::Firewall($trusted, $untrusted),
-        ]);
-
-        $request = (new ServerRequest());
-
-        foreach ($headers as $name => $value) {
-            $request = $request->withHeader($name, $value);
-        }
-
-        $response = $dispatcher($request, new Response());
-
-        $this->assertEquals($status, $response->getStatusCode());
+        return [
+            [
+                [
+                    'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
+                    'X-Forwarded' => '123.234.123.10',
+                ],
+                [],
+                [],
+                403,
+            ],[
+                [
+                    'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
+                    'X-Forwarded' => '123.234.123.10',
+                ],
+                ['123.234.123.10'],
+                [],
+                200
+            ],[
+                [
+                    'Client-Ip' => 'unknow,123.456.789.10,123.234.123.11',
+                    'X-Forwarded' => '123.234.123.10',
+                ],
+                ['123.234.123.11'],
+                ['123.234.123.10'],
+                403
+            ],[
+                [
+                    'Client-Ip' => '123.0.0.10,123.0.0.11',
+                    'X-Forwarded' => '123.0.0.12',
+                ],
+                ['123.0.0.*'],
+                [],
+                200
+            ],[
+                [
+                    'Client-Ip' => '123.0.0.10,123.0.0.11',
+                    'X-Forwarded' => '123.0.0.12',
+                ],
+                ['123.0.0.*'],
+                ['123.0.0.12'],
+                403
+            ]
+        ];
     }
 
-    public function testIps()
+    /**
+     * @dataProvider ipsProvider
+     */
+    public function testFirewall(array $headers, array $trusted, array $untrusted, $status)
     {
-        $this->makeTest([
-                'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
-                'X-Forwarded' => '123.234.123.10',
+        $response = $this->execute(
+            [
+                Middleware::ClientIp(),
+                Middleware::Firewall()
+                    ->trusted($trusted)
+                    ->untrusted($untrusted),
             ],
-            [],
-            [],
-            403
+            '',
+            $headers
         );
 
-        $this->makeTest([
-                'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
-                'X-Forwarded' => '123.234.123.10',
-            ],
-            ['123.234.123.10'],
-            [],
-            200
-        );
-
-        $this->makeTest([
-                'Client-Ip' => 'unknow,123.456.789.10,123.234.123.11',
-                'X-Forwarded' => '123.234.123.10',
-            ],
-            ['123.234.123.11'],
-            ['123.234.123.10'],
-            403
-        );
-
-        $this->makeTest([
-                'Client-Ip' => '123.0.0.10,123.0.0.11',
-                'X-Forwarded' => '123.0.0.12',
-            ],
-            '123.0.0.*',
-            [],
-            200
-        );
-
-        $this->makeTest([
-                'Client-Ip' => '123.0.0.10,123.0.0.11',
-                'X-Forwarded' => '123.0.0.12',
-            ],
-            ['123.0.0.*'],
-            ['123.0.0.12'],
-            403
-        );
+        $this->assertEquals($status, $response->getStatusCode());
     }
 }

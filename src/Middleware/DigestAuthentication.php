@@ -28,9 +28,9 @@ class DigestAuthentication
 
     /**
      * Set the realm value
-     * 
+     *
      * @param string $realm
-     * 
+     *
      * @return self
      */
     public function realm($realm)
@@ -42,9 +42,9 @@ class DigestAuthentication
 
     /**
      * Set the nonce value
-     * 
+     *
      * @param string $nonce
-     * 
+     *
      * @return self
      */
     public function nonce($nonce)

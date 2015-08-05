@@ -16,7 +16,7 @@ class Firewall
 
     /**
      * Set trusted ips
-     * 
+     *
      * @return self
      */
     public function trusted(array $trusted)
@@ -28,7 +28,7 @@ class Firewall
 
     /**
      * Set untrusted ips
-     * 
+     *
      * @return self
      */
     public function untrusted(array $untrusted)

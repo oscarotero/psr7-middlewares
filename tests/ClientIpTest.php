@@ -1,53 +1,53 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Relay\RelayBuilder;
 
-class ClientIpTest extends PHPUnit_Framework_TestCase
+class ClientIpTest extends Base
 {
-    protected function makeTest(array $headers, array $client_ips, $client_ip)
+    public function ipsProvider()
     {
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::ClientIp(),
-            function ($request, $response, $next) use ($client_ips, $client_ip) {
-                $this->assertEquals($client_ips, $request->getAttribute('CLIENT_IPS'));
-                $this->assertEquals($client_ip, $request->getAttribute('CLIENT_IP'));
-
-                $response->getBody()->write('Ok');
-
-                return $response;
-            },
-        ]);
-
-        $request = (new ServerRequest());
-
-        foreach ($headers as $name => $value) {
-            $request = $request->withHeader($name, $value);
-        }
-
-        $response = $dispatcher($request, new Response());
-
-        $this->assertEquals('Ok', (string) $response->getBody());
+        return [
+            [
+                [
+                    'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
+                    'X-Forwarded' => '123.234.123.10',
+                ],
+                ['123.234.123.10'],
+                '123.234.123.10',
+            ],[
+                [
+                    'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
+                    'X-Forwarded' => '123.234.123.11',
+                ],
+                ['123.234.123.10', '123.234.123.11'],
+                '123.234.123.10'
+            ]
+        ];
     }
 
-    public function testIps()
+    /**
+     * @dataProvider ipsProvider
+     */
+    public function testIps(array $headers, array $CLIENT_IPS, $CLIENT_IP)
     {
-        $this->makeTest([
-                'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
-                'X-Forwarded' => '123.234.123.10',
+        $response = $this->execute(
+            [
+                Middleware::ClientIp(),
+                function ($request, $response, $next) {
+                    $response->getBody()->write(json_encode([
+                        'CLIENT_IPS' => $request->getAttribute('CLIENT_IPS'),
+                        'CLIENT_IP' => $request->getAttribute('CLIENT_IP'),
+                    ]));
+
+                    return $response;
+                },
             ],
-            ['123.234.123.10'],
-            '123.234.123.10'
+            '',
+            $headers
         );
 
-        $this->makeTest([
-                'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
-                'X-Forwarded' => '123.234.123.11',
-            ],
-            ['123.234.123.10', '123.234.123.11'],
-            '123.234.123.10'
-        );
+        $body = json_decode((string) $response->getBody(), true);
+
+        $this->assertEquals($body['CLIENT_IPS'], $CLIENT_IPS);
+        $this->assertEquals($body['CLIENT_IP'], $CLIENT_IP);
     }
 }

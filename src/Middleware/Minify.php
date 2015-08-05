@@ -29,9 +29,9 @@ class Minify
 
     /**
      * Set forCache directive
-     * 
+     *
      * @param boolean $forCache
-     * 
+     *
      * @return self
      */
     public function forCache($forCache = true)
@@ -43,9 +43,9 @@ class Minify
 
     /**
      * Set inlineCss directive
-     * 
+     *
      * @param boolean $inlineCss
-     * 
+     *
      * @return self
      */
     public function inlineCss($inlineCss = true)
@@ -57,9 +57,9 @@ class Minify
 
     /**
      * Set inlineJs directive
-     * 
+     *
      * @param boolean $inlineJs
-     * 
+     *
      * @return self
      */
     public function inlineJs($inlineJs = true)

@@ -27,7 +27,7 @@ class AuraRouter
 
     /**
      * Extra arguments passed to the controller
-     * 
+     *
      * @return self
      */
     public function arguments()

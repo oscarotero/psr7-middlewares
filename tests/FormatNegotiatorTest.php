@@ -1,65 +1,49 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Uri;
-use Relay\RelayBuilder;
 
-class FormatNegotiatorTest extends PHPUnit_Framework_TestCase
+class FormatNegotiatorTest extends Base
 {
-    protected function makeTest($path, $header, $format)
+    public function formatsProvider()
     {
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::FormatNegotiator(),
-            function ($request, $response, $next) use ($format) {
-                $this->assertEquals($format, $request->getAttribute('FORMAT'));
-
-                $response->getBody()->write('Ok');
-
-                return $response;
-            },
-        ]);
-
-        $request = (new ServerRequest())
-            ->withUri(new Uri($path))
-            ->withHeader('Accept', $header);
-
-        $response = $dispatcher($request, new Response());
-
-        $this->assertEquals('Ok', (string) $response->getBody());
+        return [
+            [
+                '/',
+                'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
+                'xml',
+            ],[
+                '/test.json',
+                '',
+                'json'
+            ],[
+                '/',
+                '',
+                null
+            ],[
+                '/',
+                'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
+                'xml'
+            ]
+        ];
     }
 
-    public function testTypes()
+    /**
+     * @dataProvider formatsProvider
+     */
+    public function testTypes($url, $accept, $format)
     {
-        $this->makeTest(
-            '/',
-            'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
-            'xml'
+        $response = $this->execute(
+            [
+                Middleware::FormatNegotiator(),
+                function ($request, $response, $next) {
+                    $response->getBody()->write($request->getAttribute('FORMAT'));
+
+                    return $response;
+                },
+            ],
+            $url,
+            ['Accept' => $accept]
         );
 
-        $this->makeTest(
-            '/test.json',
-            '',
-            'json'
-        );
-
-        $this->makeTest(
-            '/test.json',
-            '',
-            'json'
-        );
-
-        $this->makeTest(
-            '/',
-            '',
-            null
-        );
-
-        $this->makeTest(
-            '/',
-            'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
-            'xml'
-        );
+        $this->assertEquals($format, (string) $response->getBody());
     }
 }

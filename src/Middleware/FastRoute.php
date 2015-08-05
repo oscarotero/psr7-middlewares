@@ -12,7 +12,7 @@ class FastRoute
     use RouterTrait;
 
     protected $dispatcher;
-    protected $arguments;
+    protected $arguments = [];
 
     /**
      * Constructor
@@ -27,7 +27,7 @@ class FastRoute
 
     /**
      * Extra arguments passed to the controller
-     * 
+     *
      * @return self
      */
     public function arguments()

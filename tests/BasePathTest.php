@@ -1,52 +1,44 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Uri;
-use Relay\RelayBuilder;
 
-class BasePathTest extends PHPUnit_Framework_TestCase
+class BasePathTest extends Base
 {
-    protected function makeTest($url, $basepath, $result)
+    public function pathProvider()
     {
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::BasePath($basepath),
-            function ($request, $response, $next) use ($result) {
-                $this->assertEquals($result, (string) $request->getUri());
-
-                $response->getBody()->write('Ok');
-
-                return $response;
-            },
-        ]);
-
-        $request = (new ServerRequest())
-            ->withUri(new Uri($url));
-
-        $response = $dispatcher($request, new Response());
-
-        $this->assertEquals('Ok', (string) $response->getBody());
+        return [
+            [
+                'http://localhost/project-name/public',
+                '/project-name/public',
+                'http://localhost',
+            ],[
+                'http://localhost/project-name/public',
+                '/other/path',
+                'http://localhost/project-name/public'
+            ],[
+                '/project-name/public',
+                '/project-name',
+                '/public'
+            ]
+        ];
     }
 
-    public function testBasePath()
+    /**
+     * @dataProvider pathProvider
+     */
+    public function testBasePath($url, $basepath, $result)
     {
-        $this->makeTest(
-            'http://localhost/project-name/public',
-            '/project-name/public',
-            'http://localhost'
+        $response = $this->execute(
+            [
+                Middleware::BasePath($basepath),
+                function ($request, $response, $next) {
+                    $response->getBody()->write((string) $request->getUri());
+
+                    return $response;
+                },
+            ],
+            $url
         );
 
-        $this->makeTest(
-            'http://localhost/project-name/public',
-            '/other/path',
-            'http://localhost/project-name/public'
-        );
-
-        $this->makeTest(
-            '/project-name/public',
-            '/project-name',
-            '/public'
-        );
+        $this->assertEquals($result, (string) $response->getBody());
     }
 }

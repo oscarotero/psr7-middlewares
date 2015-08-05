@@ -1,15 +1,12 @@
 <?php
 use Psr7Middlewares\Middleware;
 use Aura\Router\RouterContainer;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Uri;
-use Relay\RelayBuilder;
 
-class AuraRouterTest extends PHPUnit_Framework_TestCase
+class AuraRouterTest extends Base
 {
     public function testAuraRouter()
     {
+        //Create router
         $router = new RouterContainer();
         $map = $router->getMap();
 
@@ -22,15 +19,13 @@ class AuraRouterTest extends PHPUnit_Framework_TestCase
             return $response;
         });
 
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::AuraRouter($router),
-        ]);
-
-        $request = (new ServerRequest())
-            ->withUri(new Uri('http://domain.com/user/oscarotero/35'));
-
-        $response = $dispatcher($request, new Response());
+        //Test
+        $response = $this->execute(
+            [
+                Middleware::AuraRouter($router),
+            ],
+            'http://domain.com/user/oscarotero/35'
+        );
 
         $this->assertEquals('Ok', (string) $response->getBody());
     }

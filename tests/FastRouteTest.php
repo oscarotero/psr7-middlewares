@@ -1,35 +1,31 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Uri;
-use Relay\RelayBuilder;
 
-class FastRouteTest extends PHPUnit_Framework_TestCase
+class FastRouteTest extends Base
 {
     public function testFastRoute()
     {
         $dispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $r) {
             $r->addRoute('GET', '/user/{name}/{id:[0-9]+}', function ($request, $response) {
-                $this->assertEquals('oscarotero', $request->getAttribute('name'));
-                $this->assertEquals('35', $request->getAttribute('id'));
-
-                $response->getBody()->write('Ok');
+                $response->getBody()->write(json_encode([
+                    'name' => $request->getAttribute('name'),
+                    'id' => $request->getAttribute('id'),
+                ]));
 
                 return $response;
             });
         });
 
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::FastRoute($dispatcher),
-        ]);
+        $response = $this->execute(
+            [
+                Middleware::FastRoute($dispatcher),
+            ],
+            'http://domain.com/user/oscarotero/35'
+        );
 
-        $request = (new ServerRequest())
-            ->withUri(new Uri('http://domain.com/user/oscarotero/35'));
+        $body = json_decode((string) $response->getBody(), true);
 
-        $response = $dispatcher($request, new Response());
-
-        $this->assertEquals('Ok', (string) $response->getBody());
+        $this->assertEquals($body['name'], 'oscarotero');
+        $this->assertEquals($body['id'], '35');
     }
 }

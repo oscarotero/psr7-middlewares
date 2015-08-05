@@ -1,66 +1,57 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Response;
-use Relay\RelayBuilder;
 
-class LanguageNegotiatorTest extends PHPUnit_Framework_TestCase
+class LanguageNegotiatorTest extends Base
 {
-    protected function makeTest($header, array $availables, $language)
+    public function languagesProvider()
     {
-        $relayBuilder = new RelayBuilder();
-        $dispatcher = $relayBuilder->newInstance([
-            Middleware::LanguageNegotiator($availables),
-            function ($request, $response, $next) use ($language) {
-                $this->assertEquals($language, $request->getAttribute('LANGUAGE'));
-
-                $response->getBody()->write('Ok');
-
-                return $response;
-            },
-        ]);
-
-        $request = (new ServerRequest())->withHeader('Accept-Language', $header);
-        $response = $dispatcher($request, new Response());
-
-        $this->assertEquals('Ok', (string) $response->getBody());
+        return [
+            [
+                'gl-es, es;q=0.8, en;q=0.7',
+                [],
+                'gl',
+            ],[
+                'gl-es, es;q=0.8, en;q=0.7',
+                ['es', 'en'],
+                'es'
+            ],[
+                'gl-es, es;q=0.8, en;q=0.7',
+                ['en', 'es'],
+                'es'
+            ],[
+                '',
+                [],
+                null
+            ],[
+                '',
+                ['es', 'en'],
+                'es'
+            ],[
+                '',
+                ['en', 'es'],
+                'en'
+            ]
+        ];
     }
 
-    public function testLanguages()
+    /**
+     * @dataProvider languagesProvider
+     */
+    public function testLanguages($acceptLanguage, array $languages, $language)
     {
-        $this->makeTest(
-            'gl-es, es;q=0.8, en;q=0.7',
-            [],
-            'gl'
-        );
+        $response = $this->execute(
+            [
+                Middleware::LanguageNegotiator($languages),
+                function ($request, $response, $next) use ($language) {
+                    $response->getBody()->write($request->getAttribute('LANGUAGE'));
 
-        $this->makeTest(
-            'gl-es, es;q=0.8, en;q=0.7',
-            ['es', 'en'],
-            'es'
-        );
-
-        $this->makeTest(
-            'gl-es, es;q=0.8, en;q=0.7',
-            ['en', 'es'],
-            'es'
-        );
-
-        $this->makeTest(
+                    return $response;
+                },
+            ],
             '',
-            [],
-            null
+            ['Accept-Language' => $acceptLanguage]
         );
 
-        $this->makeTest(
-            '',
-            ['es', 'en'],
-            'es'
-        );
-        $this->makeTest(
-            '',
-            ['en', 'es'],
-            'en'
-        );
+        $this->assertEquals($language, (string) $response->getBody());
     }
 }
