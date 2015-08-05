@@ -19,18 +19,6 @@ class ClientIp
     ];
 
     /**
-     * Creates an instance of this middleware
-     *
-     * @param null|array $headers
-     *
-     * @return ClientIp
-     */
-    public static function create(array $headers = null)
-    {
-        return new static($headers);
-    }
-
-    /**
      * Constructor. Defines de available headers.
      *
      * @param null|array $headers

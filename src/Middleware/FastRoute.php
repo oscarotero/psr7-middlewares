@@ -12,32 +12,29 @@ class FastRoute
     use RouterTrait;
 
     protected $dispatcher;
-    protected $extraArguments;
-
-    /**
-     * Creates an instance of this middleware
-     *
-     * @param Dispatcher|callable $dispatcher
-     * @param null|array          $extraArguments
-     *
-     * @return FastRoute
-     */
-    public static function create($dispatcher, array $extraArguments = array())
-    {
-        return new static($dispatcher, $extraArguments);
-    }
+    protected $arguments;
 
     /**
      * Constructor
      * You can specify the Dispatcher instance or a callable to fetch it in lazy mode
      *
      * @param Dispatcher|callable $dispatcher
-     * @param array               $extraArguments
      */
-    public function __construct($dispatcher, $extraArguments)
+    public function __construct($dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->extraArguments = $extraArguments;
+    }
+
+    /**
+     * Extra arguments passed to the controller
+     * 
+     * @return self
+     */
+    public function arguments()
+    {
+        $this->arguments = func_get_args();
+
+        return $this;
     }
 
     /**
@@ -65,7 +62,7 @@ class FastRoute
             $request = $request->withAttribute($name, $value);
         }
 
-        $response = self::executeTarget($route[1], $this->extraArguments, $request, $response);
+        $response = self::executeTarget($route[1], $this->arguments, $request, $response);
 
         return $next($request, $response);
     }

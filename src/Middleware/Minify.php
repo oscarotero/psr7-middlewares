@@ -13,35 +13,60 @@ class Minify
     use CacheTrait;
 
     protected $streamCreator;
-    protected $options = [
-        'forCache' => false,
-        'inlineCss' => true,
-        'inlineJs' => true,
-    ];
-
-    /**
-     * Creates an instance of this middleware
-     *
-     * @param callable $streamCreator
-     * @param array    $options
-     *
-     * @return Minify
-     */
-    public static function create(callable $streamCreator, array $options = array())
-    {
-        return new static($streamCreator, $options);
-    }
+    protected $forCache = false;
+    protected $inlineCss = true;
+    protected $inlineJs = true;
 
     /**
      * Constructor
      *
      * @param callable $streamCreator
-     * @param array    $options
      */
-    public function __construct(callable $streamCreator, array $options)
+    public function __construct(callable $streamCreator)
     {
         $this->streamCreator = $streamCreator;
-        $this->options = $options + $this->options;
+    }
+
+    /**
+     * Set forCache directive
+     * 
+     * @param boolean $forCache
+     * 
+     * @return self
+     */
+    public function forCache($forCache = true)
+    {
+        $this->forCache = $forCache;
+
+        return $this;
+    }
+
+    /**
+     * Set inlineCss directive
+     * 
+     * @param boolean $inlineCss
+     * 
+     * @return self
+     */
+    public function inlineCss($inlineCss = true)
+    {
+        $this->inlineCss = $inlineCss;
+
+        return $this;
+    }
+
+    /**
+     * Set inlineJs directive
+     * 
+     * @param boolean $inlineJs
+     * 
+     * @return self
+     */
+    public function inlineJs($inlineJs = true)
+    {
+        $this->inlineJs = $inlineJs;
+
+        return $this;
     }
 
     /**
@@ -54,7 +79,7 @@ class Minify
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->options['forCache'] && !static::isCacheable($request, $response)) {
+        if ($this->forCache && !static::isCacheable($request, $response)) {
             return $next($request, $response);
         }
 
@@ -87,7 +112,7 @@ class Minify
     {
         $options = ['jsCleanComments' => true];
 
-        if ($this->options['inlineCss']) {
+        if ($this->inlineCss) {
             $cssMinify = new CssMinify();
 
             $options['cssMinifier'] = function ($css) use ($cssMinify) {
@@ -95,7 +120,7 @@ class Minify
             };
         }
 
-        if ($this->options['inlineJs']) {
+        if ($this->inlineJs) {
             $options['jsMinifier'] = function ($js) {
                 return JsMinify::minify($js);
             };

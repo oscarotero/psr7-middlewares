@@ -10,31 +10,28 @@ class ErrorResponseHandler
     use RouterTrait;
 
     protected $handler;
-    protected $extraArguments;
-
-    /**
-     * Creates an instance of this middleware
-     *
-     * @param callable   $handler
-     * @param null|array $extraArguments
-     *
-     * @return ErrorResponseHandler
-     */
-    public static function create($handler, array $extraArguments = array())
-    {
-        return new static($handler, $extraArguments);
-    }
+    protected $arguments = [];
 
     /**
      * Constructor
      *
-     * @param callable $handler
-     * @param array    $extraArguments
+     * @param $handler
      */
-    public function __construct($handler, $extraArguments)
+    public function __construct($handler)
     {
         $this->handler = $handler;
-        $this->extraArguments = $extraArguments;
+    }
+
+    /**
+     * Extra arguments passed to the controller
+     * 
+     * @return self
+     */
+    public function arguments()
+    {
+        $this->arguments = func_get_args();
+
+        return $this;
     }
 
     /**
@@ -55,7 +52,7 @@ class ErrorResponseHandler
         }
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
-            return self::executeTarget($this->handler, $this->extraArguments, $request, $response);
+            return self::executeTarget($this->handler, $this->arguments, $request, $response);
         }
 
         return $response;

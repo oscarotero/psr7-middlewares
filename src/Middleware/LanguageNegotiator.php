@@ -13,18 +13,6 @@ class LanguageNegotiator
     protected $languages = [];
 
     /**
-     * Creates an instance of this middleware
-     *
-     * @param null|array $languages
-     *
-     * @return LanguageNegotiator
-     */
-    public static function create(array $languages = null)
-    {
-        return new static($languages);
-    }
-
-    /**
      * Constructor. Defines de available languages.
      *
      * @param null|array $languages

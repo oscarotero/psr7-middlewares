@@ -10,14 +10,16 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ExceptionHandler
 {
+    protected $streamCreator;
+
     /**
-     * Creates an instance of this middleware
+     * Constructor
      *
-     * @return ExceptionHandler
+     * @param callable $streamCreator
      */
-    public static function create()
+    public function __construct(callable $streamCreator)
     {
-        return new static();
+        $this->streamCreator = $streamCreator;
     }
 
     /**
@@ -33,8 +35,10 @@ class ExceptionHandler
         try {
             $response = $next($request, $response);
         } catch (Exception $exception) {
-            $response = $response->withStatus(500);
-            $response->getBody()->write($exception->getMessage());
+            $stream = call_user_func($this->streamCreator);
+            $stream->write($exception->getMessage());
+
+            return $response->withStatus(500)->withBody($stream);
         }
 
         return $response;

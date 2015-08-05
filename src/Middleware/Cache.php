@@ -13,33 +13,45 @@ class Cache
     use CacheTrait;
 
     protected $streamCreator;
-    protected $options = [
-        'maxAge' => 3600,
-        'documentRoot' => '',
-    ];
-
-    /**
-     * Creates an instance of this middleware
-     *
-     * @param callable $streamCreator
-     * @param string   $documentRoot
-     *
-     * @return SaveResponse
-     */
-    public static function create(callable $streamCreator, array $options = array())
-    {
-        return new static($streamCreator, $documentRoot);
-    }
+    protected $maxAge = 3600;
+    protected $directory = '';
 
     /**
      * Constructor. Set the document root
      *
      * @param callable $streamCreator
-     * @param string   $documentRoot
      */
-    public function __construct(callable $streamCreator, $documentRoot)
+    public function __construct(callable $streamCreator)
     {
-        $this->documentRoot = $documentRoot;
+        $this->streamCreator = $streamCreator;
+    }
+
+    /**
+     * Set the max-age value
+     * 
+     * @param int $maxAge
+     * 
+     * @return self
+     */
+    public function maxAge($maxAge)
+    {
+        $this->maxAge = (int) $maxAge;
+
+        return $this;
+    }
+
+    /**
+     * Set the directory value
+     * 
+     * @param string $path
+     * 
+     * @return self
+     */
+    public function directory($path)
+    {
+        $this->directory = $path;
+
+        return $this;
     }
 
     /**
@@ -53,7 +65,7 @@ class Cache
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $stream = $this->options['documentRoot'].static::getCacheFilename($request);
+        $stream = $this->directory.static::getCacheFilename($request);
         $headers = "{$stream}.headers";
 
         if (is_file($stream) && is_file($headers)) {
@@ -66,7 +78,7 @@ class Cache
                 if (isset($cache['max-age'])) {
                     $time += $cache['max-age'];
                 } else {
-                    $time += $this->options['defaultMaxAge'];
+                    $time += $this->maxAge;
                 }
 
                 if ($time > time()) {

@@ -10,22 +10,8 @@ use Psr\Http\Message\ResponseInterface;
 class DigestAuthentication
 {
     protected $users;
-    protected $realm;
+    protected $realm = 'Login';
     protected $nonce;
-
-    /**
-     * Creates an instance of this middleware
-     *
-     * @param array  $users
-     * @param string $realm
-     * @param string $nonce
-     *
-     * @return DigestAuthentication
-     */
-    public static function create(array $users, $realm = 'Login', $nonce = null)
-    {
-        return new static($users, $realm, $nonce ?: uniqid());
-    }
 
     /**
      * Constructor. Defines de users.
@@ -34,11 +20,38 @@ class DigestAuthentication
      * @param string $realm
      * @param string $nonce
      */
-    public function __construct(array $users, $realm, $nonce)
+    public function __construct(array $users)
     {
         $this->users = $users;
+        $this->nonce = uniqid();
+    }
+
+    /**
+     * Set the realm value
+     * 
+     * @param string $realm
+     * 
+     * @return self
+     */
+    public function realm($realm)
+    {
         $this->realm = $realm;
+
+        return $this;
+    }
+
+    /**
+     * Set the nonce value
+     * 
+     * @param string $nonce
+     * 
+     * @return self
+     */
+    public function nonce($nonce)
+    {
         $this->nonce = $nonce;
+
+        return $this;
     }
 
     /**

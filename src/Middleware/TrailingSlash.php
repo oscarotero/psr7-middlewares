@@ -10,16 +10,6 @@ use Psr\Http\Message\ResponseInterface;
 class TrailingSlash
 {
     /**
-     * Creates an instance of this middleware
-     *
-     * @return TrailingSlash
-     */
-    public static function create()
-    {
-        return new static();
-    }
-
-    /**
      * Execute the middleware
      *
      * @param ServerRequestInterface $request

@@ -15,18 +15,6 @@ class SaveResponse
     protected $documentRoot;
 
     /**
-     * Creates an instance of this middleware
-     *
-     * @param string $documentRoot
-     *
-     * @return SaveResponse
-     */
-    public static function create($documentRoot = '')
-    {
-        return new static($documentRoot);
-    }
-
-    /**
      * Constructor. Set the document root
      *
      * @param string $documentRoot

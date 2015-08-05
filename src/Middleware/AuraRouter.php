@@ -12,32 +12,29 @@ class AuraRouter
     use RouterTrait;
 
     protected $router;
-    protected $extraArguments;
-
-    /**
-     * Creates an instance of this middleware
-     *
-     * @param RouterContainer|callable $router
-     * @param null|array               $extraArguments
-     *
-     * @return AuraRouter
-     */
-    public static function create($router, array $extraArguments = array())
-    {
-        return new static($router, $extraArguments);
-    }
+    protected $arguments = [];
 
     /**
      * Constructor
      * You can specify the RouterContainer instance or a callable to fetch it in lazy mode
      *
      * @param RouterContainer|callable $router
-     * @param array                    $extraArguments
      */
-    public function __construct($router, $extraArguments)
+    public function __construct($router)
     {
         $this->router = $router;
-        $this->extraArguments = $extraArguments;
+    }
+
+    /**
+     * Extra arguments passed to the controller
+     * 
+     * @return self
+     */
+    public function arguments()
+    {
+        $this->arguments = func_get_args();
+
+        return $this;
     }
 
     /**
@@ -75,7 +72,7 @@ class AuraRouter
             $request = $request->withAttribute($name, $value);
         }
 
-        $response = self::executeTarget($route->handler, $this->extraArguments, $request, $response);
+        $response = self::executeTarget($route->handler, $this->arguments, $request, $response);
 
         return $next($request, $response);
     }

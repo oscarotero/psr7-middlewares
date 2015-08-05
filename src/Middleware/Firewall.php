@@ -15,28 +15,27 @@ class Firewall
     protected $untrusted;
 
     /**
-     * Creates an instance of this middleware
-     *
-     * @param string|array|null $trusted
-     * @param string|array|null $untrusted
-     *
-     * @return Firewall
+     * Set trusted ips
+     * 
+     * @return self
      */
-    public static function create($trusted = null, $untrusted = null)
+    public function trusted(array $trusted)
     {
-        return new static((array) $trusted, (array) $untrusted);
+        $this->trusted = $trusted;
+
+        return $this;
     }
 
     /**
-     * Constructor. Defines de available headers.
-     *
-     * @param array $trusted   Trusted ips
-     * @param array $untrusted Untrusted ips
+     * Set untrusted ips
+     * 
+     * @return self
      */
-    public function __construct(array $trusted, array $untrusted)
+    public function untrusted(array $untrusted)
     {
-        $this->trusted = $trusted;
         $this->untrusted = $untrusted;
+
+        return $this;
     }
 
     /**

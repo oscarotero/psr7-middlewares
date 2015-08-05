@@ -11,32 +11,27 @@ class AuraSession
     protected $name;
 
     /**
-     * Creates an instance of this middleware
+     * Constructor
      *
-     * @param string         $name
-     * @param SessionFactory $factory
-     *
-     * @return AuraSession
+     * @param SessionFactory|null $factory
      */
-    public static function create($name = null, SessionFactory $factory = null)
+    public function __construct(SessionFactory $factory = null)
     {
-        if ($factory === null) {
-            $factory = new SessionFactory();
-        }
-
-        return new static($factory, $name);
+        $this->factory = $factory ?: new SessionFactory();
     }
 
     /**
-     * Constructor
-     *
-     * @param string         $name
-     * @param SessionFactory $factory
+     * Set the session name
+     * 
+     * @param string $name
+     * 
+     * @return self
      */
-    public function __construct(SessionFactory $factory, $name = null)
+    public function name($name)
     {
-        $this->factory = $factory;
         $this->name = $name;
+
+        return $this;
     }
 
     /**
@@ -51,7 +46,7 @@ class AuraSession
     {
         $session = $this->factory->newInstance($request->getCookieParams());
 
-        if ($this->name) {
+        if ($this->name !== null) {
             $session->setName($this->name);
         }
 

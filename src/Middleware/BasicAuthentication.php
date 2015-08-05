@@ -10,31 +10,30 @@ use Psr\Http\Message\ResponseInterface;
 class BasicAuthentication
 {
     protected $users;
-    protected $realm;
-
-    /**
-     * Creates an instance of this middleware
-     *
-     * @param array  $users
-     * @param string $realm
-     *
-     * @return BasicAuthentication
-     */
-    public static function create(array $users, $realm = 'Login')
-    {
-        return new static($users, $realm);
-    }
+    protected $realm = 'Login';
 
     /**
      * Constructor. Defines de users.
      *
      * @param array  $users [username => password]
-     * @param string $realm
      */
-    public function __construct(array $users, $realm)
+    public function __construct(array $users)
     {
         $this->users = $users;
+    }
+
+    /**
+     * Set the realm value
+     * 
+     * @param string $realm
+     * 
+     * @return self
+     */
+    public function realm($realm)
+    {
         $this->realm = $realm;
+
+        return $this;
     }
 
     /**

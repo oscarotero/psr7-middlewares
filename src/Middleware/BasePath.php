@@ -12,18 +12,6 @@ class BasePath
     protected $prefix;
 
     /**
-     * Creates an instance of this middleware
-     *
-     * @param string $prefix
-     *
-     * @return BasePath
-     */
-    public static function create($prefix)
-    {
-        return new static($prefix);
-    }
-
-    /**
      * Constructor. Set the path prefix
      *
      * @param string $prefix

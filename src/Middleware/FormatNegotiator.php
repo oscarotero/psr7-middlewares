@@ -11,8 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 class FormatNegotiator
 {
     protected $negotiator;
-
-    protected static $formats = [
+    protected $formats = [
         'atom' => ['application/atom+xml'],
         'css' => ['text/css'],
         'html' => ['text/html', 'application/xhtml+xml'],
@@ -32,33 +31,28 @@ class FormatNegotiator
     ];
 
     /**
-     * Creates an instance of this middleware
-     *
-     * @param Negotiator|null $negotiator
-     *
-     * @return FormatNegotiator
-     */
-    public static function create(Negotiator $negotiator = null)
-    {
-        if ($negotiator === null) {
-            $negotiator = new Negotiator();
-
-            foreach (static::$formats as $name => $mimeTypes) {
-                $negotiator->registerFormat($name, $mimeTypes, true);
-            }
-        }
-
-        return new static($negotiator);
-    }
-
-    /**
      * Constructor. Defines de available formats.
      *
      * @param Negotiator $negotiator
      */
-    public function __construct(Negotiator $negotiator)
+    public function __construct(Negotiator $negotiator = null)
     {
         $this->negotiator = $negotiator;
+    }
+
+    /**
+     * Add a new format
+     * 
+     * @param string $format
+     * @param array  $mimeTypes
+     * 
+     * @return self
+     */
+    public function addFormat($format, array $mimeTypes)
+    {
+        $this->formats[$format] = $mimeTypes;
+
+        return $this;
     }
 
     /**
@@ -75,18 +69,38 @@ class FormatNegotiator
         $format = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 
         //Calculate using the header
-        if (!$this->negotiator->normalizePriorities([$format])) {
-            $format = $this->negotiator->getBestFormat($request->getHeaderLine('Accept'));
+        $negotiator = $this->getNegotiator();
+
+        if (!$negotiator->normalizePriorities([$format])) {
+            $format = $negotiator->getBestFormat($request->getHeaderLine('Accept'));
         }
 
         //Save the format as attribute
         $request = $request->withAttribute('FORMAT', $format);
 
         //Set the content-type to the response
-        if (($mime = $this->negotiator->normalizePriorities([$format]))) {
+        if (($mime = $negotiator->normalizePriorities([$format]))) {
             return $next($request, $response->withHeader('Content-Type', $mime[0].'; charset=utf-8'));
         }
 
         return $next($request, $response);
+    }
+
+    /**
+     * Returns the negotiator
+     * 
+     * @return Negotiator
+     */
+    protected function getNegotiator()
+    {
+        if ($this->negotiator === null) {
+            $this->negotiator = new Negotiator();
+
+            foreach ($this->formats as $name => $mimeTypes) {
+                $this->negotiator->registerFormat($name, $mimeTypes, true);
+            }
+        }
+
+        return $this->negotiator;
     }
 }
