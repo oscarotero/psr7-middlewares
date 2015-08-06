@@ -13,6 +13,7 @@ class SaveResponse
     use CacheTrait;
 
     protected $documentRoot;
+    protected $basePath;
 
     /**
      * Constructor. Set the document root
@@ -22,6 +23,20 @@ class SaveResponse
     public function __construct($documentRoot)
     {
         $this->documentRoot = $documentRoot;
+    }
+
+    /**
+     * Set the basepath used in the request
+     *
+     * @param string $basePath
+     * 
+     * @return self
+     */
+    public function basePath($basePath)
+    {
+        $this->basePath = $basePath;
+
+        return $this;
     }
 
     /**
@@ -39,7 +54,7 @@ class SaveResponse
             return $next($request, $response);
         }
 
-        static::writeFile($response->getBody(), $this->documentRoot.static::getCacheFilename($request));
+        static::writeFile($response->getBody(), $this->documentRoot.static::getCacheFilename($request, $this->basePath));
 
         return $next($request, $response);
     }

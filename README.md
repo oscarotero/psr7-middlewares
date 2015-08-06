@@ -54,7 +54,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 
 ### AuraRouter
 
-To use [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You must use the 3.x version, compatible with psr-7:
+To use [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You need to use the 3.x version, compatible with psr-7:
 
 ```php
 use Aura\Router\RouterContainer;
@@ -63,25 +63,44 @@ use Aura\Router\RouterContainer;
 $routerContainer = new RouterContainer();
 
 $map = $routerContainer->getMap();
-$map->get('blog.read', '/blog/{id}', 'blogReadHandler');
+$map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
+    //The route values are stored into parameters
+    $name = $request->getAttribute('name');
+
+    //You can get also the route instance
+    $route = $request->getAttribute('ROUTE');
+
+    //Write directly in the body's response
+    $response->getBody()->write('Hello '.$name);
+
+    //or echo the output (it will be captured and passed to body stream)
+    echo 'Hello world';
+
+    //or return a string
+    return 'Hello world';
+
+    //or return a new response
+    return $response->withStatus(200);
+});
 
 //Add to the dispatcher
 $dispatcher = new Relay([
     Middleware::AuraRouter($routerContainer)
+        ->arguments($myApp) //to pass more arguments to the controller after request and response
 ]);
 ```
 
 ### AuraSession
 
-Creates a new [Aura.Session](https://github.com/auraphp/Aura.Session) instance with the request and save it in `SESSION` attribute. This middleware has two arguments:
-
-* $name (optional) The session name
-* $factory (optional) An instance of `Aura\Session\SessionFactory`.
+Creates a new [Aura.Session](https://github.com/auraphp/Aura.Session) instance with the request and save it in `SESSION` attribute. You can set an instance of `Aura\Session\SessionFactory` as first argument.
 
 ```php
 $dispatcher = new Relay([
     Middleware::AuraSession(),
+        ->name('my-session-name'), //to set a custom session name
+
     function ($request, $reponse, $next) {
+        //Get the session instance
         $session = $request->getAttribute('SESSION');
     }
 ]);
@@ -99,33 +118,55 @@ $dispatcher = new Relay([
 
 ### BasicAuthentication
 
-Implements the [basic http authentication](http://php.net/manual/en/features.http-auth.php). It has two arguments:
-
-* users: An array with all users and passwords allowed
-* realm: (optional) The realm used in the authentication
+Implements the [basic http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed as first argument:
 
 ```php
 $dispatcher = new Relay([
+
+    //set the names and values as first argument
     Middleware::BasicAuthentication([
-        'username1' => 'password1',
-        'username2' => 'password2'
-    ])
+            'username1' => 'password1',
+            'username2' => 'password2'
+        ])
+        ->realm('My realm') //change the realm value
+]);
+```
+
+### CacheMaxAge
+
+To save and reuse responses based in the Cache-Control: max-age directive.
+
+```php
+$dispatcher = new Relay([
+
+    //set the stream factory as first argument
+    Middleware::CacheMaxAge(function () {
+            return new Stream('php://temp', 'r+');
+        })
+        ->basePath('public') //optional basepath ignored from the request uri
+        ->cacheDirectory('cache/pages'), //directory where the responses will be cached
+
+    function($request, $response, $next) {
+        //Cache the response 1 hour
+        return $response->withHeader('Cache-Control', 'max-age=3600');
+    }
 ]);
 ```
 
 ### ClientIp
 
-Detects the client ip(s) and create two attributes in the request instance: `CLIENT_IPS` (array with all ips found) and `CLIENT_IP` (the first ip)
+Detects the client ip(s) and create two attributes in the request instance: `CLIENT_IPS` (array with all ips found) and `CLIENT_IP` (the first ip). You can set an array of allowed headers as the first argument.
 
 ```php
 $dispatcher = new Relay([
     Middleware::ClientIp(),
 
     function ($request, $response, $next) {
+        //Get the user ip
         $ip = $request->getAttribute('CLIENT_IP');
-        $all_ips = array_implode(', ', $request->getAttribute('CLIENT_IPS'));
 
-        $response->getBody()->write("Your ip is {$ip} but we also found {$all_ips}";
+        //Get all ips found in the headers
+        $all_ips = array_implode(', ', $request->getAttribute('CLIENT_IPS'));
 
         return $next($request, $response);
     }
@@ -134,18 +175,18 @@ $dispatcher = new Relay([
 
 ### DigestAuthentication
 
-Implements the [digest http authentication](http://php.net/manual/en/features.http-auth.php). It has three arguments:
-
-* users: An array with all users and passwords allowed
-* realm: (optional) The realm used in the authentication
-* nonce: (optional) The nonce value used in the authentication
+Implements the [digest http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed as first argument:
 
 ```php
 $dispatcher = new Relay([
+
+    //set the names and values as first argument
     Middleware::DigestAuthentication([
-        'username1' => 'password1',
-        'username2' => 'password2'
-    ])
+            'username1' => 'password1',
+            'username2' => 'password2'
+        ])
+        ->realm('My realm') //to customice the realm value
+        ->nonce(uniqid()) //to customice the nonce value
 ]);
 ```
 
@@ -154,7 +195,7 @@ $dispatcher = new Relay([
 Execute a handler if the response returned by the next middlewares has any error (status code 400-599). It also catch any exception and handle it as an error 500.
 
 ```php
-function errorHandler($request, $response) {
+function errorHandler($request, $response, $myApp) {
     switch ($response->getStatusCode()) {
         case 404:
             return 'Page not found';
@@ -171,17 +212,24 @@ function errorHandler($request, $response) {
 }
 
 $dispatcher = new Relay([
-    Middleware::ErrorResponseHandler('errorHandler'),
+
+    //Set the callable function as the first argument
+    Middleware::ErrorResponseHandler('errorHandler')
+        ->arguments($myApp) //extra arguments passed to the callable
 ]);
 ```
 
 ### ExceptionHandler
 
-Cath any exception throwed by the next middlewares and returns a response with it.
+Cath any exception throwed by the next middlewares and returns a response with it. You have to pass a callable that returns an instance of Stream:
 
 ```php
 $dispatcher = new Relay([
-    Middleware::exceptionHandler(),
+    
+    //pass a stream factory as first argument
+    Middleware::exceptionHandler(function () {
+        return new Stream('php://temp', 'r+');
+    })
 ]);
 ```
 
@@ -194,42 +242,41 @@ $router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
 });
 
 $dispatcher = new Relay([
+
+    //pass the router as first argument
     Middleware::FastRoute($router)
+        ->argument($myApp) //extra arguments passed to the controller
 ]);
 ```
 
 ### Firewall
 
-Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide a IP filtering. This middleware deppends of **ClientIp** (to extract the ips from the headers). You can provide two arguments:
+Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide a IP filtering. This middleware deppends of **ClientIp** (to extract the ips from the headers).
 
-* trusted: string/array with all ips allowed. [See the ip formats allowed](https://github.com/M6Web/Firewall#entries-formats)
-* untrusted: (optional) string/array with the ips not allowed.
+[See the ip formats allowed](https://github.com/M6Web/Firewall#entries-formats) for trusted/untrusted options:
 
 ```php
 $dispatcher = new Relay([
+
+    //needed to capture the user ips
     Middleware::ClientIp(),
-    Middleware::Firewall('123.0.0.*')
+
+    //set the firewall
+    Middleware::Firewall()
+        ->trusted('123.0.0.*') //ips allowed
+        ->untrusted('123.0.0.1') //ips not allowed
 ]);
 ```
 
 ### FormatNegotiation
 
-Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. Stores the format in the `FORMAT` attribute. The middleware add also the `Content-Type` header to the response if it's missing.
+Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. Stores the format in the `FORMAT` attribute. The middleware add also the `Content-Type` header to the response if it's missing. You can pass an instance of `Negotiation\FormatNegotiator` as first argument.
 
 ```php
 $dispatcher = new Relay([
-    Middleware::FormatNegotiation(),
 
-    function ($request, $response, $next) {
-        $format = $request->getAttribute('FORMAT');
-
-        if ($format === 'json') {
-            $response->getBody()->write(json_encode(['Your content']));
-        } else {
-            $response->getBody()->write('Your content');
-        }
-
-        return $next($request, $response);
+    Middleware::FormatNegotiation()
+        ->addFormat('pdf', ['application/pdf', 'application/x-download']) //add new formats and mimetypes associated
     }
 ]);
 ```
@@ -240,10 +287,13 @@ Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to dete
 
 ```php
 $dispatcher = new Relay([
+
+    //Set all available languages as first argument
     Middleware::LanguageNegotiation(['gl', 'en', 'es']),
 
     function ($request, $response, $next) {
-        $response->getBody()->write('Your preferred language is '.$request->getAttribute('LANGUAGE'));
+        //Get the preferred language
+        $language = $request->getAttribute('LANGUAGE');
 
         return $next($request, $response);
     }
@@ -252,22 +302,18 @@ $dispatcher = new Relay([
 
 ### Minify
 
-Uses [mrclay/minify](https://github.com/mrclay/minify) to minify the html, css and js code from the responses. The available arguments are:
-
-* streamCreator (callable): A callable that returns an instance of `Psr\Http\Message\StreamInterface` used to store the minified code
-* options (array): Options to configure the minification:
-  * forCache (bool): Set true to check the same conditions like [SaveResponse](#saveresponse) middleware.
-  * inlineCss (bool): True to minify inline css (true by default)
-  * inlineJs (bool): True to minify inline javascript (true by default)
+Uses [mrclay/minify](https://github.com/mrclay/minify) to minify the html, css and js code from the responses.
 
 ```php
 $dispatcher = new Relay([
+    
+    //Set the stream factory as first argument
     Middleware::Minify(function () {
-        return new Stream('php://temp', 'r+');
-    }, [
-        'forCache' => true,
-    ]),
-    Middleware::saveResponse('public') //saves the stream content in a file
+            return new Stream('php://temp', 'r+');
+        })
+        ->forCache(true) //only save cacheable responses
+        ->inlineCss(false) //enable/disable inline css minification
+        ->inlineJs(false) //enable/disable inline js minification
 ]);
 ```
 
@@ -284,6 +330,7 @@ This is useful for cache purposes
 ```php
 $dispatcher = new Relay([
     Middleware::SaveResponse('path/to/document/root')
+        ->basePath('public') //optional basepath ignored from the request uri
 ]);
 ```
 

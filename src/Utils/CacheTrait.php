@@ -4,6 +4,7 @@ namespace Psr7Middlewares\Utils;
 use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Utilities used by router middlewares
@@ -47,12 +48,19 @@ trait CacheTrait
      * Returns the filename of the response cache file
      *
      * @param ServerRequestInterface $request
+     * @param string                 $basePath
      *
      * @return boolean
      */
-    protected static function getCacheFilename(ServerRequestInterface $request)
+    protected static function getCacheFilename(ServerRequestInterface $request, $basePath = '')
     {
-        $parts = pathinfo($request->getUri()->getPath());
+        $path = $request->getUri()->getPath();
+
+        if (!empty($basePath) && strpos($path, $basePath) === 0) {
+            $path = substr($path, strlen($basePath)) ?: '';
+        }
+
+        $parts = pathinfo($path);
         $path = '/'.(isset($parts['dirname']) ? $parts['dirname'] : '');
         $filename = isset($parts['basename']) ? $parts['basename'] : '';
 
@@ -111,11 +119,11 @@ trait CacheTrait
         $cache = [];
 
         foreach (array_map('trim', explode(',', strtolower($header))) as $part) {
-            if (strpos($part, '=')) {
-                $part = array_map('trim', explode($part, $part, 2));
-                $cache[$part[0]] = $part[1];
-            } else {
+            if (strpos($part, '=') === false) {
                 $cache[$part] = true;
+            } else {
+                $part = array_map('trim', explode('=', $part, 2));
+                $cache[$part[0]] = $part[1];
             }
         }
 

@@ -50,7 +50,7 @@ class AuraRouter
         $router = $this->getRouter();
         $matcher = $router->getMatcher();
         $route = $matcher->match($request);
-
+        
         if (!$route) {
             $failedRoute = $matcher->getFailedRoute();
 

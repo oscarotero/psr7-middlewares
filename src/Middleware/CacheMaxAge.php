@@ -13,8 +13,8 @@ class CacheMaxAge
     use CacheTrait;
 
     protected $streamCreator;
-    protected $maxAge = 3600;
     protected $directory = '';
+    protected $basePath;
 
     /**
      * Constructor. Set the document root
@@ -27,15 +27,15 @@ class CacheMaxAge
     }
 
     /**
-     * Set the max-age value
+     * Set the basepath used in the request
      *
-     * @param int $maxAge
-     *
+     * @param string $basePath
+     * 
      * @return self
      */
-    public function maxAge($maxAge)
+    public function basePath($basePath)
     {
-        $this->maxAge = (int) $maxAge;
+        $this->basePath = $basePath;
 
         return $this;
     }
@@ -47,7 +47,7 @@ class CacheMaxAge
      *
      * @return self
      */
-    public function directory($path)
+    public function cacheDirectory($path)
     {
         $this->directory = $path;
 
@@ -65,30 +65,27 @@ class CacheMaxAge
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $stream = $this->directory.static::getCacheFilename($request);
-        $headers = "{$stream}.headers";
+        $stream_file = $this->directory.static::getCacheFilename($request, $this->basePath);
+        $headers_file = "{$stream_file}.headers";
 
-        if (is_file($stream) && is_file($headers)) {
-            $headers = json_decode(file_get_contents($headers));
+        if (is_file($stream_file) && is_file($headers_file)) {
+            $headers = include $headers_file;
 
             if (isset($headers['Cache-Control'][0])) {
                 $cache = static::parseCacheControl($headers['Cache-Control'][0]);
-                $time = filemtime($stream);
 
                 if (isset($cache['max-age'])) {
-                    $time += $cache['max-age'];
-                } else {
-                    $time += $this->maxAge;
-                }
+                    $time = filemtime($stream_file) + $cache['max-age'];
 
-                if ($time > time()) {
-                    $response = $response->withBody(call_user_func($this->streamCreator, $stream));
+                    if ($time > time()) {
+                        $response = $response->withBody(call_user_func($this->streamCreator, $stream_file));
 
-                    foreach ($headers as $name => $header) {
-                        $response = $response->withHeader($name, $header);
+                        foreach ($headers as $name => $header) {
+                            $response = $response->withHeader($name, $header);
+                        }
+
+                        return $response;
                     }
-
-                    return $response;
                 }
             }
         }
@@ -96,8 +93,8 @@ class CacheMaxAge
         $response = $next($request, $response);
 
         if (static::isCacheable($request, $response)) {
-            static::writeFile($response->getBody(), $stream);
-            file_put_contents($headers, json_encode($response->getHeaders()));
+            static::writeStream($response->getBody(), $stream_file);
+            file_put_contents($headers_file, '<?php return '.var_export($response->getHeaders(), true).';');
         }
 
         return $response;

@@ -9,16 +9,16 @@ use Psr\Http\Message\ResponseInterface;
  */
 class BasePath
 {
-    protected $prefix;
+    protected $basePath;
 
     /**
      * Constructor. Set the path prefix
      *
-     * @param string $prefix
+     * @param string $basePath
      */
-    public function __construct($prefix)
+    public function __construct($basePath)
     {
-        $this->prefix = $prefix;
+        $this->basePath = $basePath;
     }
 
     /**
@@ -34,8 +34,8 @@ class BasePath
         $uri = $request->getUri();
         $path = $uri->getPath();
 
-        if (strpos($path, $this->prefix) === 0) {
-            $path = substr($path, strlen($this->prefix)) ?: '';
+        if (strpos($path, $this->basePath) === 0) {
+            $path = substr($path, strlen($this->basePath)) ?: '';
             $request = $request->withUri($uri->withPath($path));
         }
 
