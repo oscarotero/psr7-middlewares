@@ -19,9 +19,19 @@ use Psr7Middlewares\Middleware;
 use Relay\Relay;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Stream;
 
-$dispatcher = new Relay([
+//Set a stream factory used by some middlewares
+Middleware::setStreamFactory(function ($file, $mode) {
+    return new Stream($file, $mode);
+});
+
+//Create a relay dispatcher and add some middlewares:
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->newInstance([
     Middleware::ExceptionHandler(),
+    Middleware::Cache(),
     Middleware::BasePath('/my-site/web'),
     Middleware::DigestAuthentication(['username' => 'password']),
     Middleware::ClientIp(),
@@ -40,6 +50,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [AuraSession](#aurasession)
 * [BasePath](#basepath)
 * [BasicAuthentication](#basicauthentication)
+* [Cache](#cache)
 * [ClientIp](#clientip)
 * [DigestAuthentication](#digestauthentication)
 * [ErrorResponseHandler](#errorresponsehandler)
@@ -84,7 +95,9 @@ $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
 });
 
 //Add to the dispatcher
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
     Middleware::AuraRouter($routerContainer)
         ->arguments($myApp) //to pass more arguments to the controller after request and response
 ]);
@@ -95,7 +108,9 @@ $dispatcher = new Relay([
 Creates a new [Aura.Session](https://github.com/auraphp/Aura.Session) instance with the request and save it in `SESSION` attribute. You can set an instance of `Aura\Session\SessionFactory` as first argument.
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
     Middleware::AuraSession(),
         ->name('my-session-name'), //to set a custom session name
 
@@ -111,7 +126,9 @@ $dispatcher = new Relay([
 Strip off the prefix from the uri path of the request. This is useful to combine with routers if the root of the website is in a subdirectory. For example, if the root of your website is `/web/public`, a request with the uri `/web/public/post/34` will be converted to `/post/34`.
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
     Middleware::BasePath('/web/public'),
 ]);
 ```
@@ -121,7 +138,9 @@ $dispatcher = new Relay([
 Implements the [basic http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed as first argument:
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
 
     //set the names and values as first argument
     Middleware::BasicAuthentication([
@@ -134,17 +153,15 @@ $dispatcher = new Relay([
 
 ### CacheMaxAge
 
-To save and reuse responses based in the Cache-Control: max-age directive.
+To save and reuse responses based in the Cache-Control: max-age directive and Expires header.
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
 
     //set the stream factory as first argument
-    Middleware::CacheMaxAge(function () {
-            return new Stream('php://temp', 'r+');
-        })
-        ->basePath('public') //optional basepath ignored from the request uri
-        ->cacheDirectory('cache/pages'), //directory where the responses will be cached
+    Middleware::CacheMaxAge('my-cache-directory')
 
     function($request, $response, $next) {
         //Cache the response 1 hour
@@ -158,7 +175,9 @@ $dispatcher = new Relay([
 Detects the client ip(s) and create two attributes in the request instance: `CLIENT_IPS` (array with all ips found) and `CLIENT_IP` (the first ip). You can set an array of allowed headers as the first argument.
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
     Middleware::ClientIp(),
 
     function ($request, $response, $next) {
@@ -178,7 +197,9 @@ $dispatcher = new Relay([
 Implements the [digest http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed as first argument:
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
 
     //set the names and values as first argument
     Middleware::DigestAuthentication([
@@ -211,7 +232,9 @@ function errorHandler($request, $response, $myApp) {
     }
 }
 
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
 
     //Set the callable function as the first argument
     Middleware::ErrorResponseHandler('errorHandler')
@@ -224,12 +247,10 @@ $dispatcher = new Relay([
 Cath any exception throwed by the next middlewares and returns a response with it. You have to pass a callable that returns an instance of Stream:
 
 ```php
-$dispatcher = new Relay([
-    
-    //pass a stream factory as first argument
-    Middleware::exceptionHandler(function () {
-        return new Stream('php://temp', 'r+');
-    })
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
+    Middleware::exceptionHandler();
 ]);
 ```
 
@@ -241,7 +262,9 @@ $router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
     $r->addRoute('GET', '/blog/{id:[0-9]+}', 'blogReadHandler');
 });
 
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
 
     //pass the router as first argument
     Middleware::FastRoute($router)
@@ -256,7 +279,9 @@ Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide a IP filteri
 [See the ip formats allowed](https://github.com/M6Web/Firewall#entries-formats) for trusted/untrusted options:
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
 
     //needed to capture the user ips
     Middleware::ClientIp(),
@@ -273,7 +298,9 @@ $dispatcher = new Relay([
 Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. Stores the format in the `FORMAT` attribute. The middleware add also the `Content-Type` header to the response if it's missing. You can pass an instance of `Negotiation\FormatNegotiator` as first argument.
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiation()
         ->addFormat('pdf', ['application/pdf', 'application/x-download']) //add new formats and mimetypes associated
@@ -286,7 +313,9 @@ $dispatcher = new Relay([
 Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. Store the language in the `LANGUAGE` attribute. You must provide an array with all available languages:
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
 
     //Set all available languages as first argument
     Middleware::LanguageNegotiation(['gl', 'en', 'es']),
@@ -305,12 +334,11 @@ $dispatcher = new Relay([
 Uses [mrclay/minify](https://github.com/mrclay/minify) to minify the html, css and js code from the responses.
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
     
-    //Set the stream factory as first argument
-    Middleware::Minify(function () {
-            return new Stream('php://temp', 'r+');
-        })
+    Middleware::Minify()
         ->forCache(true) //only save cacheable responses
         ->inlineCss(false) //enable/disable inline css minification
         ->inlineJs(false) //enable/disable inline js minification
@@ -328,7 +356,9 @@ Saves the response content into a file if all of the following conditions are me
 This is useful for cache purposes
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
     Middleware::SaveResponse('path/to/document/root')
         ->basePath('public') //optional basepath ignored from the request uri
 ]);
@@ -339,7 +369,9 @@ $dispatcher = new Relay([
 Removes the trailing slash of the path. Useful if you have problems with the router
 
 ```php
-$dispatcher = new Relay([
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
     Middleware::TrailingSlash()
 ]);
 ```

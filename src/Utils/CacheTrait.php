@@ -21,61 +21,22 @@ trait CacheTrait
      */
     protected static function isCacheable(ServerRequestInterface $request, ResponseInterface $response)
     {
-        if ($response->getStatusCode() !== 200) {
+        if ($response->getMethod() !== 'GET') {
             return false;
         }
 
-        //Do not cache requests with query parameters
-        if (count($request->getQueryParams())) {
+        if (!in_array($response->getStatusCode(), [200, 203, 300, 301, 302, 404, 410])) {
             return false;
         }
 
         //Check http headers
         $cache = static::parseCacheControl($response->getHeaderLine('Cache-Control'));
 
-        if (in_array('no-cache', $cache)) {
-            return false;
-        }
-
-        if (in_array('private', $cache)) {
+        if (in_array('no-cache', $cache) || in_array('no-store', $cache) || in_array('private', $cache)) {
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Returns the filename of the response cache file
-     *
-     * @param ServerRequestInterface $request
-     * @param string                 $basePath
-     *
-     * @return boolean
-     */
-    protected static function getCacheFilename(ServerRequestInterface $request, $basePath = '')
-    {
-        $path = $request->getUri()->getPath();
-
-        if (!empty($basePath) && strpos($path, $basePath) === 0) {
-            $path = substr($path, strlen($basePath)) ?: '';
-        }
-
-        $parts = pathinfo($path);
-        $path = '/'.(isset($parts['dirname']) ? $parts['dirname'] : '');
-        $filename = isset($parts['basename']) ? $parts['basename'] : '';
-
-        //if it's a directory, append "/index.html"
-        if (empty($parts['extension'])) {
-            if ($path === '/') {
-                $path .= $filename;
-            } else {
-                $path .= '/'.$filename;
-            }
-
-            $filename = 'index.'.($request->getAttribute('FORMAT') ?: 'html');
-        }
-
-        return $path.'/'.$filename;
     }
 
     /**

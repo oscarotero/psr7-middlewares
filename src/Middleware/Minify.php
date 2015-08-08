@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Middleware as Factory;
 use Psr7Middlewares\Utils\CacheTrait;
 use Minify_HTML as HtmlMinify;
 use CSSmin as CssMinify;
@@ -12,20 +13,9 @@ class Minify
 {
     use CacheTrait;
 
-    protected $streamCreator;
     protected $forCache = false;
     protected $inlineCss = true;
     protected $inlineJs = true;
-
-    /**
-     * Constructor
-     *
-     * @param callable $streamCreator
-     */
-    public function __construct(callable $streamCreator)
-    {
-        $this->streamCreator = $streamCreator;
-    }
 
     /**
      * Set forCache directive
@@ -126,7 +116,7 @@ class Minify
             };
         }
 
-        $stream = call_user_func($this->streamCreator);
+        $stream = Factory::createStream();
         $stream->write(HtmlMinify::minify((string) $response->getBody(), $options));
 
         return $response->withBody($stream);
@@ -141,7 +131,7 @@ class Minify
      */
     protected function minifyCss(ResponseInterface $response)
     {
-        $stream = call_user_func($this->streamCreator);
+        $stream = Factory::createStream();
         $stream->write((new CssMinify())->run((string) $response->getBody()));
 
         return $response->withBody($stream);
@@ -156,7 +146,7 @@ class Minify
      */
     protected function minifyJs(ResponseInterface $response)
     {
-        $stream = call_user_func($this->streamCreator);
+        $stream = Factory::createStream();
         $stream->write(JsMinify::minify((string) $response->getBody()));
 
         return $response->withBody($stream);

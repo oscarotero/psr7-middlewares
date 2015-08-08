@@ -50,12 +50,45 @@ class SaveResponse
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!static::isCacheable($request, $response)) {
+        if (!count($request->getQueryParams()) && !static::isCacheable($request, $response)) {
             return $next($request, $response);
         }
 
-        static::writeFile($response->getBody(), $this->documentRoot.static::getCacheFilename($request, $this->basePath));
+        static::writeFile($response->getBody(), $this->getCacheFilename($request));
 
         return $next($request, $response);
+    }
+
+    /**
+     * Returns the filename of the response cache file
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return string
+     */
+    protected function getCacheFilename(ServerRequestInterface $request)
+    {
+        $path = $request->getUri()->getPath();
+
+        if (!empty($this->basePath) && strpos($path, $this->basePath) === 0) {
+            $path = substr($path, strlen($this->basePath)) ?: '';
+        }
+
+        $parts = pathinfo($path);
+        $path = '/'.(isset($parts['dirname']) ? $parts['dirname'] : '');
+        $filename = isset($parts['basename']) ? $parts['basename'] : '';
+
+        //if it's a directory, append "/index.html"
+        if (empty($parts['extension'])) {
+            if ($path === '/') {
+                $path .= $filename;
+            } else {
+                $path .= '/'.$filename;
+            }
+
+            $filename = 'index.'.($request->getAttribute('FORMAT') ?: 'html');
+        }
+
+        return $this->documentRoot.$path.'/'.$filename;
     }
 }

@@ -2,7 +2,6 @@
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
-use Zend\Diactoros\Stream;
 use Relay\RelayBuilder;
 
 abstract class Base extends PHPUnit_Framework_TestCase
@@ -21,12 +20,7 @@ abstract class Base extends PHPUnit_Framework_TestCase
 
     protected function response()
     {
-        return (new Response())->withBody($this->stream());
-    }
-
-    protected function stream()
-    {
-        return new Stream('php://temp', 'r+');
+        return new Response();
     }
 
     protected function dispatcher(array $middlewares)

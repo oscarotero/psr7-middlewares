@@ -7,9 +7,7 @@ class ExceptionHandlerTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::ExceptionHandler(function () {
-                    return $this->stream();
-                }),
+                Middleware::ExceptionHandler(),
                 function ($request, $response, $next) {
                     throw new \Exception("Error Processing Request");
                 },

@@ -1,27 +1,16 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
-use Exception;
+use Psr7Middlewares\Middleware as Factory;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Exception;
 
 /**
  * Middleware to handle exceptions
  */
 class ExceptionHandler
 {
-    protected $streamCreator;
-
-    /**
-     * Constructor
-     *
-     * @param callable $streamCreator
-     */
-    public function __construct(callable $streamCreator)
-    {
-        $this->streamCreator = $streamCreator;
-    }
-
     /**
      * Execute the middleware
      *
@@ -35,7 +24,7 @@ class ExceptionHandler
         try {
             $response = $next($request, $response);
         } catch (Exception $exception) {
-            $stream = call_user_func($this->streamCreator);
+            $stream = Factory::createStream();
             $stream->write($exception->getMessage());
 
             return $response->withStatus(500)->withBody($stream);
