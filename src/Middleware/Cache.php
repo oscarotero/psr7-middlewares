@@ -13,7 +13,7 @@ class Cache
 {
     use CacheTrait;
 
-    protected $directory = '';
+    protected $cacheDirectory = '';
 
     /**
      * Constructor. Set the cache directory
@@ -22,7 +22,7 @@ class Cache
      */
     public function __construct($cacheDirectory)
     {
-        $this->directory = $path;
+        $this->cacheDirectory = $cacheDirectory;
     }
 
     /**

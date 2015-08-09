@@ -21,7 +21,7 @@ trait CacheTrait
      */
     protected static function isCacheable(ServerRequestInterface $request, ResponseInterface $response)
     {
-        if ($response->getMethod() !== 'GET') {
+        if ($request->getMethod() !== 'GET') {
             return false;
         }
 

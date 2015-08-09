@@ -31,7 +31,7 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->newInstance([
     Middleware::ExceptionHandler(),
-    Middleware::Cache(),
+    Middleware::Cache('/cache-dir'),
     Middleware::BasePath('/my-site/web'),
     Middleware::DigestAuthentication(['username' => 'password']),
     Middleware::ClientIp(),
@@ -151,7 +151,7 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
-### CacheMaxAge
+### Cache
 
 To save and reuse responses based in the Cache-Control: max-age directive and Expires header.
 
@@ -160,8 +160,8 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
 
-    //set the stream factory as first argument
-    Middleware::CacheMaxAge('my-cache-directory')
+    //set the directory path where to store the cached responses
+    Middleware::CacheMaxAge('cache/responses')
 
     function($request, $response, $next) {
         //Cache the response 1 hour
