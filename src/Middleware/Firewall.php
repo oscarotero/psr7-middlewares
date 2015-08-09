@@ -56,11 +56,11 @@ class Firewall
 
         $firewall = new IpFirewall();
 
-        if ($this->trusted) {
+        if (!empty($this->trusted)) {
             $firewall->addList($this->trusted, 'trusted', true);
         }
 
-        if ($this->untrusted) {
+        if (!empty($this->untrusted)) {
             $firewall->addList($this->untrusted, 'untrusted', false);
         }
 

@@ -16,9 +16,7 @@ class DigestAuthentication
     /**
      * Constructor. Defines de users.
      *
-     * @param array  $users [username => password]
-     * @param string $realm
-     * @param string $nonce
+     * @param array $users [username => password]
      */
     public function __construct(array $users)
     {
@@ -137,9 +135,11 @@ class DigestAuthentication
 
         preg_match_all('@('.implode('|', array_keys($needed_parts)).')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@', substr($header, 7), $matches, PREG_SET_ORDER);
 
-        foreach ($matches as $m) {
-            $data[$m[1]] = $m[3] ? $m[3] : $m[4];
-            unset($needed_parts[$m[1]]);
+        if ($matches) {
+            foreach ($matches as $m) {
+                $data[$m[1]] = $m[3] ? $m[3] : $m[4];
+                unset($needed_parts[$m[1]]);
+            }
         }
 
         return empty($needed_parts) ? $data : false;

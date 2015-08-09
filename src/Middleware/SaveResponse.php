@@ -54,7 +54,7 @@ class SaveResponse
             return $next($request, $response);
         }
 
-        static::writeFile($response->getBody(), $this->getCacheFilename($request));
+        static::writeStream($response->getBody(), $this->getCacheFilename($request));
 
         return $next($request, $response);
     }

@@ -69,7 +69,7 @@ trait RouterTrait
                 return $target;
             }
 
-            //is a class (Classname::method)
+            //is a class "classname::method"
             if (strpos($target, '::') === false) {
                 $class = $target;
                 $method = '__invoke';
