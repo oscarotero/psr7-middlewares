@@ -16,7 +16,7 @@ Collection of PSR-7 middlewares
 ```php
 use Psr7Middlewares\Middleware;
 
-use Relay\Relay;
+use Relay\RelayBuilder;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Stream;

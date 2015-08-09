@@ -29,7 +29,7 @@ class SaveResponse
      * Set the basepath used in the request
      *
      * @param string $basePath
-     * 
+     *
      * @return self
      */
     public function basePath($basePath)

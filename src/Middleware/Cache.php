@@ -18,7 +18,7 @@ class Cache
     /**
      * Constructor. Set the cache directory
      *
-     * @param string   $cacheDirectory
+     * @param string $cacheDirectory
      */
     public function __construct($cacheDirectory)
     {
@@ -64,10 +64,10 @@ class Cache
 
     /**
      * Check the max-age directive
-     * 
+     *
      * @param array  $cacheHeaders
      * @param string $cacheBodyFile
-     * 
+     *
      * @return boolean
      */
     protected static function cacheIsFresh(array $cacheHeaders, $cacheBodyFile)
@@ -78,7 +78,7 @@ class Cache
         //Cache-Control
         if (isset($cacheHeaders['Cache-Control'][0])) {
             $cacheControl = static::parseCacheControl($cacheHeaders['Cache-Control'][0]);
-        
+
             //Max age
             if (isset($cacheControl['max-age']) && ($cacheTime + $cacheControl['max-age'] < $now->get('U'))) {
                 return false;

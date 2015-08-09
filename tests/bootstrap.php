@@ -7,7 +7,7 @@ include_once __DIR__.'/Base.php';
 use Zend\Diactoros\Stream;
 
 Psr7Middlewares\Middleware::setStreamFactory(function ($file, $mode) {
-	return new Stream($file, $mode);
+    return new Stream($file, $mode);
 });
 
 PHPUnit_Framework_Error_Notice::$enabled = true;

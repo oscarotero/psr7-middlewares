@@ -10,7 +10,7 @@ class Middleware
 
     /**
      * Set the stream factory used by some middlewares
-     * 
+     *
      * @param callable $streamFactory
      */
     public static function setStreamFactory(callable $streamFactory)
@@ -20,7 +20,7 @@ class Middleware
 
     /**
      * Get the stream factory
-     * 
+     *
      * @return Stream
      */
     public static function createStream($file = 'php://temp', $mode = 'r+')
