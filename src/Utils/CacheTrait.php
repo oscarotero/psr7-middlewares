@@ -25,7 +25,7 @@ trait CacheTrait
             return false;
         }
 
-        if (!in_array($response->getStatusCode(), [200, 203, 300, 301, 302, 404, 410])) {
+        if (!in_array($response->getStatusCode(), [200, 203, 300, 301, 302, 404, 410], true)) {
             return false;
         }
 
@@ -77,6 +77,10 @@ trait CacheTrait
      */
     protected static function parseCacheControl($header)
     {
+        if (empty($header)) {
+            return [];
+        }
+
         $cache = [];
 
         foreach (array_map('trim', explode(',', strtolower($header))) as $part) {

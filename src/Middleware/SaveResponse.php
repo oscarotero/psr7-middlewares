@@ -50,13 +50,13 @@ class SaveResponse
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!count($request->getQueryParams()) && !static::isCacheable($request, $response)) {
-            return $next($request, $response);
+        $response = $next($request, $response);
+
+        if (!count($request->getQueryParams()) && static::isCacheable($request, $response)) {
+            static::writeStream($response->getBody(), $this->getCacheFilename($request));
         }
 
-        static::writeStream($response->getBody(), $this->getCacheFilename($request));
-
-        return $next($request, $response);
+        return $response;
     }
 
     /**
