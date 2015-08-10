@@ -6,21 +6,24 @@ class TrailingSlashTest extends Base
     public function pathsProvider()
     {
         return [
-            ['/foo/bar', '/foo/bar'],
-            ['/foo/bar/', '/foo/bar'],
-            ['/', '/'],
-            ['', '']
+            ['/foo/bar', '/foo/bar', ''],
+            ['/foo/bar/', '/foo/bar', '/'],
+            ['/', '/', '/'],
+            ['', '/', '/'],
+            ['/www/public', '/www/public/', '/www/public'],
         ];
     }
 
     /**
      * @dataProvider pathsProvider
      */
-    public function testTrailingSlash($url, $result)
+    public function testTrailingSlash($url, $result, $basePath)
     {
         $response = $this->execute(
             [
-                Middleware::trailingSlash(),
+                Middleware::trailingSlash()
+                    ->basePath($basePath),
+
                 function ($request, $response, $next) {
                     $response->getBody()->write($request->getUri()->getPath());
 

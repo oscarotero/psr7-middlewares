@@ -2,6 +2,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\CacheTrait;
+use Psr7Middlewares\Utils\BasePathTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -11,9 +12,9 @@ use Psr\Http\Message\ResponseInterface;
 class SaveResponse
 {
     use CacheTrait;
+    use BasePathTrait;
 
     protected $documentRoot;
-    protected $basePath;
 
     /**
      * Constructor. Set the document root
@@ -23,20 +24,6 @@ class SaveResponse
     public function __construct($documentRoot)
     {
         $this->documentRoot = $documentRoot;
-    }
-
-    /**
-     * Set the basepath used in the request
-     *
-     * @param string $basePath
-     *
-     * @return self
-     */
-    public function basePath($basePath)
-    {
-        $this->basePath = $basePath;
-
-        return $this;
     }
 
     /**
@@ -68,11 +55,7 @@ class SaveResponse
      */
     protected function getCacheFilename(ServerRequestInterface $request)
     {
-        $path = $request->getUri()->getPath();
-
-        if (!empty($this->basePath) && strpos($path, $this->basePath) === 0) {
-            $path = substr($path, strlen($this->basePath)) ?: '';
-        }
+        $path = $this->getBasePath($request->getUri()->getPath());
 
         $parts = pathinfo($path);
         $path = '/'.(isset($parts['dirname']) ? $parts['dirname'] : '');

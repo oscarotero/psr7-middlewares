@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils\BasePathTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -9,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class BasePath
 {
-    protected $basePath;
+    use BasePathTrait;
 
     /**
      * Constructor. Set the path prefix
@@ -18,7 +19,7 @@ class BasePath
      */
     public function __construct($basePath)
     {
-        $this->basePath = $basePath;
+        $this->basePath($basePath);
     }
 
     /**
@@ -32,12 +33,8 @@ class BasePath
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $uri = $request->getUri();
-        $path = $uri->getPath();
-
-        if (strpos($path, $this->basePath) === 0) {
-            $path = substr($path, strlen($this->basePath)) ?: '';
-            $request = $request->withUri($uri->withPath($path));
-        }
+        $path = $this->getBasePath($uri->getPath());
+        $request = $request->withUri($uri->withPath($path));
 
         return $next($request, $response);
     }

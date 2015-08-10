@@ -366,13 +366,14 @@ $dispatcher = $relay->getInstance([
 
 ### TrailingSlash
 
-Removes the trailing slash of the path. Useful if you have problems with the router
+Removes the trailing slash of the path. For example, `/post/23/` will be converted to `/post/23`. If the path is `/` it won't be converted. Useful if you have problems with the router.
 
 ```php
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
     Middleware::TrailingSlash()
+        ->basePath('public') //optional basepath
 ]);
 ```
 
