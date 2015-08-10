@@ -24,9 +24,9 @@ trait BasePathTrait
 
     /**
      * Removes the basepath from a path
-     * 
+     *
      * @param string $path
-     * 
+     *
      * @return string
      */
     protected function getBasePath($path)
