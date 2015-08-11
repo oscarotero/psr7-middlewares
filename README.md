@@ -161,7 +161,7 @@ $relay = new RelayBuilder();
 $dispatcher = $relay->getInstance([
 
     //set the directory path where to store the cached responses
-    Middleware::CacheMaxAge('cache/responses')
+    Middleware::Cache('cache/responses')
 
     function($request, $response, $next) {
         //Cache the response 1 hour
@@ -259,7 +259,10 @@ To use [FastRoute](https://github.com/nikic/FastRoute) as a middleware.
 
 ```php
 $router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
-    $r->addRoute('GET', '/blog/{id:[0-9]+}', 'blogReadHandler');
+
+    $r->addRoute('GET', '/blog/{id:[0-9]+}', function ($request, $response, $app) {
+        return 'This is the post number'.$request->getAttribute('id');
+    });
 });
 
 $relay = new RelayBuilder();
@@ -268,7 +271,7 @@ $dispatcher = $relay->getInstance([
 
     //pass the router as first argument
     Middleware::FastRoute($router)
-        ->argument($myApp) //extra arguments passed to the controller
+        ->argument($myApp) //extra arguments passed to the controller next to request/response instances
 ]);
 ```
 
@@ -339,7 +342,7 @@ $relay = new RelayBuilder();
 $dispatcher = $relay->getInstance([
     
     Middleware::Minify()
-        ->forCache(true) //only save cacheable responses
+        ->forCache(true) //only minify cacheable responses (see SaveResponse)
         ->inlineCss(false) //enable/disable inline css minification
         ->inlineJs(false) //enable/disable inline js minification
 ]);
@@ -349,6 +352,7 @@ $dispatcher = $relay->getInstance([
 
 Saves the response content into a file if all of the following conditions are met:
 
+* The method is `GET`
 * The status code is `200`
 * The `Cache-Control` header does not contain `no-cache` value
 * The request has not query parameters.
