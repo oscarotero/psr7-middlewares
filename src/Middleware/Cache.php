@@ -3,6 +3,7 @@ namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware as Factory;
 use Psr7Middlewares\Utils\CacheTrait;
+use Psr7Middlewares\Utils\StorageTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -12,34 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 class Cache
 {
     use CacheTrait;
-
-    protected $storage = '';
-
-    /**
-     * Constructor. Set the cache directory
-     *
-     * @param string|null $storage
-     */
-    public function __construct($storage = null)
-    {
-        if ($storage !== null) {
-            $this->storage($storage);
-        }
-    }
-
-    /**
-     * Configure the cache storage directory
-     *
-     * @param string $storage
-     *
-     * @return self
-     */
-    public function storage($storage)
-    {
-        $this->storage = $storage;
-
-        return $this;
-    }
+    use StorageTrait;
 
     /**
      * Execute the middleware

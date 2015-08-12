@@ -3,6 +3,7 @@ namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\CacheTrait;
 use Psr7Middlewares\Utils\BasePathTrait;
+use Psr7Middlewares\Utils\StorageTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -13,32 +14,7 @@ class SaveResponse
 {
     use CacheTrait;
     use BasePathTrait;
-
-    protected $documentRoot;
-
-    /**
-     * Constructor. Set the document root
-     *
-     * @param string $documentRoot
-     */
-    public function __construct($documentRoot = '')
-    {
-        $this->documentRoot($documentRoot);
-    }
-
-    /**
-     * Configure the document root used to save the responses
-     *
-     * @param string $documentRoot
-     *
-     * @return self
-     */
-    public function documentRoot($documentRoot)
-    {
-        $this->documentRoot = $documentRoot;
-
-        return $this;
-    }
+    use StorageTrait;
 
     /**
      * Execute the middleware
@@ -86,6 +62,6 @@ class SaveResponse
             $filename = 'index.'.($request->getAttribute('FORMAT') ?: 'html');
         }
 
-        return $this->documentRoot.$path.'/'.$filename;
+        return $this->storage.$path.'/'.$filename;
     }
 }

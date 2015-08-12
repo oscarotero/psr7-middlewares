@@ -31,11 +31,11 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->newInstance([
     Middleware::ExceptionHandler(),
-    Middleware::Cache('/cache-dir'),
+    Middleware::Cache('/storage'),
     Middleware::BasePath('/my-site/web'),
     Middleware::DigestAuthentication(['username' => 'password']),
     Middleware::ClientIp(),
-    Middleware::Firewall('127.0.0.1'),
+    Middleware::Firewall(['127.0.0.1']),
     Middleware::LanguageNegotiator(['gl', 'es', 'en']),
     Middleware::FormatNegotiator(),
     Middleware::Minify()
@@ -98,8 +98,10 @@ $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
-    Middleware::AuraRouter($routerContainer)
-        ->arguments($myApp) //to pass more arguments to the controller after request and response
+
+    Middleware::AuraRouter()
+        ->router($routerContainer) //Instance of Aura\Router\RouterContainer
+        ->arguments($myApp) //(optional) append more arguments to the controller
 ]);
 ```
 
@@ -111,8 +113,10 @@ Creates a new [Aura.Session](https://github.com/auraphp/Aura.Session) instance w
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
+
     Middleware::AuraSession(),
-        ->name('my-session-name'), //to set a custom session name
+        ->factory($sessionFactory) //(optional) Intance of Aura\Session\SessionFactory
+        ->name('my-session-name'), //(optional) custom session name
 
     function ($request, $reponse, $next) {
         //Get the session instance
@@ -142,12 +146,12 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
 
-    //set the names and values as first argument
-    Middleware::BasicAuthentication([
+    Middleware::BasicAuthentication()
+        ->users([
             'username1' => 'password1',
             'username2' => 'password2'
         ])
-        ->realm('My realm') //change the realm value
+        ->realm('My realm') //(optional) change the realm value
 ]);
 ```
 
@@ -160,8 +164,8 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
 
-    //set the directory path where to store the cached responses
-    Middleware::Cache('cache/responses')
+    Middleware::Cache()
+        ->storage('cache/responses') //the directory to store the cache
 
     function($request, $response, $next) {
         //Cache the response 1 hour
@@ -178,7 +182,13 @@ Detects the client ip(s) and create two attributes in the request instance: `CLI
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
-    Middleware::ClientIp(),
+
+    Middleware::ClientIp()
+        ->headers([
+            'Client-Ip',
+            'X-Forwarded-For',
+            'X-Forwarded'
+        ]), //(optional) to change the trusted headers
 
     function ($request, $response, $next) {
         //Get the user ip
@@ -201,13 +211,13 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
 
-    //set the names and values as first argument
-    Middleware::DigestAuthentication([
+    Middleware::DigestAuthentication()
+        ->users([
             'username1' => 'password1',
             'username2' => 'password2'
         ])
-        ->realm('My realm') //to customice the realm value
-        ->nonce(uniqid()) //to customice the nonce value
+        ->realm('My realm') //(optional) custom realm value
+        ->nonce(uniqid()) //(optional) custom nonce value
 ]);
 ```
 
@@ -236,9 +246,9 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
 
-    //Set the callable function as the first argument
-    Middleware::ErrorResponseHandler('errorHandler')
-        ->arguments($myApp) //extra arguments passed to the callable
+    Middleware::ErrorResponseHandler()
+        ->handler('errorHandler')
+        ->arguments($myApp) //(optional) append arguments to the callable
 ]);
 ```
 
@@ -250,7 +260,7 @@ Cath any exception throwed by the next middlewares and returns a response with i
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
-    Middleware::exceptionHandler();
+    Middleware::exceptionHandler()
 ]);
 ```
 
@@ -269,9 +279,9 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
 
-    //pass the router as first argument
-    Middleware::FastRoute($router)
-        ->argument($myApp) //extra arguments passed to the controller next to request/response instances
+    Middleware::FastRoute()
+        ->router($router) //Instance of FastRoute\Dispatcher
+        ->argument($myApp) //(optional) arguments appended to the controller
 ]);
 ```
 
@@ -291,8 +301,8 @@ $dispatcher = $relay->getInstance([
 
     //set the firewall
     Middleware::Firewall()
-        ->trusted('123.0.0.*') //ips allowed
-        ->untrusted('123.0.0.1') //ips not allowed
+        ->trusted(['123.0.0.*']) //(optional) ips allowed
+        ->untrusted(['123.0.0.1']) //(optional) ips not allowed
 ]);
 ```
 
@@ -306,7 +316,8 @@ $relay = new RelayBuilder();
 $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiation()
-        ->addFormat('pdf', ['application/pdf', 'application/x-download']) //add new formats and mimetypes associated
+        ->negotiator($negotiator) //(optional) Instance of Negotiation\FormatNegotiator
+        ->addFormat('pdf', ['application/pdf', 'application/x-download']) //(optional) add new formats and mimetypes
     }
 ]);
 ```
@@ -320,8 +331,8 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
 
-    //Set all available languages as first argument
-    Middleware::LanguageNegotiation(['gl', 'en', 'es']),
+    Middleware::LanguageNegotiation()
+        ->languages(['gl', 'en', 'es']), //Available languages
 
     function ($request, $response, $next) {
         //Get the preferred language
@@ -342,9 +353,9 @@ $relay = new RelayBuilder();
 $dispatcher = $relay->getInstance([
     
     Middleware::Minify()
-        ->forCache(true) //only minify cacheable responses (see SaveResponse)
-        ->inlineCss(false) //enable/disable inline css minification
-        ->inlineJs(false) //enable/disable inline js minification
+        ->forCache(true) //(optional) only minify cacheable responses (see SaveResponse)
+        ->inlineCss(false) //(optional) enable/disable inline css minification
+        ->inlineJs(false) //(optional) enable/disable inline js minification
 ]);
 ```
 
@@ -363,8 +374,10 @@ This is useful for cache purposes
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
-    Middleware::SaveResponse('path/to/document/root')
-        ->basePath('public') //optional basepath ignored from the request uri
+
+    Middleware::SaveResponse()
+        ->storage('path/to/document/root') //Path where save the responses
+        ->basePath('public') //(optional) basepath ignored from the request uri
 ]);
 ```
 
@@ -377,7 +390,8 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
     Middleware::TrailingSlash()
-        ->basePath('public') //optional basepath
+        ->addSlash(true) //(optional) to add the trailing slash instead remove
+        ->basePath('public') //(optional) basepath
 ]);
 ```
 
