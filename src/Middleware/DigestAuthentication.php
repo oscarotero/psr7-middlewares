@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils\AuthenticationTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -9,34 +10,9 @@ use Psr\Http\Message\ResponseInterface;
  */
 class DigestAuthentication
 {
-    protected $users;
-    protected $realm = 'Login';
+    use AuthenticationTrait;
+
     protected $nonce;
-
-    /**
-     * Constructor. Defines de users.
-     *
-     * @param array $users [username => password]
-     */
-    public function __construct(array $users)
-    {
-        $this->users = $users;
-        $this->nonce = uniqid();
-    }
-
-    /**
-     * Set the realm value
-     *
-     * @param string $realm
-     *
-     * @return self
-     */
-    public function realm($realm)
-    {
-        $this->realm = $realm;
-
-        return $this;
-    }
 
     /**
      * Set the nonce value
@@ -68,7 +44,7 @@ class DigestAuthentication
 
         return $response
             ->withStatus(401)
-            ->withHeader('WWW-Authenticate', 'Digest realm="'.$this->realm.'",qop="auth",nonce="'.$this->nonce.'",opaque="'.md5($this->realm).'"');
+            ->withHeader('WWW-Authenticate', 'Digest realm="'.$this->realm.'",qop="auth",nonce="'.($this->nonce ?: uniqid()).'",opaque="'.md5($this->realm).'"');
     }
 
     /**
@@ -88,14 +64,12 @@ class DigestAuthentication
         }
 
         //Check whether user exists
-        $password = isset($this->users[$authorization['username']]) ? $this->users[$authorization['username']] : null;
-
-        if (!$password) {
+        if (!isset($this->users[$authorization['username']])) {
             return false;
         }
 
         //Check authentication
-        return $this->checkAuthentication($authorization, $request->getMethod(), $password);
+        return $this->checkAuthentication($authorization, $request->getMethod(), $this->users[$authorization['username']]);
     }
 
     /**

@@ -19,15 +19,29 @@ class ClientIp
     ];
 
     /**
-     * Constructor. Defines de available headers.
+     * Constructor. Defines de trusted headers.
      *
      * @param null|array $headers
      */
     public function __construct(array $headers = null)
     {
         if ($headers !== null) {
-            $this->headers = $headers;
+            $this->headers($headers);
         }
+    }
+
+    /**
+     * Configure the trusted headers
+     *
+     * @param array $headers
+     *
+     * @return self
+     */
+    public function headers(array $headers)
+    {
+        $this->headers = $headers;
+
+        return $this;
     }
 
     /**

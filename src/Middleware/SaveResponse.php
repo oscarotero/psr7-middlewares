@@ -21,9 +21,23 @@ class SaveResponse
      *
      * @param string $documentRoot
      */
-    public function __construct($documentRoot)
+    public function __construct($documentRoot = '')
+    {
+        $this->documentRoot($documentRoot);
+    }
+
+    /**
+     * Configure the document root used to save the responses
+     *
+     * @param string $documentRoot
+     *
+     * @return self
+     */
+    public function documentRoot($documentRoot)
     {
         $this->documentRoot = $documentRoot;
+
+        return $this;
     }
 
     /**

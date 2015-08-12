@@ -37,7 +37,23 @@ class FormatNegotiator
      */
     public function __construct(Negotiator $negotiator = null)
     {
+        if ($negotiator !== null) {
+            $this->negotiator($negotiator);
+        }
+    }
+
+    /**
+     * Set the negotiator used
+     *
+     * @param Negotiator $negotiator
+     *
+     * @return self
+     */
+    public function negotiator(Negotiator $negotiator)
+    {
         $this->negotiator = $negotiator;
+
+        return $this;
     }
 
     /**

@@ -15,13 +15,27 @@ class LanguageNegotiator
     /**
      * Constructor. Defines de available languages.
      *
-     * @param null|array $languages
+     * @param array $languages
      */
     public function __construct(array $languages = null)
     {
         if ($languages !== null) {
-            $this->languages = $languages;
+            $this->languages($languages);
         }
+    }
+
+    /**
+     * Configure the available languages
+     *
+     * @param array $languages
+     *
+     * @return self
+     */
+    public function languages(array $languages)
+    {
+        $this->languages = $languages;
+
+        return $this;
     }
 
     /**

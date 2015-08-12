@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils\AuthenticationTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -9,32 +10,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class BasicAuthentication
 {
-    protected $users;
-    protected $realm = 'Login';
-
-    /**
-     * Constructor. Defines de users.
-     *
-     * @param array $users [username => password]
-     */
-    public function __construct(array $users)
-    {
-        $this->users = $users;
-    }
-
-    /**
-     * Set the realm value
-     *
-     * @param string $realm
-     *
-     * @return self
-     */
-    public function realm($realm)
-    {
-        $this->realm = $realm;
-
-        return $this;
-    }
+    use AuthenticationTrait;
 
     /**
      * Execute the middleware

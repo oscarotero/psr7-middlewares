@@ -13,16 +13,32 @@ class Cache
 {
     use CacheTrait;
 
-    protected $cacheDirectory = '';
+    protected $storage = '';
 
     /**
      * Constructor. Set the cache directory
      *
-     * @param string $cacheDirectory
+     * @param string|null $storage
      */
-    public function __construct($cacheDirectory)
+    public function __construct($storage = null)
     {
-        $this->cacheDirectory = $cacheDirectory;
+        if ($storage !== null) {
+            $this->storage($storage);
+        }
+    }
+
+    /**
+     * Configure the cache storage directory
+     *
+     * @param string $storage
+     *
+     * @return self
+     */
+    public function storage($storage)
+    {
+        $this->storage = $storage;
+
+        return $this;
     }
 
     /**
@@ -106,7 +122,7 @@ class Cache
      */
     protected function getCacheFilename(ServerRequestInterface $request)
     {
-        $file = $this->cacheDirectory.'/'.md5((string) $request->getUri());
+        $file = $this->storage.'/'.md5((string) $request->getUri());
 
         return ["{$file}.headers", "{$file}.body"];
     }

@@ -15,11 +15,13 @@ class BasePath
     /**
      * Constructor. Set the path prefix
      *
-     * @param string $basePath
+     * @param string|null $basePath
      */
-    public function __construct($basePath)
+    public function __construct($basePath = null)
     {
-        $this->basePath($basePath);
+        if ($basePath !== null) {
+            $this->basePath($basePath);
+        }
     }
 
     /**

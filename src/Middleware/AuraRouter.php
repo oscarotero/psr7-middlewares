@@ -2,6 +2,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\RouterTrait;
+use Psr7Middlewares\Utils\ArgumentsTrait;
 use Aura\Router\RouterContainer;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -10,29 +11,32 @@ use RuntimeException;
 class AuraRouter
 {
     use RouterTrait;
+    use ArgumentsTrait;
 
     protected $router;
-    protected $arguments = [];
 
     /**
-     * Constructor
-     * You can specify the RouterContainer instance or a callable to fetch it in lazy mode
+     * Constructor.Set the RouterContainer instance
      *
-     * @param RouterContainer|callable $router
+     * @param RouterContainer $router
      */
-    public function __construct($router)
+    public function __construct(RouterContainer $router = null)
     {
-        $this->router = $router;
+        if ($router !== null) {
+            $this->router($router);
+        }
     }
 
     /**
      * Extra arguments passed to the controller
      *
+     * @param RouterContainer $router
+     *
      * @return self
      */
-    public function arguments()
+    public function router(RouterContainer $router)
     {
-        $this->arguments = func_get_args();
+        $this->router = $router;
 
         return $this;
     }
@@ -47,8 +51,11 @@ class AuraRouter
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $router = $this->getRouter();
-        $matcher = $router->getMatcher();
+        if ($this->router === null) {
+            throw new RuntimeException('No RouterContainer instance has been provided');
+        }
+
+        $matcher = $this->router->getMatcher();
         $route = $matcher->match($request);
 
         if (!$route) {
@@ -75,24 +82,5 @@ class AuraRouter
         $response = self::executeTarget($route->handler, $this->arguments, $request, $response);
 
         return $next($request, $response);
-    }
-
-    /**
-     * Returns the route
-     *
-     * @throws RuntimeException If the route cannot be fetched
-     * @return RouterContainer
-     */
-    protected function getRouter()
-    {
-        if (is_callable($this->router)) {
-            $this->router = call_user_func($this->router);
-        }
-
-        if ($this->router instanceof RouterContainer) {
-            return $this->router;
-        }
-
-        throw new RuntimeException('No RouterContainer instance has been provided');
     }
 }

@@ -2,37 +2,41 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\RouterTrait;
-use FastRoute\Dispatcher;
+use Psr7Middlewares\Utils\ArgumentsTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use FastRoute\Dispatcher;
 use RuntimeException;
 
 class FastRoute
 {
     use RouterTrait;
+    use ArgumentsTrait;
 
-    protected $dispatcher;
-    protected $arguments = [];
+    protected $router;
 
     /**
-     * Constructor
-     * You can specify the Dispatcher instance or a callable to fetch it in lazy mode
+     * Constructor. Set Dispatcher instance
      *
-     * @param Dispatcher|callable $dispatcher
+     * @param Dispatcher $router
      */
-    public function __construct($dispatcher)
+    public function __construct(Dispatcher $router = null)
     {
-        $this->dispatcher = $dispatcher;
+        if ($router !== null) {
+            $this->router($router);
+        }
     }
 
     /**
      * Extra arguments passed to the controller
      *
+     * @param Dispatcher $router
+     *
      * @return self
      */
-    public function arguments()
+    public function router(Dispatcher $router)
     {
-        $this->arguments = func_get_args();
+        $this->router = $router;
 
         return $this;
     }
@@ -47,8 +51,11 @@ class FastRoute
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $dispatcher = $this->getDispatcher();
-        $route = $dispatcher->dispatch($request->getMethod(), $request->getUri()->getPath());
+        if ($this->router === null) {
+            throw new RuntimeException('No FastRoute\\Dispatcher instance has been provided');
+        }
+
+        $route = $this->router->dispatch($request->getMethod(), $request->getUri()->getPath());
 
         if ($route[0] === Dispatcher::NOT_FOUND) {
             return $response->withStatus(404);
@@ -65,24 +72,5 @@ class FastRoute
         $response = self::executeTarget($route[1], $this->arguments, $request, $response);
 
         return $next($request, $response);
-    }
-
-    /**
-     * Returns the route dispatcher
-     *
-     * @throws RuntimeException If the dispatcher cannot be fetched
-     * @return Dispatcher
-     */
-    protected function getDispatcher()
-    {
-        if (is_callable($this->dispatcher)) {
-            $this->dispatcher = call_user_func($this->dispatcher);
-        }
-
-        if ($this->dispatcher instanceof Dispatcher) {
-            return $this->dispatcher;
-        }
-
-        throw new RuntimeException('No FastRoute\\Dispatcher instance has been provided');
     }
 }

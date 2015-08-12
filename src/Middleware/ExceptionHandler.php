@@ -25,7 +25,7 @@ class ExceptionHandler
             $response = $next($request, $response);
         } catch (Exception $exception) {
             $stream = Factory::createStream();
-            $stream->write($exception->getMessage());
+            $stream->write((string) $exception);
 
             return $response->withStatus(500)->withBody($stream);
         }

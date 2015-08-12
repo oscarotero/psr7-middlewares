@@ -2,34 +2,39 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\RouterTrait;
+use Psr7Middlewares\Utils\ArgumentsTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class ErrorResponseHandler
 {
     use RouterTrait;
+    use ArgumentsTrait;
 
     protected $handler;
-    protected $arguments = [];
 
     /**
      * Constructor
      *
-     * @param $handler
+     * @param callable|string|null $handler
      */
-    public function __construct($handler)
+    public function __construct($handler = null)
     {
-        $this->handler = $handler;
+        if ($handler !== null) {
+            $this->handler($handler);
+        }
     }
 
     /**
-     * Extra arguments passed to the controller
+     * Configure the error handler
+     *
+     * @param string|callable $handler
      *
      * @return self
      */
-    public function arguments()
+    public function handler($handler)
     {
-        $this->arguments = func_get_args();
+        $this->handler = $handler;
 
         return $this;
     }

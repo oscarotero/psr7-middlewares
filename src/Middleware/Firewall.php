@@ -15,6 +15,18 @@ class Firewall
     protected $untrusted;
 
     /**
+     * Constructor. Set the trusted ips
+     *
+     * @param array|null $trusted
+     */
+    public function __construct(array $trusted = null)
+    {
+        if ($trusted !== null) {
+            $this->trusted($trusted);
+        }
+    }
+
+    /**
      * Set trusted ips
      *
      * @return self

@@ -5,16 +5,17 @@ class ExceptionHandlerTest extends Base
 {
     public function testException()
     {
+        $exception = new \Exception("Error Processing Request");
         $response = $this->execute(
             [
                 Middleware::ExceptionHandler(),
-                function ($request, $response, $next) {
-                    throw new \Exception("Error Processing Request");
+                function ($request, $response, $next) use ($exception) {
+                    throw $exception;
                 },
             ]
         );
 
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals('Error Processing Request', (string) $response->getBody());
+        $this->assertEquals((string) $exception, (string) $response->getBody());
     }
 }
