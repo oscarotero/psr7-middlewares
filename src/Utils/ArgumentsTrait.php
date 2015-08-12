@@ -1,7 +1,6 @@
 <?php
 namespace Psr7Middlewares\Utils;
 
-
 /**
  * Trait used by all middlewares with arguments() option
  */
