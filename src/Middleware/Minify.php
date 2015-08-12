@@ -105,13 +105,13 @@ class Minify
         if ($this->inlineCss) {
             $cssMinify = new CssMinify();
 
-            $options['cssMinifier'] = function ($css) use ($cssMinify) {
+            $options['cssMinifier'] = function($css) use ($cssMinify) {
                 return $cssMinify->run($css);
             };
         }
 
         if ($this->inlineJs) {
-            $options['jsMinifier'] = function ($js) {
+            $options['jsMinifier'] = function($js) {
                 return JsMinify::minify($js);
             };
         }

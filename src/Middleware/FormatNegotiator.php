@@ -21,7 +21,7 @@ class FormatNegotiator
         'js'  => ['text/javascript', 'application/javascript', 'application/x-javascript'],
         'jsonp'  => ['text/javascript', 'application/javascript', 'application/x-javascript'],
         'json' => ['application/json', 'text/json', 'application/x-json'],
-        'png' => ['image/png',  'image/x-png'],
+        'png' => ['image/png', 'image/x-png'],
         'pdf' => ['application/pdf', 'application/x-download'],
         'rdf' => ['application/rdf+xml'],
         'rss' => ['application/rss+xml'],
