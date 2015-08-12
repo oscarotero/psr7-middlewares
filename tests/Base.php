@@ -6,21 +6,14 @@ use Relay\RelayBuilder;
 
 abstract class Base extends PHPUnit_Framework_TestCase
 {
-    protected function request($url = '', array $headers = array())
+    protected function request($uri = '', array $headers = array())
     {
-        $request = (new ServerRequest())
-            ->withUri(new Uri($url));
-
-        foreach ($headers as $name => $header) {
-            $request = $request->withHeader($name, $header);
-        }
-
-        return $request;
+        return (new ServerRequest([], [], $uri, null, 'php://temp', $headers))->withUri(new Uri($uri));
     }
 
-    protected function response()
+    protected function response(array $headers = array())
     {
-        return new Response();
+        return new Response('php://temp', 200, $headers);
     }
 
     protected function dispatcher(array $middlewares)
