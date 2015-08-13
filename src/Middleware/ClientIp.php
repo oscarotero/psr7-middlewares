@@ -10,12 +10,12 @@ use Psr\Http\Message\ResponseInterface;
 class ClientIp
 {
     protected $headers = [
-        'Client-Ip',
-        'X-Forwarded-For',
-        'X-Forwarded',
-        'X-Cluster-Client-Ip',
-        'Forwarded-For',
         'Forwarded',
+        'Forwarded-For',
+        'Client-Ip',
+        'X-Forwarded',
+        'X-Forwarded-For',
+        'X-Cluster-Client-Ip',
     ];
 
     /**
@@ -72,7 +72,12 @@ class ClientIp
      */
     protected function getIps(ServerRequestInterface $request)
     {
+        $server = $request->getServerParams();
         $ips = [];
+
+        if (!empty($server['REMOTE_ADDR']) && filter_var($server['REMOTE_ADDR'], FILTER_VALIDATE_IP)) {
+            $ips[] = $server['REMOTE_ADDR'];
+        }
 
         foreach ($this->headers as $name) {
             $header = $request->getHeaderLine($name);
