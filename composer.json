@@ -3,7 +3,7 @@
 	"type": "library",
 	"description": "Collection of HTTP middlewares compatible with PSR-7",
 	"keywords": ["PSR-7", "http", "middlewares", "psr-messages"],
-	"homepage": "https://github.com/fol-project/http-middlewares",
+	"homepage": "https://github.com/oscarotero/psr7-middlewares",
 	"license": "MIT",
 	"authors": [
 		{
@@ -15,7 +15,7 @@
 	],
 	"support": {
 		"email": "oom@oscarotero.com",
-		"issues": "https://github.com/fol-project/http-middlewares/issues"
+		"issues": "https://github.com/oscarotero/psr7-middlewares/issues"
 	},
 	"require": {
 		"php": ">=5.5.0",
