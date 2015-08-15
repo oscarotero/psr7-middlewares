@@ -52,6 +52,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [BasicAuthentication](#basicauthentication)
 * [Cache](#cache)
 * [ClientIp](#clientip)
+* [Cors](#cors)
 * [DigestAuthentication](#digestauthentication)
 * [ErrorResponseHandler](#errorresponsehandler)
 * [ExceptionHandler](#exceptionhandler)
@@ -199,6 +200,20 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
+]);
+```
+
+### Cors
+
+To use the [neomerx/cors-psr7](https://github.com/neomerx/cors-psr7) library:
+
+```php
+$relay = new RelayBuilder();
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Cors()
+        ->settings(new Neomerx\Cors\Strategies\Settings())
 ]);
 ```
 
