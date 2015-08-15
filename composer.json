@@ -18,10 +18,7 @@
 		"issues": "https://github.com/oscarotero/psr7-middlewares/issues"
 	},
 	"require": {
-		"php": ">=5.5.0",
-		"willdurand/negotiation": "~1.3",
-		"m6web/firewall": "~1.0",
-		"mrclay/minify": "^2.2"
+		"php": ">=5.5.0"	
 	},
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",
@@ -29,12 +26,18 @@
 		"nikic/fast-route": "0.*",
 		"aura/router": "3.0.0-beta2",
 		"aura/session": "2.*",
-		"phpunit/phpunit": "~4.0"
+		"phpunit/phpunit": "~4.0",
+		"willdurand/negotiation": "~1.3",
+		"m6web/firewall": "~1.0",
+		"mrclay/minify": "^2.2"
 	},
 	"suggest": {
-		"aura/router": "If you want to use the AuraRouter middleware",
-		"aura/session": "If you want to use the AuraSession middleware",
-		"nikic/fast-route": "If you want to use the FastRoute middleware"
+		"aura/router": "To use the AuraRouter middleware",
+		"aura/session": "To use the AuraSession middleware",
+		"nikic/fast-route": "To use the FastRoute middleware",
+		"willdurand/negotiation": "To use the FormatNegotiator or LanguageNegotiator middleware",
+		"m6web/firewall": "To use the Firewall middleware",
+		"mrclay/minify": "To use the Minify middleware"
 	},
 	"autoload": {
 		"psr-4": {
