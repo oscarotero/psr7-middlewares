@@ -52,7 +52,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Cache](#cache)
 * [ClientIp](#clientip)
 * [DigestAuthentication](#digestauthentication)
-* [ErrorHandler](#errorresponsehandler)
+* [ErrorHandler](#errorhandler)
 * [FastRoute](#fastroute)
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
