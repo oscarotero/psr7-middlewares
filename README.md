@@ -30,7 +30,6 @@ Middleware::setStreamFactory(function ($file, $mode) {
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->newInstance([
-    Middleware::ExceptionHandler(),
     Middleware::Cache('/storage'),
     Middleware::BasePath('/my-site/web'),
     Middleware::DigestAuthentication(['username' => 'password']),
@@ -53,8 +52,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Cache](#cache)
 * [ClientIp](#clientip)
 * [DigestAuthentication](#digestauthentication)
-* [ErrorResponseHandler](#errorresponsehandler)
-* [ExceptionHandler](#exceptionhandler)
+* [ErrorHandler](#errorresponsehandler)
 * [FastRoute](#fastroute)
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
@@ -221,9 +219,9 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
-### ErrorResponseHandler
+### ErrorHandler
 
-Execute a handler if the response returned by the next middlewares has any error (status code 400-599). It also catch any exception and handle it as an error 500.
+Executes a handler if the response returned by the next middlewares has any error (status code 400-599). If you use an error handler like [whoops](https://github.com/filp/whoops), you can register it to catch exceptions and other errors using the methods `before` and `after`. These methods receives a callable wrapping your handler that returns a ResponseInterface object.
 
 ```php
 function errorHandler($request, $response, $myApp) {
@@ -242,25 +240,29 @@ function errorHandler($request, $response, $myApp) {
     }
 }
 
-$relay = new RelayBuilder();
+$relay = new Relay\RelayBuilder();
+$whoops = new Whoops\Run();
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::ErrorResponseHandler()
+    Middleware::ErrorHandler()
+        //My error handler
         ->handler('errorHandler')
-        ->arguments($myApp) //(optional) append arguments to the callable
-]);
-```
 
-### ExceptionHandler
+        //(optional) append arguments to the handler
+        ->arguments($myApp)
 
-Cath any exception throwed by the next middlewares and returns a response with it. You have to pass a callable that returns an instance of Stream:
+        //(optional) register your function to catch exceptions or other errors
+        ->before(function ($handler) use ($whoops) {
+           $whoops->pushHandler(function () use ($handler) {
+                echo $handler()->getBody();
+           });
+        });
 
-```php
-$relay = new RelayBuilder();
-
-$dispatcher = $relay->getInstance([
-    Middleware::exceptionHandler()
+        //(optional) unregister the error catcher
+        ->after(function ($handler) use ($whoops) {
+            $whoops->popHandler();
+        })
 ]);
 ```
 

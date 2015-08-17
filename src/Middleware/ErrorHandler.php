@@ -6,12 +6,17 @@ use Psr7Middlewares\Utils\ArgumentsTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class ErrorResponseHandler
+/**
+ * Middleware to handle php errors and exceptions
+ */
+class ErrorHandler
 {
     use RouterTrait;
     use ArgumentsTrait;
 
     protected $handler;
+    protected $before;
+    protected $after;
 
     /**
      * Constructor
@@ -26,7 +31,7 @@ class ErrorResponseHandler
     }
 
     /**
-     * Configure the error handler
+     * Set the error handler
      *
      * @param string|callable $handler
      *
@@ -35,6 +40,34 @@ class ErrorResponseHandler
     public function handler($handler)
     {
         $this->handler = $handler;
+
+        return $this;
+    }
+
+    /**
+     * Register a handler executed before
+     *
+     * @param callable $handler
+     *
+     * @return self
+     */
+    public function before(callable $handler)
+    {
+        $this->before = $handler;
+
+        return $this;
+    }
+
+    /**
+     * Register a handler executed after
+     *
+     * @param callable $handler
+     *
+     * @return self
+     */
+    public function after(callable $handler)
+    {
+        $this->after = $handler;
 
         return $this;
     }
@@ -49,15 +82,22 @@ class ErrorResponseHandler
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        try {
-            $response = $next($request, $response);
-        } catch (\Exception $exception) {
-            $request = $request->withAttribute('EXCEPTION', $exception);
-            $response = $response->withStatus(500);
+        $handler = function () use ($request, $response) {
+            return self::executeTarget($this->handler, $this->arguments, $request, $response);
+        };
+
+        if ($this->before !== null) {
+            call_user_func($this->before, $handler);
         }
+
+        $response = $next($request, $response);
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
             return self::executeTarget($this->handler, $this->arguments, $request, $response);
+        }
+
+        if ($this->after !== null) {
+            call_user_func($this->after, $handler);
         }
 
         return $response;

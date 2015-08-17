@@ -1,13 +1,13 @@
 <?php
 use Psr7Middlewares\Middleware;
 
-class ErrorResponseHandlerTest extends Base
+class ErrorHandlerTest extends Base
 {
     public function testError()
     {
         $response = $this->execute(
             [
-                Middleware::ErrorResponseHandler(function ($request, $response) {
+                Middleware::ErrorHandler(function ($request, $response) {
                     $response->getBody()->write('Page not found');
                 }),
                 function ($request, $response, $next) {
