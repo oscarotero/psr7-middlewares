@@ -257,12 +257,15 @@ $dispatcher = $relay->getInstance([
            $whoops->pushHandler(function () use ($handler) {
                 echo $handler()->getBody();
            });
-        });
+        })
 
         //(optional) unregister the error catcher
         ->after(function ($handler) use ($whoops) {
             $whoops->popHandler();
         })
+
+        //(optional) catch exceptions, if you don't use an external library for that
+        ->catchExceptions(true)
 ]);
 ```
 

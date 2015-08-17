@@ -17,6 +17,7 @@ class ErrorHandler
     protected $handler;
     protected $before;
     protected $after;
+    protected $catchExceptions = false;
 
     /**
      * Constructor
@@ -40,6 +41,20 @@ class ErrorHandler
     public function handler($handler)
     {
         $this->handler = $handler;
+
+        return $this;
+    }
+
+    /**
+     * Configure the catchExceptions
+     *
+     * @param boolean $catch
+     *
+     * @return self
+     */
+    public function catchExceptions($catch = true)
+    {
+        $this->catchExceptions = (boolean) $catch;
 
         return $this;
     }
@@ -90,7 +105,16 @@ class ErrorHandler
             call_user_func($this->before, $handler);
         }
 
-        $response = $next($request, $response);
+        try {
+            $response = $next($request, $response);
+        } catch (\Exception $exception) {
+            if (!$this->catchExceptions) {
+                throw $exception;
+            }
+
+            $request = $request->withAttribute('EXCEPTION', $exception);
+            $response = $response->withStatus(500);
+        }
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
             return self::executeTarget($this->handler, $this->arguments, $request, $response);
