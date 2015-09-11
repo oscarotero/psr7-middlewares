@@ -30,14 +30,45 @@ Middleware::setStreamFactory(function ($file, $mode) {
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->newInstance([
-    Middleware::Cache('/storage'),
+    
+    //Handle errors
+    Middleware::errorHandler()
+        ->handler('error_handler_function')
+        ->catchExceptions(true)
+
+    //Remove the path prefix
     Middleware::BasePath('/my-site/web'),
-    Middleware::DigestAuthentication(['username' => 'password']),
+
+    //Digest authentication
+    Middleware::DigestAuthentication()
+        ->users([
+            'username' => 'password'
+        ]),
+
+    //Get the client ip
     Middleware::ClientIp(),
-    Middleware::Firewall(['127.0.0.1']),
-    Middleware::LanguageNegotiator(['gl', 'es', 'en']),
+
+    //Allow only some ips
+    Middleware::Firewall()
+        ->trusted(['127.0.0.*']),
+
+    //Detects the user preferred language
+    Middleware::LanguageNegotiator()
+        ->languages(['gl', 'es', 'en']),
+
+    //Detects the format
     Middleware::FormatNegotiator(),
+
+    //Execute fast route
+    Middleware::FastRoute()
+        ->router($app->get('dispatcher')),
+
+    //Minify the result
     Middleware::Minify()
+
+    //Saves the response in a file
+    Middleware::saveResponse()
+        ->storage('app/public')
 ]);
 
 $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
@@ -66,18 +97,22 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 To use [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You need to use the 3.x version, compatible with psr-7:
 
 ```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\AuraRouter;
 use Aura\Router\RouterContainer;
 
 //Create the router
 $routerContainer = new RouterContainer();
 
 $map = $routerContainer->getMap();
+
 $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
+
     //The route values are stored into parameters
     $name = $request->getAttribute('name');
 
     //You can get also the route instance
-    $route = $request->getAttribute('ROUTE');
+    $route = AuraRouter::getRoute($request);
 
     //Write directly in the body's response
     $response->getBody()->write('Hello '.$name);
@@ -93,8 +128,6 @@ $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
 });
 
 //Add to the dispatcher
-$relay = new RelayBuilder();
-
 $dispatcher = $relay->getInstance([
 
     Middleware::AuraRouter()
@@ -105,10 +138,11 @@ $dispatcher = $relay->getInstance([
 
 ### AuraSession
 
-Creates a new [Aura.Session](https://github.com/auraphp/Aura.Session) instance with the request and save it in `SESSION` attribute. You can set an instance of `Aura\Session\SessionFactory` as first argument.
+Creates a new [Aura.Session](https://github.com/auraphp/Aura.Session) instance with the request.
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\AuraSession;
 
 $dispatcher = $relay->getInstance([
 
@@ -118,7 +152,7 @@ $dispatcher = $relay->getInstance([
 
     function ($request, $reponse, $next) {
         //Get the session instance
-        $session = $request->getAttribute('SESSION');
+        $session = AuraSession::getSession($request);
     }
 ]);
 ```
@@ -128,7 +162,7 @@ $dispatcher = $relay->getInstance([
 Strip off the prefix from the uri path of the request. This is useful to combine with routers if the root of the website is in a subdirectory. For example, if the root of your website is `/web/public`, a request with the uri `/web/public/post/34` will be converted to `/post/34`.
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
     Middleware::BasePath('/web/public'),
@@ -137,10 +171,10 @@ $dispatcher = $relay->getInstance([
 
 ### BasicAuthentication
 
-Implements the [basic http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed as first argument:
+Implements the [basic http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed:
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
@@ -158,7 +192,7 @@ $dispatcher = $relay->getInstance([
 To save and reuse responses based in the Cache-Control: max-age directive and Expires header.
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
@@ -174,10 +208,11 @@ $dispatcher = $relay->getInstance([
 
 ### ClientIp
 
-Detects the client ip(s) and create two attributes in the request instance: `CLIENT_IPS` (array with all ips found) and `CLIENT_IP` (the first ip). You can set an array of allowed headers as the first argument.
+Detects the client ip(s). You can configure the allowed headers.
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\ClientIp;
 
 $dispatcher = $relay->getInstance([
 
@@ -190,10 +225,10 @@ $dispatcher = $relay->getInstance([
 
     function ($request, $response, $next) {
         //Get the user ip
-        $ip = $request->getAttribute('CLIENT_IP');
+        $ip = ClientIp::getIp($request);
 
         //Get all ips found in the headers
-        $all_ips = array_implode(', ', $request->getAttribute('CLIENT_IPS'));
+        $all_ips = array_implode(', ', ClientIp::getIps($request));
 
         return $next($request, $response);
     }
@@ -205,7 +240,7 @@ $dispatcher = $relay->getInstance([
 Implements the [digest http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed as first argument:
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
@@ -221,9 +256,12 @@ $dispatcher = $relay->getInstance([
 
 ### ErrorHandler
 
-Executes a handler if the response returned by the next middlewares has any error (status code 400-599). If you use an error handler like [whoops](https://github.com/filp/whoops), you can register it to catch exceptions and other errors using the methods `before` and `after`. These methods receives a callable wrapping your handler that returns a ResponseInterface object.
+Executes a handler if the response returned by the next middlewares has any error (status code 400-599). You can catch also the exceptions throwed. To use it with an error handler like [whoops](https://github.com/filp/whoops), you can register it to catch exceptions and other errors using the methods `before` and `after`. These methods receives a callable wrapping your handler that returns a ResponseInterface object.
 
 ```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\ErrorHandler;
+
 function errorHandler($request, $response, $myApp) {
     switch ($response->getStatusCode()) {
         case 404:
@@ -231,7 +269,7 @@ function errorHandler($request, $response, $myApp) {
 
         case 500:
             //you can get the exception catched
-            $exception = $request->getAttribute('EXCEPTION');
+            $exception = ErrorHandler::getException($request);
 
             return 'Server error: '.$exception->getMessage();
 
@@ -240,7 +278,6 @@ function errorHandler($request, $response, $myApp) {
     }
 }
 
-$relay = new Relay\RelayBuilder();
 $whoops = new Whoops\Run();
 
 $dispatcher = $relay->getInstance([
@@ -273,14 +310,14 @@ $dispatcher = $relay->getInstance([
 To use [FastRoute](https://github.com/nikic/FastRoute) as a middleware.
 
 ```php
+use Psr7Middlewares\Middleware;
+
 $router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
 
     $r->addRoute('GET', '/blog/{id:[0-9]+}', function ($request, $response, $app) {
         return 'This is the post number'.$request->getAttribute('id');
     });
 });
-
-$relay = new RelayBuilder();
 
 $dispatcher = $relay->getInstance([
 
@@ -297,7 +334,7 @@ Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide a IP filteri
 [See the ip formats allowed](https://github.com/M6Web/Firewall#entries-formats) for trusted/untrusted options:
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
@@ -313,26 +350,35 @@ $dispatcher = $relay->getInstance([
 
 ### FormatNegotiation
 
-Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. Stores the format in the `FORMAT` attribute. The middleware add also the `Content-Type` header to the response if it's missing. You can pass an instance of `Negotiation\FormatNegotiator` as first argument.
+Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. It also adds the `Content-Type` header to the response if it's missing.
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\FormatNegotiation;
 
 $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiation()
         ->negotiator($negotiator) //(optional) Instance of Negotiation\FormatNegotiator
         ->addFormat('pdf', ['application/pdf', 'application/x-download']) //(optional) add new formats and mimetypes
+    },
+
+    function ($request, $response, $next) {
+        //get the format (for example: html)
+        $format = FormatNegotiation::getFormat($request);
+
+        return $next($request, $response);
     }
 ]);
 ```
 
 ### LanguageNegotiation
 
-Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. Store the language in the `LANGUAGE` attribute. You must provide an array with all available languages:
+Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. You must provide an array with all available languages:
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\LanguageNegotiation;
 
 $dispatcher = $relay->getInstance([
 
@@ -341,7 +387,7 @@ $dispatcher = $relay->getInstance([
 
     function ($request, $response, $next) {
         //Get the preferred language
-        $language = $request->getAttribute('LANGUAGE');
+        $language = LanguageNegotiation::getLanguage($request);
 
         return $next($request, $response);
     }
@@ -353,7 +399,7 @@ $dispatcher = $relay->getInstance([
 Uses [mrclay/minify](https://github.com/mrclay/minify) to minify the html, css and js code from the responses.
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
     
@@ -376,7 +422,7 @@ Saves the response content into a file if all of the following conditions are me
 This is useful for cache purposes
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
@@ -391,12 +437,16 @@ $dispatcher = $relay->getInstance([
 Removes the trailing slash of the path. For example, `/post/23/` will be converted to `/post/23`. If the path is `/` it won't be converted. Useful if you have problems with the router.
 
 ```php
-$relay = new RelayBuilder();
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
+
     Middleware::TrailingSlash()
         ->addSlash(true) //(optional) to add the trailing slash instead remove
         ->basePath('public') //(optional) basepath
 ]);
 ```
 
+## Contribution
+
+New middlewares are appreciated. Just create a pull request.
