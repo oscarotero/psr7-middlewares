@@ -7,8 +7,9 @@ use RuntimeException;
 
 class Middleware
 {
+    const KEY = 'Psr7Middlewares\\Middleware';
+
     protected static $streamFactory;
-    protected static $attributesKey = '_MIDDLEWARES_';
 
     /**
      * Set the stream factory used by some middlewares
@@ -62,10 +63,10 @@ class Middleware
      */
     public static function setAttribute(ServerRequestInterface $request, $name, $value)
     {
-        $attributes = $request->getAttribute(static::$attributesKey, []);
+        $attributes = $request->getAttribute(self::KEY, []);
         $attributes[$name] = $value;
 
-        return $request->withAttribute(static::$attributesKey, $attributes);
+        return $request->withAttribute(self::KEY, $attributes);
     }
 
     /**
@@ -78,7 +79,7 @@ class Middleware
      */
     public static function getAttribute(ServerRequestInterface $request, $name)
     {
-        $attributes = $request->getAttribute(static::$attributesKey);
+        $attributes = $request->getAttribute(self::KEY);
 
         if (isset($attributes[$name])) {
             return $attributes[$name];
