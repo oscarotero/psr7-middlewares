@@ -59,7 +59,7 @@ class SaveResponse
                 $path .= '/'.$filename;
             }
 
-            $filename = 'index.'.($request->getAttribute('FORMAT') ?: 'html');
+            $filename = 'index.'.(FormatNegotiator::getFormat($request) ?: 'html');
         }
 
         return $this->storage.$path.'/'.$filename;

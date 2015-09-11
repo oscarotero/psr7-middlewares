@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils\RouterTrait;
 use Psr7Middlewares\Utils\ArgumentsTrait;
 use Psr\Http\Message\ServerRequestInterface;
@@ -11,6 +12,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ErrorHandler
 {
+    const KEY = 'EXCEPTION';
+
     use RouterTrait;
     use ArgumentsTrait;
 
@@ -18,6 +21,18 @@ class ErrorHandler
     protected $before;
     protected $after;
     protected $catchExceptions = false;
+
+    /**
+     * Returns the exception throwed
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return \Exception|null
+     */
+    public static function getException(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Constructor
@@ -112,7 +127,7 @@ class ErrorHandler
                 throw $exception;
             }
 
-            $request = $request->withAttribute('EXCEPTION', $exception);
+            $request = Middleware::setAttribute($request, self::KEY, $exception);
             $response = $response->withStatus(500);
         }
 

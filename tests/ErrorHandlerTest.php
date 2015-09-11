@@ -1,5 +1,6 @@
 <?php
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\ErrorHandler;
 
 class ErrorHandlerTest extends Base
 {
@@ -28,7 +29,7 @@ class ErrorHandlerTest extends Base
             [
                 Middleware::ErrorHandler()
                     ->handler(function ($request, $response) {
-                        $exception = $request->getAttribute('EXCEPTION');
+                        $exception = ErrorHandler::getException($request);
 
                         $response->getBody()->write((string) $exception);
                     })

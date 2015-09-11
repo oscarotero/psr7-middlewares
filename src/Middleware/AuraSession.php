@@ -1,14 +1,30 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Middleware;
 use Aura\Session\SessionFactory;
+use Aura\Session\Session;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class AuraSession
 {
+    const KEY = 'AURA_SESSION';
+
     protected $factory;
     protected $name;
+
+    /**
+     * Returns the session instance
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return Session|null
+     */
+    public static function getSession(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Constructor
@@ -67,7 +83,7 @@ class AuraSession
             $session->setName($this->name);
         }
 
-        $request = $request->withAttribute('SESSION', $session);
+        $request = Middleware::setAttribute($request, self::KEY, $session);
 
         return $next($request, $response);
     }

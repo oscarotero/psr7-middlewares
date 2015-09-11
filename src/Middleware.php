@@ -2,11 +2,13 @@
 namespace Psr7Middlewares;
 
 use Psr\Http\Message\Stream;
+use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
 class Middleware
 {
     protected static $streamFactory;
+    protected static $attributesKey = '_MIDDLEWARES_';
 
     /**
      * Set the stream factory used by some middlewares
@@ -47,5 +49,39 @@ class Middleware
         }
 
         throw new RuntimeException("The middleware {$name} does not exits");
+    }
+
+    /**
+     * Store an attribute in the request
+     *
+     * @param ServerRequestInterface $request
+     * @param string                 $name
+     * @param mixed                  $value
+     *
+     * @return ServerRequestInterface
+     */
+    public static function setAttribute(ServerRequestInterface $request, $name, $value)
+    {
+        $attributes = $request->getAttribute(static::$attributesKey, []);
+        $attributes[$name] = $value;
+
+        return $request->withAttribute(static::$attributesKey, $attributes);
+    }
+
+    /**
+     * Retrieves an attribute from the request
+     *
+     * @param ServerRequestInterface $request
+     * @param string                 $name
+     *
+     * @return mixed
+     */
+    public static function getAttribute(ServerRequestInterface $request, $name)
+    {
+        $attributes = $request->getAttribute(static::$attributesKey);
+
+        if (isset($attributes[$name])) {
+            return $attributes[$name];
+        }
     }
 }

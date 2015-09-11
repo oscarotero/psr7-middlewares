@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -9,6 +10,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ClientIp
 {
+    const KEY = 'CLIENT_IPS';
+
     protected $headers = [
         'Forwarded',
         'Forwarded-For',
@@ -17,6 +20,32 @@ class ClientIp
         'X-Forwarded-For',
         'X-Cluster-Client-Ip',
     ];
+
+    /**
+     * Returns all ips found
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return array|null
+     */
+    public static function getIps(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
+
+    /**
+     * Return the client ip
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return string|null
+     */
+    public static function getIp(ServerRequestInterface $request)
+    {
+        $ips = static::getIps($request);
+
+        return isset($ips[0]) ? $ips[0] : null;
+    }
 
     /**
      * Constructor. Defines de trusted headers.
@@ -54,11 +83,7 @@ class ClientIp
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $ips = $this->getIps($request);
-
-        $request = $request
-            ->withAttribute('CLIENT_IPS', $ips)
-            ->withAttribute('CLIENT_IP', isset($ips[0]) ? $ips[0] : null);
+        $request = Middleware::setAttribute($request, self::KEY, $this->scanIps($request));
 
         return $next($request, $response);
     }
@@ -70,7 +95,7 @@ class ClientIp
      *
      * @return array
      */
-    protected function getIps(ServerRequestInterface $request)
+    protected function scanIps(ServerRequestInterface $request)
     {
         $server = $request->getServerParams();
         $ips = [];

@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Middleware;
 use Negotiation\FormatNegotiator as Negotiator;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -10,6 +11,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class FormatNegotiator
 {
+    const KEY = 'FORMAT';
+
     protected $negotiator;
     protected $formats = [
         'atom' => ['application/atom+xml'],
@@ -29,6 +32,18 @@ class FormatNegotiator
         'xml' => ['text/xml', 'application/xml', 'application/x-xml'],
         'zip' => ['application/zip', 'application/x-zip', 'application/x-zip-compressed'],
     ];
+
+    /**
+     * Returns the format
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return string|null
+     */
+    public static function getFormat(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Constructor. Defines de available formats.
@@ -92,7 +107,7 @@ class FormatNegotiator
         }
 
         //Save the format as attribute
-        $request = $request->withAttribute('FORMAT', $format);
+        $request = Middleware::setAttribute($request, self::KEY, $format);
 
         //Set the content-type to the response
         if (($mime = $negotiator->normalizePriorities([$format]))) {

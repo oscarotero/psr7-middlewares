@@ -1,5 +1,6 @@
 <?php
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\LanguageNegotiator;
 
 class LanguageNegotiatorTest extends Base
 {
@@ -43,7 +44,7 @@ class LanguageNegotiatorTest extends Base
             [
                 Middleware::LanguageNegotiator($languages),
                 function ($request, $response, $next) use ($language) {
-                    $response->getBody()->write($request->getAttribute('LANGUAGE'));
+                    $response->getBody()->write(LanguageNegotiator::getLanguage($request));
 
                     return $response;
                 },
