@@ -6,7 +6,6 @@ use Psr7Middlewares\Utils\CacheTrait;
 use Psr7Middlewares\Utils\StorageTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-
 use Psr\Cache\CacheItemPoolInterface;
 use Datetime;
 
@@ -34,7 +33,7 @@ class Cache
 
     /**
      * Set the psr-6 cache pool used
-     * 
+     *
      * @param CacheItemPoolInterface $cache
      */
     public function cache(CacheItemPoolInterface $cache)
@@ -73,7 +72,7 @@ class Cache
         if (static::isCacheable($request, $response)) {
             $item->set([
                 $response->getHeaders(),
-                (string) $response->getBody()
+                (string) $response->getBody(),
             ]);
 
             if (($time = static::getExpiration($response)) !== null) {

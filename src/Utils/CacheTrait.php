@@ -1,10 +1,8 @@
 <?php
 namespace Psr7Middlewares\Utils;
 
-use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
 /**
  * Utilities used by router middlewares

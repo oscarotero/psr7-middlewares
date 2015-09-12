@@ -1,7 +1,5 @@
 <?php
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Middleware\AuraRouter;
-use Aura\Router\RouterContainer;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
 use MatthiasMullie\Scrapbook\Psr6\Pool;
 
@@ -21,7 +19,7 @@ class CacheTest extends Base
                 ++$used;
 
                 return $next($request, $response);
-            }
+            },
         ];
 
         //Test
@@ -54,7 +52,7 @@ class CacheTest extends Base
                 ++$used;
 
                 return $next($request, $response->withHeader('Expires', (new \Datetime('-1 day'))->format('D, d M Y H:i:s')));
-            }
+            },
         ];
 
         //Test

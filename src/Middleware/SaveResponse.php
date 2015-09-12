@@ -6,6 +6,7 @@ use Psr7Middlewares\Utils\BasePathTrait;
 use Psr7Middlewares\Utils\StorageTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Middleware to save the response into a file
