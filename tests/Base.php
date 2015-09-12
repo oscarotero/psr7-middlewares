@@ -16,17 +16,18 @@ abstract class Base extends PHPUnit_Framework_TestCase
         return new Response('php://temp', 200, $headers);
     }
 
-    protected function dispatcher(array $middlewares)
+    protected function dispatch(array $middlewares, ServerRequest $request, Response $response)
     {
-        return (new RelayBuilder())->newInstance($middlewares);
+        $dispatcher = (new RelayBuilder())->newInstance($middlewares);
+
+        return $dispatcher($request, $response);
     }
 
     protected function execute(array $middlewares, $url = '', array $headers = array())
     {
         $request = $this->request($url, $headers);
         $response = $this->response();
-        $dispatcher = $this->dispatcher($middlewares);
 
-        return $dispatcher($request, $response);
+        return $this->dispatch($middlewares, $request, $response);
     }
 }

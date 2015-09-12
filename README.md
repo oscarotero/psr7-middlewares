@@ -108,7 +108,7 @@ $map = $routerContainer->getMap();
 
 $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
 
-    //The route values are stored into parameters
+    //The route parameters are stored as attributes
     $name = $request->getAttribute('name');
 
     //You can get also the route instance
