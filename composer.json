@@ -30,7 +30,7 @@
 		"willdurand/negotiation": "~1.3",
 		"m6web/firewall": "~1.0",
 		"mrclay/minify": "^2.2",
-		"matthiasmullie/scrapbook": "^1.0"
+		"matthiasmullie/scrapbook": "dev-master"
 	},
 	"suggest": {
 		"aura/router": "To use the AuraRouter middleware",

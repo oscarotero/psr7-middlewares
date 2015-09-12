@@ -77,7 +77,7 @@ class Cache
             ]);
 
             if (($time = static::getExpiration($response)) !== null) {
-                $item->setExpiration($time);
+                $item->expiresAt($time);
             }
 
             $this->cache->save($item);
