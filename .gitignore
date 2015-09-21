@@ -27,3 +27,6 @@ $RECYCLE.BIN/
 vendor/
 composer.lock
 composer.phar
+
+
+test.php
