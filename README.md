@@ -89,6 +89,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [FormatNegotiation](#formatnegotiation)
 * [LanguageNegotiation](#languagenegotiation)
 * [Minify](#minify)
+* [Payload](#payload)
 * [SaveResponse](#saveresponse)
 * [TrailingSlash](#trailingslash)
 
@@ -407,6 +408,27 @@ $dispatcher = $relay->getInstance([
         ->forCache(true) //(optional) only minify cacheable responses (see SaveResponse)
         ->inlineCss(false) //(optional) enable/disable inline css minification
         ->inlineJs(false) //(optional) enable/disable inline js minification
+]);
+```
+
+### Payload
+
+Parses the body of the request if it's not parsed and the method is GET, POST or PUT. It has support for json and url encoded format.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+    
+    Middleware::Payload()
+        ->associative(true) //(optional) To generate associative arrays with json objects
+
+    function ($request, $response, $next) {
+        //Get the parsed body
+        $content = $request->getParsedBody();
+
+        return $next($request, $response);
+    }
 ]);
 ```
 
