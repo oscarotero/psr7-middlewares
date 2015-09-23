@@ -476,12 +476,25 @@ Uses [ramsey/uuid](https://github.com/ramsey/uuid) to generate an Uuid (Universa
 
 ```php
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\Uuid;
 
 $dispatcher = $relay->getInstance([
 
     Middleware::Uuid()
         ->version(4) //(optional) version of the identifier (1 by default). Versions 3 and 5 need more arguments (see https://github.com/ramsey/uuid#examples)
-        ->header(false) //(optional) Name of the header to store the identifier (X-Uuid by default). Set false to no save header
+        ->header(false), //(optional) Name of the header to store the identifier (X-Uuid by default). Set false to no save header
+
+    function ($request, $response, $next) {
+        //Get the X-Uuid header
+        $id = $request->getHeaderLine('X-Uuid');
+
+        //Get the Uuid instance
+        $uuid = Uuid::getUuid($request);
+
+        echo $uuid->toString();
+
+        return $next($request, $response);
+    }
 ]);
 ```
 

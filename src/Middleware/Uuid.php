@@ -5,6 +5,8 @@ use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+use Rhumsaa\Uuid\Uuid;
+
 /**
  * Middleware to generate UUID on each request
  */
@@ -14,6 +16,18 @@ class Uuid
 
     protected $version = [1];
     protected $header = 'X-Uuid';
+
+    /**
+     * Returns the Uuid instance
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return Uuid|null
+     */
+    public static function getUuid(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Constructor. Set the version of UUID
