@@ -42,8 +42,8 @@ class Middleware
         $class = __NAMESPACE__.'\\Middleware\\'.ucfirst($name);
 
         if (class_exists($class)) {
-            if (isset($args[0])) {
-                return new $class($args[0]);
+            if (!empty($args)) {
+                return (new \ReflectionClass($class))->newInstanceArgs($args);
             }
 
             return new $class();

@@ -92,6 +92,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Payload](#payload)
 * [SaveResponse](#saveresponse)
 * [TrailingSlash](#trailingslash)
+* [Uuid](#uuid)
 
 ### AuraRouter
 
@@ -466,6 +467,21 @@ $dispatcher = $relay->getInstance([
     Middleware::TrailingSlash()
         ->addSlash(true) //(optional) to add the trailing slash instead remove
         ->basePath('public') //(optional) basepath
+]);
+```
+
+### Uuid
+
+Uses [ramsey/uuid](https://github.com/ramsey/uuid) to generate an Uuid (Universally Unique Identifiers) for each request (compatible with [RFC 4122](http://tools.ietf.org/html/rfc4122) versions 1, 3, 4 and 5). It's usefull for debugging purposes.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Uuid()
+        ->version(4) //(optional) version of the identifier (1 by default). Versions 3 and 5 need more arguments (see https://github.com/ramsey/uuid#examples)
+        ->header(false) //(optional) Name of the header to store the identifier (X-Uuid by default). Set false to no save header
 ]);
 ```
 
