@@ -5,8 +5,6 @@ use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-use Rhumsaa\Uuid\Uuid;
-
 /**
  * Middleware to generate UUID on each request
  */
@@ -22,7 +20,7 @@ class Uuid
      *
      * @param ServerRequestInterface $request
      *
-     * @return Uuid|null
+     * @return \Rhumsaa\Uuid\Uuid|null
      */
     public static function getUuid(ServerRequestInterface $request)
     {
@@ -88,7 +86,7 @@ class Uuid
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $uuid = $this->getUUID();
+        $uuid = $this->generateUuid();
 
         $request = Middleware::setAttribute($request, self::KEY, $uuid);
 
@@ -106,7 +104,7 @@ class Uuid
      *
      * @return ServerRequestInterface
      */
-    protected function getUuid()
+    protected function generateUuid()
     {
         $args = $this->version;
         $fn = 'uuid'.array_shift($args);
