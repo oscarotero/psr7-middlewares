@@ -30,45 +30,45 @@ Middleware::setStreamFactory(function ($file, $mode) {
 $relay = new RelayBuilder();
 
 $dispatcher = $relay->newInstance([
+
+    //Add an Uuid to request
+    Middleware::uuid(),
     
     //Handle errors
-    Middleware::errorHandler()
-        ->handler('error_handler_function')
-        ->catchExceptions(true)
+    Middleware::errorHandler('error_handler_function')->catchExceptions(true),
+
+    //Parse the request payload
+    Middleware::payload(),
 
     //Remove the path prefix
-    Middleware::BasePath('/my-site/web'),
+    Middleware::basePath('/my-site/web'),
+
+    //Remove the trailing slash
+    Middleware::trailingSlash(),
 
     //Digest authentication
-    Middleware::DigestAuthentication()
-        ->users([
-            'username' => 'password'
-        ]),
+    Middleware::digestAuthentication(['username' => 'password']),
 
     //Get the client ip
-    Middleware::ClientIp(),
+    Middleware::clientIp(),
 
     //Allow only some ips
-    Middleware::Firewall()
-        ->trusted(['127.0.0.*']),
+    Middleware::firewall(['127.0.0.*']),
 
     //Detects the user preferred language
-    Middleware::LanguageNegotiator()
-        ->languages(['gl', 'es', 'en']),
+    Middleware::languageNegotiator(['gl', 'es', 'en']),
 
     //Detects the format
-    Middleware::FormatNegotiator(),
+    Middleware::formatNegotiator(),
 
     //Execute fast route
-    Middleware::FastRoute()
-        ->router($app->get('dispatcher')),
+    Middleware::fastRoute($app->get('dispatcher')),
 
     //Minify the result
-    Middleware::Minify()
+    Middleware::minify()
 
     //Saves the response in a file
-    Middleware::saveResponse()
-        ->storage('app/public')
+    Middleware::saveResponse('app/public')
 ]);
 
 $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
@@ -482,7 +482,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::Uuid()
         ->version(4) //(optional) version of the identifier (1 by default). Versions 3 and 5 need more arguments (see https://github.com/ramsey/uuid#examples)
-        ->header(false), //(optional) Name of the header to store the identifier (X-Uuid by default). Set false to no save header
+        ->header(false), //(optional) Name of the header to store the identifier (X-Uuid by default). Set false to don't save header
 
     function ($request, $response, $next) {
         //Get the X-Uuid header
