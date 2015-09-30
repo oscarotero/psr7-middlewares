@@ -60,7 +60,7 @@ class Firewall
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $ips = $request->getAttribute('CLIENT_IPS');
+        $ips = ClientIp::getIps($request);
 
         if ($ips === null) {
             throw new RuntimeException('Firewall middleware needs ClientIp executed before');

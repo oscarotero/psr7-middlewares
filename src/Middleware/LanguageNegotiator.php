@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Middleware;
 use Negotiation\LanguageNegotiator as Negotiator;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -10,7 +11,21 @@ use Psr\Http\Message\ResponseInterface;
  */
 class LanguageNegotiator
 {
+    const KEY = 'LANGUAGE';
+
     protected $languages = [];
+
+    /**
+     * Returns the language
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return string|null
+     */
+    public static function getLanguage(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Constructor. Defines de available languages.
@@ -57,6 +72,8 @@ class LanguageNegotiator
             $language = isset($this->languages[0]) ? $this->languages[0] : null;
         }
 
-        return $next($request->withAttribute('LANGUAGE', $language), $response);
+        $request = Middleware::setAttribute($request, self::KEY, $language);
+
+        return $next($request, $response);
     }
 }

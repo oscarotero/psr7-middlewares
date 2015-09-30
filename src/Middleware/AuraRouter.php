@@ -1,9 +1,11 @@
 <?php
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils\RouterTrait;
 use Psr7Middlewares\Utils\ArgumentsTrait;
 use Aura\Router\RouterContainer;
+use Aura\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -13,7 +15,21 @@ class AuraRouter
     use RouterTrait;
     use ArgumentsTrait;
 
+    const KEY = 'AURA_ROUTE';
+
     protected $router;
+
+    /**
+     * Returns the route instance
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return Route|null
+     */
+    public static function getRoute(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Constructor.Set the RouterContainer instance
@@ -73,7 +89,7 @@ class AuraRouter
             }
         }
 
-        $request = $request->withAttribute('ROUTE', $route);
+        $request = Middleware::setAttribute($request, self::KEY, $route);
 
         foreach ($route->attributes as $name => $value) {
             $request = $request->withAttribute($name, $value);

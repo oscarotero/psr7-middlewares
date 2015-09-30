@@ -1,5 +1,6 @@
 <?php
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\ClientIp;
 
 class ClientIpTest extends Base
 {
@@ -34,8 +35,8 @@ class ClientIpTest extends Base
                 Middleware::ClientIp(),
                 function ($request, $response, $next) {
                     $response->getBody()->write(json_encode([
-                        'CLIENT_IPS' => $request->getAttribute('CLIENT_IPS'),
-                        'CLIENT_IP' => $request->getAttribute('CLIENT_IP'),
+                        'CLIENT_IPS' => ClientIp::getIps($request),
+                        'CLIENT_IP' => ClientIp::getIp($request),
                     ]));
 
                     return $response;

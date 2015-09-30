@@ -1,10 +1,8 @@
 <?php
 namespace Psr7Middlewares\Utils;
 
-use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
 /**
  * Utilities used by router middlewares
@@ -37,35 +35,6 @@ trait CacheTrait
         }
 
         return true;
-    }
-
-    /**
-     * Write the stream to the given path
-     *
-     * @param StreamInterface $stream
-     * @param string          $path
-     */
-    protected static function writeStream(StreamInterface $stream, $path)
-    {
-        $dir = dirname($path);
-
-        if (!is_dir($dir)) {
-            mkdir($dir, 0777, true);
-        }
-
-        $handle = fopen($path, 'wb+');
-
-        if (false === $handle) {
-            throw new RuntimeException('Unable to write to designated path');
-        }
-
-        $stream->rewind();
-
-        while (!$stream->eof()) {
-            fwrite($handle, $stream->read(4096));
-        }
-
-        fclose($handle);
     }
 
     /**

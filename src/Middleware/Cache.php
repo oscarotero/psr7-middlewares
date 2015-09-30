@@ -6,6 +6,8 @@ use Psr7Middlewares\Utils\CacheTrait;
 use Psr7Middlewares\Utils\StorageTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Cache\CacheItemPoolInterface;
+use Datetime;
 
 /**
  * Middleware to cache the response using Cache-Control and other directives
@@ -14,6 +16,30 @@ class Cache
 {
     use CacheTrait;
     use StorageTrait;
+
+    protected $cache;
+
+    /**
+     * Constructor. Set the cache pool
+     *
+     * @param CacheItemPoolInterface|null $cache
+     */
+    public function __construct(CacheItemPoolInterface $cache = null)
+    {
+        if ($cache !== null) {
+            $this->cache($cache);
+        }
+    }
+
+    /**
+     * Set the psr-6 cache pool used
+     *
+     * @param CacheItemPoolInterface $cache
+     */
+    public function cache(CacheItemPoolInterface $cache)
+    {
+        $this->cache = $cache;
+    }
 
     /**
      * Execute the middleware
@@ -26,78 +52,77 @@ class Cache
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        list($headers_file, $stream_file) = $this->getCacheFilename($request);
+        $item = $this->cache->getItem(static::getCacheKey($request));
 
-        if (is_file($stream_file) && is_file($headers_file)) {
-            $headers = include $headers_file;
+        if ($item->isHit()) {
+            list($headers, $body) = $item->get();
 
-            if (static::cacheIsFresh($headers, $stream_file)) {
-                $response = $response->withBody(Factory::createStream($stream_file));
+            $response = $response->withBody(Factory::createStream());
+            $response->getBody()->write($body);
 
-                foreach ($headers as $name => $header) {
-                    $response = $response->withHeader($name, $header);
-                }
-
-                return $response;
+            foreach ($headers as $name => $header) {
+                $response = $response->withHeader($name, $header);
             }
+
+            return $response;
         }
 
         $response = $next($request, $response);
 
         if (static::isCacheable($request, $response)) {
-            static::writeStream($response->getBody(), $stream_file);
-            file_put_contents($headers_file, '<?php return '.var_export($response->getHeaders(), true).';');
+            $item->set([
+                $response->getHeaders(),
+                (string) $response->getBody(),
+            ]);
+
+            if (($time = static::getExpiration($response)) !== null) {
+                $item->expiresAt($time);
+            }
+
+            $this->cache->save($item);
         }
 
         return $response;
     }
 
     /**
-     * Check the max-age directive
+     * Check the cache headers and return the expiration time
      *
-     * @param array  $cacheHeaders
-     * @param string $cacheBodyFile
+     * @param ResponseInterface $response
      *
-     * @return boolean
+     * @return Datetime|null
      */
-    protected static function cacheIsFresh(array $cacheHeaders, $cacheBodyFile)
+    protected static function getExpiration(ResponseInterface $response)
     {
-        $cacheTime = filemtime($cacheBodyFile);
-        $now = new \Datetime();
-
         //Cache-Control
-        if (isset($cacheHeaders['Cache-Control'][0])) {
-            $cacheControl = static::parseCacheControl($cacheHeaders['Cache-Control'][0]);
+        $cacheControl = $response->getHeaderLine('Cache-Control');
+
+        if (!empty($cacheControl)) {
+            $cacheControl = static::parseCacheControl($cacheControl);
 
             //Max age
-            if (isset($cacheControl['max-age']) && ($cacheTime + $cacheControl['max-age'] < $now->get('U'))) {
-                return false;
+            if (isset($cacheControl['max-age'])) {
+                return time() + (int) $cacheControl['max-age'];
             }
         }
 
         //Expires
-        if (isset($cacheHeaders['Expires'][0])) {
-            $expires = new \Datetime($cacheHeaders['Expires'][0]);
+        $expires = $response->getHeaderLine('Expires');
 
-            if ($expires < $now) {
-                return false;
-            }
+        if (!empty($expires)) {
+            return new Datetime($expires);
         }
-
-        return true;
     }
 
     /**
-     * Returns the filename of the response cache file
+     * Returns the id used to cache a request
      *
      * @param ServerRequestInterface $request
      *
-     * @return array
+     * @return string
      */
-    protected function getCacheFilename(ServerRequestInterface $request)
+    protected function getCacheKey(ServerRequestInterface $request)
     {
-        $file = $this->storage.'/'.md5((string) $request->getUri());
-
-        return ["{$file}.headers", "{$file}.body"];
+        return $request->getMethod().md5((string) $request->getUri());
     }
 }

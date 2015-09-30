@@ -1,5 +1,6 @@
 <?php
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\FormatNegotiator;
 
 class FormatNegotiatorTest extends Base
 {
@@ -35,7 +36,7 @@ class FormatNegotiatorTest extends Base
             [
                 Middleware::FormatNegotiator(),
                 function ($request, $response, $next) {
-                    $response->getBody()->write($request->getAttribute('FORMAT'));
+                    $response->getBody()->write(FormatNegotiator::getFormat($request));
 
                     return $response;
                 },

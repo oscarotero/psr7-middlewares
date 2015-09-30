@@ -33,11 +33,11 @@ EOT;
         $response = $this->response(['Content-Type' => 'text/html']);
         $response->getBody()->write($body);
 
-        $dispatcher = $this->dispatcher([
+        $middlewares = [
             Middleware::Minify(),
-        ]);
+        ];
 
-        $response = $dispatcher($this->request(), $response);
+        $response = $this->dispatch($middlewares, $this->request(), $response);
 
         $this->assertEquals($body_minified, (string) $response->getBody());
     }

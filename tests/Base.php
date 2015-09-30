@@ -1,6 +1,7 @@
 <?php
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\Stream;
 use Zend\Diactoros\Uri;
 use Relay\RelayBuilder;
 
@@ -16,17 +17,29 @@ abstract class Base extends PHPUnit_Framework_TestCase
         return new Response('php://temp', 200, $headers);
     }
 
-    protected function dispatcher(array $middlewares)
+    protected function stream($content = '')
     {
-        return (new RelayBuilder())->newInstance($middlewares);
+        $stream = new Stream('php://temp', 'r+');
+
+        if ($content) {
+            $stream->write($content);
+        }
+
+        return $stream;
+    }
+
+    protected function dispatch(array $middlewares, ServerRequest $request, Response $response)
+    {
+        $dispatcher = (new RelayBuilder())->newInstance($middlewares);
+
+        return $dispatcher($request, $response);
     }
 
     protected function execute(array $middlewares, $url = '', array $headers = array())
     {
         $request = $this->request($url, $headers);
         $response = $this->response();
-        $dispatcher = $this->dispatcher($middlewares);
 
-        return $dispatcher($request, $response);
+        return $this->dispatch($middlewares, $request, $response);
     }
 }

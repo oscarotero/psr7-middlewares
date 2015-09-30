@@ -3,7 +3,9 @@ namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Neomerx\Cors\Strategies\AnalysisStrategyInterface;
+use Neomerx\Cors\Analyzer;
+use Neomerx\Cors\Contracts\AnalysisResultInterface;
+use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
 
 /**
  * Middleware to implement Cors
@@ -15,9 +17,9 @@ class Cors
     /**
      * Constructor. Defines the settings used
      *
-     * @param null|AnalysisStrategyInterface $settings
+     * @param null|SettingsStrategyInterface $settings
      */
-    public function __construct(AnalysisStrategyInterface $settings = null)
+    public function __construct(SettingsStrategyInterface $settings = null)
     {
         if ($settings !== null) {
             $this->settings($settings);
@@ -27,11 +29,11 @@ class Cors
     /**
      * Set the settings
      *
-     * @param AnalysisStrategyInterface $settings
+     * @param SettingsStrategyInterface $settings
      *
      * @return self
      */
-    public function settings(AnalysisStrategyInterface $settings)
+    public function settings(SettingsStrategyInterface $settings)
     {
         $this->settings = $settings;
 
@@ -61,18 +63,20 @@ class Cors
                 return $next($request, $response);
 
             case AnalysisResultInterface::TYPE_PRE_FLIGHT_REQUEST:
-                break;
+                foreach ($cors->getResponseHeaders() as $name => $value) {
+                    $response = $response->withHeader($name, $value);
+                }
+
+                return $response->withStatus(200);
 
             default:
                 $response = $next($request, $response);
+
+                foreach ($cors->getResponseHeaders() as $name => $value) {
+                    $response = $response->withHeader($name, $value);
+                }
+
+                return $response;
         }
-
-        $corsHeaders = $cors->getResponseHeaders();
-
-        foreach ($corsHeaders as $name => $value) {
-            $response = $response->withHeader($name, $value);
-        }
-
-        return $response;
     }
 }
