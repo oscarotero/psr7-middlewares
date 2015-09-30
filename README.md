@@ -244,12 +244,21 @@ $dispatcher = $relay->getInstance([
 To use the [neomerx/cors-psr7](https://github.com/neomerx/cors-psr7) library:
 
 ```php
+use Neomerx\Cors\Strategies\Settings
+
 $relay = new RelayBuilder();
+
+$settings = (new Settings())
+    ->setServerOrigin([
+        'scheme' => 'http',
+        'host'   => 'example.com',
+        'port'   => '123',
+    ]);
 
 $dispatcher = $relay->getInstance([
 
     Middleware::Cors()
-        ->settings(new Neomerx\Cors\Strategies\Settings())
+        ->settings($settings)
 ]);
 ```
 
