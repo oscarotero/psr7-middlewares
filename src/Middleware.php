@@ -28,6 +28,10 @@ class Middleware
      */
     public static function createStream($file = 'php://temp', $mode = 'r+')
     {
+        if (empty(static::$streamFactory)) {
+            throw new \RuntimeException('Unable to create a stream. No stream factory defined');
+        }
+
         return call_user_func(static::$streamFactory, $file, $mode);
     }
 
