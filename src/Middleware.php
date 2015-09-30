@@ -29,6 +29,10 @@ class Middleware
     public static function createStream($file = 'php://temp', $mode = 'r+')
     {
         if (empty(static::$streamFactory)) {
+            if (class_exists('Zend\\Diactoros\\Stream')) {
+                return new \Zend\Diactoros\Stream($file, $mode);
+            }
+
             throw new \RuntimeException('Unable to create a stream. No stream factory defined');
         }
 

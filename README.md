@@ -22,6 +22,7 @@ use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Stream;
 
 //Set a stream factory used by some middlewares
+//(Required only if Zend\Diactoros\Stream is not detected)
 Middleware::setStreamFactory(function ($file, $mode) {
     return new Stream($file, $mode);
 });
