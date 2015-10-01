@@ -63,17 +63,34 @@ class LanguageNegotiator
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $negotiator = new Negotiator();
-        $language = $negotiator->getBest($request->getHeaderLine('Accept-Language'), $this->languages);
+        $language = $this->getFromHeader($request);
 
-        if ($language) {
-            $language = strtolower(substr($language->getValue(), 0, 2));
-        } else {
+        if (empty($language)) {
             $language = isset($this->languages[0]) ? $this->languages[0] : null;
         }
 
         $request = Middleware::setAttribute($request, self::KEY, $language);
 
         return $next($request, $response);
+    }
+
+    /**
+     * Returns the language using the Accept-Language header
+     *
+     * @return null|string
+     */
+    protected function getFromHeader(ServerRequestInterface $request)
+    {
+        $accept = $request->getHeaderLine('Accept-Language');
+
+        if (empty($accept) || empty($this->languages)) {
+            return;
+        }
+
+        $language = (new Negotiator())->getBest($accept, $this->languages);
+
+        if ($language) {
+            return $language->getValue();
+        }
     }
 }

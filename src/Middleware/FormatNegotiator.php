@@ -2,9 +2,9 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Negotiation\FormatNegotiator as Negotiator;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Negotiation\Negotiator;
 
 /**
  * Middleware returns the client preferred format
@@ -58,20 +58,6 @@ class FormatNegotiator
     }
 
     /**
-     * Set the negotiator used
-     *
-     * @param Negotiator $negotiator
-     *
-     * @return self
-     */
-    public function negotiator(Negotiator $negotiator)
-    {
-        $this->negotiator = $negotiator;
-
-        return $this;
-    }
-
-    /**
      * Add a new format
      *
      * @param string $format
@@ -96,42 +82,52 @@ class FormatNegotiator
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        //Calculate using the extension
-        $format = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
+        $format = $this->getFromExtension($request) ?: $this->getFromHeader($request);
 
-        //Calculate using the header
-        $negotiator = $this->getNegotiator();
-
-        if (!$negotiator->normalizePriorities([$format])) {
-            $format = $negotiator->getBestFormat($request->getHeaderLine('Accept'));
-        }
-
-        //Save the format as attribute
-        $request = Middleware::setAttribute($request, self::KEY, $format);
-
-        //Set the content-type to the response
-        if (($mime = $negotiator->normalizePriorities([$format]))) {
-            return $next($request, $response->withHeader('Content-Type', $mime[0].'; charset=utf-8'));
+        if ($format) {
+            $request = Middleware::setAttribute($request, self::KEY, $format);
+            $response = $response->withHeader('Content-Type', $this->formats[$format][0].'; charset=utf-8');
         }
 
         return $next($request, $response);
     }
 
     /**
-     * Returns the negotiator
+     * Returns the format using the file extension
      *
-     * @return Negotiator
+     * @return null|string
      */
-    protected function getNegotiator()
+    protected function getFromExtension(ServerRequestInterface $request)
     {
-        if ($this->negotiator === null) {
-            $this->negotiator = new Negotiator();
+        $format = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 
-            foreach ($this->formats as $name => $mimeTypes) {
-                $this->negotiator->registerFormat($name, $mimeTypes, true);
-            }
+        return isset($this->formats[$format]) ? $format : null;
+    }
+
+    /**
+     * Returns the format using the Accept header
+     *
+     * @return null|string
+     */
+    protected function getFromHeader(ServerRequestInterface $request)
+    {
+        $accept = $request->getHeaderLine('Accept');
+
+        if (empty($accept)) {
+            return;
         }
 
-        return $this->negotiator;
+        $priorities = call_user_func_array('array_merge', array_values($this->formats));
+        $accept = (new Negotiator())->getBest($accept, $priorities);
+
+        if ($accept) {
+            $accept = $accept->getValue();
+
+            foreach ($this->formats as $extension => $headers) {
+                if (in_array($accept, $headers)) {
+                    return $extension;
+                }
+            }
+        }
     }
 }

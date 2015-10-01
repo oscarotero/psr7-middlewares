@@ -10,7 +10,7 @@ class FormatNegotiatorTest extends Base
             [
                 '/',
                 'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
-                'xml',
+                'html',
             ],[
                 '/test.json',
                 '',
@@ -22,7 +22,7 @@ class FormatNegotiatorTest extends Base
             ],[
                 '/',
                 'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
-                'xml'
+                'html'
             ]
         ];
     }

@@ -9,7 +9,7 @@ class LanguageNegotiatorTest extends Base
         return [
             [
                 'gl-es, es;q=0.8, en;q=0.7',
-                [],
+                ['gl'],
                 'gl',
             ],[
                 'gl-es, es;q=0.8, en;q=0.7',
