@@ -13,7 +13,6 @@ class FormatNegotiator
 {
     const KEY = 'FORMAT';
 
-    protected $negotiator;
     protected $formats = [
         'atom' => ['application/atom+xml'],
         'css' => ['text/css'],
@@ -43,18 +42,6 @@ class FormatNegotiator
     public static function getFormat(ServerRequestInterface $request)
     {
         return Middleware::getAttribute($request, self::KEY);
-    }
-
-    /**
-     * Constructor. Defines de available formats.
-     *
-     * @param Negotiator $negotiator
-     */
-    public function __construct(Negotiator $negotiator = null)
-    {
-        if ($negotiator !== null) {
-            $this->negotiator($negotiator);
-        }
     }
 
     /**
