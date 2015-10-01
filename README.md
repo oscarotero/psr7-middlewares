@@ -386,7 +386,6 @@ use Psr7Middlewares\Middleware\FormatNegotiation;
 $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiation()
-        ->negotiator($negotiator) //(optional) Instance of Negotiation\FormatNegotiator
         ->addFormat('pdf', ['application/pdf', 'application/x-download']) //(optional) add new formats and mimetypes
     },
 
