@@ -2,8 +2,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\CacheTrait;
-use Psr7Middlewares\Utils\BasePathTrait;
-use Psr7Middlewares\Utils\StorageTrait;
+use Psr7Middlewares\Utils\FileTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -14,8 +13,7 @@ use Psr\Http\Message\StreamInterface;
 class SaveResponse
 {
     use CacheTrait;
-    use BasePathTrait;
-    use StorageTrait;
+    use FileTrait;
 
     /**
      * Execute the middleware
@@ -31,39 +29,10 @@ class SaveResponse
         $response = $next($request, $response);
 
         if (!count($request->getQueryParams()) && static::isCacheable($request, $response)) {
-            static::writeStream($response->getBody(), $this->getCacheFilename($request));
+            static::writeStream($response->getBody(), $this->getFilename($request));
         }
 
         return $response;
-    }
-
-    /**
-     * Returns the filename of the response cache file
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return string
-     */
-    protected function getCacheFilename(ServerRequestInterface $request)
-    {
-        $path = $this->getBasePath($request->getUri()->getPath());
-
-        $parts = pathinfo($path);
-        $path = '/'.(isset($parts['dirname']) ? $parts['dirname'] : '');
-        $filename = isset($parts['basename']) ? $parts['basename'] : '';
-
-        //if it's a directory, append "/index.html"
-        if (empty($parts['extension'])) {
-            if ($path === '/') {
-                $path .= $filename;
-            } else {
-                $path .= '/'.$filename;
-            }
-
-            $filename = 'index.'.(FormatNegotiator::getFormat($request) ?: 'html');
-        }
-
-        return $this->storage.$path.'/'.$filename;
     }
 
     /**
