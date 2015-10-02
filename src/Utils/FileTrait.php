@@ -1,6 +1,7 @@
 <?php
 namespace Psr7Middlewares\Utils;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Psr7Middlewares\Middleware\FormatNegotiator;
 
 /**
