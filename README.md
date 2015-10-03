@@ -387,6 +387,7 @@ use Psr7Middlewares\Middleware\FormatNegotiation;
 $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiation()
+        ->defaultFormat('html') //(optional) default format if it's unable to detect. (by default is "html")
         ->addFormat('pdf', ['application/pdf', 'application/x-download']) //(optional) add new formats and mimetypes
     },
 
