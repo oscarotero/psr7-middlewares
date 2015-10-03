@@ -120,6 +120,8 @@ class ErrorHandler
             call_user_func($this->before, $handler);
         }
 
+        ob_start();
+
         try {
             $response = $next($request, $response);
         } catch (\Exception $exception) {
@@ -130,6 +132,8 @@ class ErrorHandler
             $request = Middleware::setAttribute($request, self::KEY, $exception);
             $response = $response->withStatus(500);
         }
+
+        ob_end_clean();
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
             return self::executeTarget($this->handler, $this->arguments, $request, $response);
