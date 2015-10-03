@@ -92,6 +92,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [LanguageNegotiation](#languagenegotiation)
 * [Minify](#minify)
 * [Payload](#payload)
+* [ReadResponse](#readresponse)
 * [SaveResponse](#saveresponse)
 * [TrailingSlash](#trailingslash)
 * [Uuid](#uuid)
@@ -454,6 +455,21 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
+]);
+```
+
+### ReadResponse
+
+Read the response content from a file. It's the opposite of [SaveResponse](#saveresponse)
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::ReadResponse()
+        ->storage('path/to/document/root') //Path where are the files 
+        ->basePath('public') //(optional) basepath ignored from the request uri
 ]);
 ```
 
