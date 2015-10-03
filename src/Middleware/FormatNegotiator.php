@@ -13,6 +13,7 @@ class FormatNegotiator
 {
     const KEY = 'FORMAT';
 
+    protected $default = 'html';
     protected $formats = [
         'atom' => ['application/atom+xml'],
         'css' => ['text/css'],
@@ -60,6 +61,20 @@ class FormatNegotiator
     }
 
     /**
+     * Set the default format
+     *
+     * @param string $format
+     *
+     * @return self
+     */
+    public function defaultFormat($format)
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
+    /**
      * Execute the middleware
      *
      * @param ServerRequestInterface $request
@@ -69,7 +84,7 @@ class FormatNegotiator
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $format = $this->getFromExtension($request) ?: $this->getFromHeader($request);
+        $format = $this->getFromExtension($request) ?: $this->getFromHeader($request) ?: $this->default;
 
         if ($format) {
             $request = Middleware::setAttribute($request, self::KEY, $format);
