@@ -93,4 +93,19 @@ class Middleware
             return $attributes[$name];
         }
     }
+
+    /**
+     * Check whether an attribute exists
+     *
+     * @param ServerRequestInterface $request
+     * @param string                 $name
+     *
+     * @return boolean
+     */
+    public static function hasAttribute(ServerRequestInterface $request, $name)
+    {
+        $attributes = $request->getAttribute(self::KEY);
+
+        return array_key_exists($name, $attributes);
+    }
 }
