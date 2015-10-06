@@ -2,6 +2,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use RuntimeException;
+use Psr7Middlewares\Middleware;
 use M6Web\Component\Firewall\Firewall as IpFirewall;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
