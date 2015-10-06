@@ -15,22 +15,22 @@ class FormatNegotiator
 
     protected $default = 'html';
     protected $formats = [
-        'atom' => ['application/atom+xml'],
-        'css' => ['text/css'],
-        'html' => ['text/html', 'application/xhtml+xml'],
-        'gif' => ['image/gif'],
-        'jpg' => ['image/jpeg', 'image/jpg'],
-        'jpeg' => ['image/jpeg', 'image/jpg'],
-        'js'  => ['text/javascript', 'application/javascript', 'application/x-javascript'],
-        'jsonp'  => ['text/javascript', 'application/javascript', 'application/x-javascript'],
-        'json' => ['application/json', 'text/json', 'application/x-json'],
-        'png' => ['image/png', 'image/x-png'],
-        'pdf' => ['application/pdf', 'application/x-download'],
-        'rdf' => ['application/rdf+xml'],
-        'rss' => ['application/rss+xml'],
-        'txt' => ['text/plain'],
-        'xml' => ['text/xml', 'application/xml', 'application/x-xml'],
-        'zip' => ['application/zip', 'application/x-zip', 'application/x-zip-compressed'],
+        'html'  => ['text/html', 'application/xhtml+xml'],
+        'css'   => ['text/css'],
+        'gif'   => ['image/gif'],
+        'png'   => ['image/png', 'image/x-png'],
+        'jpg'   => ['image/jpeg', 'image/jpg'],
+        'jpeg'  => ['image/jpeg', 'image/jpg'],
+        'json'  => ['application/json', 'text/json', 'application/x-json'],
+        'jsonp' => ['text/javascript', 'application/javascript', 'application/x-javascript'],
+        'js'    => ['text/javascript', 'application/javascript', 'application/x-javascript'],
+        'pdf'   => ['application/pdf', 'application/x-download'],
+        'rdf'   => ['application/rdf+xml'],
+        'rss'   => ['application/rss+xml'],
+        'atom'  => ['application/atom+xml'],
+        'xml'   => ['text/xml', 'application/xml', 'application/x-xml'],
+        'txt'   => ['text/plain'],
+        'zip'   => ['application/zip', 'application/x-zip', 'application/x-zip-compressed'],
     ];
 
     /**
