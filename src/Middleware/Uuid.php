@@ -32,8 +32,6 @@ class Uuid
      * Constructor. Set the version of UUID.
      *
      * @param int|null $version
-     * @param mixed    $arg1
-     * @param mixed    $arg2
      */
     public function __construct($version = null)
     {
@@ -45,9 +43,7 @@ class Uuid
     /**
      * Choose the Uuid version.
      *
-     * @param int   $version 1, 3, 4 or 5
-     * @param mixed $arg1
-     * @param mixed $arg2
+     * @param int $version 1, 3, 4 or 5
      *
      * @return self
      */
@@ -99,11 +95,9 @@ class Uuid
     }
 
     /**
-     * Handle the payload.
+     * Generate the uuid with the current configuration
      *
-     * @param ServerRequestInterface $request
-     *
-     * @return ServerRequestInterface
+     * @return string
      */
     protected function generateUuid()
     {
