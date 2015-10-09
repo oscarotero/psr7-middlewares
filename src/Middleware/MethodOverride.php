@@ -11,7 +11,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class MethodOverride
 {
-    protected $header = 'X-Http-Method-Override';
+    const HEADER = 'X-Http-Method-Override';
+
     protected $get = ['HEAD', 'CONNECT', 'TRACE', 'OPTIONS'];
     protected $post = ['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'];
 
@@ -25,20 +26,6 @@ class MethodOverride
         if ($trusted !== null) {
             $this->trusted($trusted);
         }
-    }
-
-    /**
-     * Use other header name to override the method.
-     *
-     * @param string $header
-     *
-     * @return self
-     */
-    public function header($header)
-    {
-        $this->header = $header;
-
-        return $this;
     }
 
     /**
@@ -101,7 +88,7 @@ class MethodOverride
      */
     protected function getOverrideMethod(ServerRequestInterface $request)
     {
-        $method = $request->getHeaderLine($this->header);
+        $method = $request->getHeaderLine(self::HEADER);
 
         if (!empty($method) && ($method !== $request->getMethod())) {
             return strtoupper($method);
