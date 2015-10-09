@@ -1,15 +1,16 @@
 <?php
+
 namespace Psr7Middlewares\Utils;
 
 /**
- * Utilities used by middlewares with storage options
+ * Utilities used by middlewares with storage options.
  */
 trait StorageTrait
 {
     protected $storage;
 
     /**
-     * Constructor. Set the storage option
+     * Constructor. Set the storage option.
      *
      * @param string $storage
      */
@@ -19,7 +20,7 @@ trait StorageTrait
     }
 
     /**
-     * Configure the storage
+     * Configure the storage.
      *
      * @param string $storage
      *

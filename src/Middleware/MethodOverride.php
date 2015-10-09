@@ -1,13 +1,13 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
-use RuntimeException;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to override the request method using http headers
+ * Middleware to override the request method using http headers.
  */
 class MethodOverride
 {
@@ -16,7 +16,7 @@ class MethodOverride
     protected $post = ['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'];
 
     /**
-     * Constructor. Set the trusted ips
+     * Constructor. Set the trusted ips.
      *
      * @param array|null $trusted
      */
@@ -28,7 +28,7 @@ class MethodOverride
     }
 
     /**
-     * Use other header name to override the method
+     * Use other header name to override the method.
      *
      * @param string $header
      *
@@ -42,7 +42,7 @@ class MethodOverride
     }
 
     /**
-     * Set allowed method for GET
+     * Set allowed method for GET.
      *
      * @return self
      */
@@ -54,7 +54,7 @@ class MethodOverride
     }
 
     /**
-     * Set allowed method for POST
+     * Set allowed method for POST.
      *
      * @return self
      */
@@ -66,7 +66,7 @@ class MethodOverride
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -93,7 +93,7 @@ class MethodOverride
     }
 
     /**
-     * Returns the override method
+     * Returns the override method.
      * 
      * @param ServerRequestInterface $request
      * 
@@ -109,7 +109,7 @@ class MethodOverride
     }
 
     /**
-     * Returns the allowed override methods
+     * Returns the allowed override methods.
      * 
      * @param ServerRequestInterface $request
      * 
@@ -123,7 +123,7 @@ class MethodOverride
 
             case 'POST':
                 return $this->post;
-            
+
             default:
                 return [];
         }

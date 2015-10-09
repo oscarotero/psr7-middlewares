@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use RuntimeException;
@@ -8,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to filter request by ip
+ * Middleware to filter request by ip.
  */
 class Firewall
 {
@@ -16,7 +17,7 @@ class Firewall
     protected $untrusted;
 
     /**
-     * Constructor. Set the trusted ips
+     * Constructor. Set the trusted ips.
      *
      * @param array|null $trusted
      */
@@ -28,7 +29,7 @@ class Firewall
     }
 
     /**
-     * Set trusted ips
+     * Set trusted ips.
      *
      * @return self
      */
@@ -40,7 +41,7 @@ class Firewall
     }
 
     /**
-     * Set untrusted ips
+     * Set untrusted ips.
      *
      * @return self
      */
@@ -52,7 +53,7 @@ class Firewall
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

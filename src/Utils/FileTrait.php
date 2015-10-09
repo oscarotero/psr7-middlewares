@@ -1,11 +1,12 @@
 <?php
+
 namespace Psr7Middlewares\Utils;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr7Middlewares\Middleware\FormatNegotiator;
 
 /**
- * Common methods used by middlewares that read/write files
+ * Common methods used by middlewares that read/write files.
  */
 trait FileTrait
 {
@@ -13,7 +14,7 @@ trait FileTrait
     use StorageTrait;
 
     /**
-     * Returns the filename of the response file
+     * Returns the filename of the response file.
      *
      * @param ServerRequestInterface $request
      *

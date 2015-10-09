@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\ClientIp;
 
@@ -20,8 +21,8 @@ class ClientIpTest extends Base
                     'X-Forwarded' => '123.234.123.11',
                 ],
                 ['123.234.123.10', '123.234.123.11'],
-                '123.234.123.10'
-            ]
+                '123.234.123.10',
+            ],
         ];
     }
 

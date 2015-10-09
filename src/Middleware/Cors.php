@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -8,14 +9,14 @@ use Neomerx\Cors\Contracts\AnalysisResultInterface;
 use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
 
 /**
- * Middleware to implement Cors
+ * Middleware to implement Cors.
  */
 class Cors
 {
     protected $settings;
 
     /**
-     * Constructor. Defines the settings used
+     * Constructor. Defines the settings used.
      *
      * @param null|SettingsStrategyInterface $settings
      */
@@ -27,7 +28,7 @@ class Cors
     }
 
     /**
-     * Set the settings
+     * Set the settings.
      *
      * @param SettingsStrategyInterface $settings
      *
@@ -41,7 +42,7 @@ class Cors
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

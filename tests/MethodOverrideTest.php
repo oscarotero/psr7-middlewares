@@ -1,6 +1,6 @@
 <?php
+
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Middleware\LanguageNegotiator;
 
 class MethodOverrideTest extends Base
 {
@@ -20,7 +20,7 @@ class MethodOverrideTest extends Base
     {
         $response = $this->dispatch(
             [
-                Middleware::MethodOverride()
+                Middleware::MethodOverride(),
             ],
             $this->request('', ['X-Http-Method-Override' => $overrided])->withMethod($original),
             $this->response()

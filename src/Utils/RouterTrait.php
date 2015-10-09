@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Utils;
 
 use RuntimeException;
@@ -6,12 +7,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Utilities used by cache related middlewares
+ * Utilities used by cache related middlewares.
  */
 trait RouterTrait
 {
     /**
-     * Execute the target
+     * Execute the target.
      *
      * @param mixed                  $target
      * @param array                  $extraArguments
@@ -52,7 +53,7 @@ trait RouterTrait
     }
 
     /**
-     * Resolves the target of the route and returns a callable
+     * Resolves the target of the route and returns a callable.
      *
      * @param mixed $target
      * @param array $construct_args

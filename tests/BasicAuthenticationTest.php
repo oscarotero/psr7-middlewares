@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 
 class BasicAuthenticationTest extends Base

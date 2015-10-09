@@ -1,4 +1,5 @@
 <?php
+
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Stream;

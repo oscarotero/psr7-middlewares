@@ -1,21 +1,21 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils\FileTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 
 /**
- * Middleware to read the response 
+ * Middleware to read the response.
  */
 class ReadResponse
 {
     use FileTrait;
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

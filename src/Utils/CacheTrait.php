@@ -1,21 +1,22 @@
 <?php
+
 namespace Psr7Middlewares\Utils;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Utilities used by router middlewares
+ * Utilities used by router middlewares.
  */
 trait CacheTrait
 {
     /**
-     * Check whether the response can be cached or not
+     * Check whether the response can be cached or not.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
      *
-     * @return boolean
+     * @return bool
      */
     protected static function isCacheable(ServerRequestInterface $request, ResponseInterface $response)
     {
@@ -38,7 +39,7 @@ trait CacheTrait
     }
 
     /**
-     * Parses and returns the cache-control header values
+     * Parses and returns the cache-control header values.
      *
      * @param string $header
      *

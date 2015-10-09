@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 
 class BasePathTest extends Base
@@ -13,12 +14,12 @@ class BasePathTest extends Base
             ],[
                 'http://localhost/project-name/public',
                 '/other/path',
-                'http://localhost/project-name/public'
+                'http://localhost/project-name/public',
             ],[
                 '/project-name/public',
                 '/project-name',
-                '/public'
-            ]
+                '/public',
+            ],
         ];
     }
 

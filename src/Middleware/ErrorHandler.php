@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
@@ -8,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to handle php errors and exceptions
+ * Middleware to handle php errors and exceptions.
  */
 class ErrorHandler
 {
@@ -23,7 +24,7 @@ class ErrorHandler
     protected $catchExceptions = false;
 
     /**
-     * Returns the exception throwed
+     * Returns the exception throwed.
      *
      * @param ServerRequestInterface $request
      *
@@ -35,7 +36,7 @@ class ErrorHandler
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param callable|string|null $handler
      */
@@ -47,7 +48,7 @@ class ErrorHandler
     }
 
     /**
-     * Set the error handler
+     * Set the error handler.
      *
      * @param string|callable $handler
      *
@@ -61,9 +62,9 @@ class ErrorHandler
     }
 
     /**
-     * Configure the catchExceptions
+     * Configure the catchExceptions.
      *
-     * @param boolean $catch
+     * @param bool $catch
      *
      * @return self
      */
@@ -75,7 +76,7 @@ class ErrorHandler
     }
 
     /**
-     * Register a handler executed before
+     * Register a handler executed before.
      *
      * @param callable $handler
      *
@@ -89,7 +90,7 @@ class ErrorHandler
     }
 
     /**
-     * Register a handler executed after
+     * Register a handler executed after.
      *
      * @param callable $handler
      *
@@ -103,7 +104,7 @@ class ErrorHandler
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

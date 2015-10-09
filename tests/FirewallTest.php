@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 
 class FirewallTest extends Base
@@ -21,7 +22,7 @@ class FirewallTest extends Base
                 ],
                 ['123.234.123.10'],
                 [],
-                200
+                200,
             ],[
                 [
                     'Client-Ip' => 'unknow,123.456.789.10,123.234.123.11',
@@ -29,7 +30,7 @@ class FirewallTest extends Base
                 ],
                 ['123.234.123.11'],
                 ['123.234.123.10'],
-                403
+                403,
             ],[
                 [
                     'Client-Ip' => '123.0.0.10,123.0.0.11',
@@ -37,7 +38,7 @@ class FirewallTest extends Base
                 ],
                 ['123.0.0.*'],
                 [],
-                200
+                200,
             ],[
                 [
                     'Client-Ip' => '123.0.0.10,123.0.0.11',
@@ -45,8 +46,8 @@ class FirewallTest extends Base
                 ],
                 ['123.0.0.*'],
                 ['123.0.0.12'],
-                403
-            ]
+                403,
+            ],
         ];
     }
 

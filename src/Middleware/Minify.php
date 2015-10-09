@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware as Factory;
@@ -18,9 +19,9 @@ class Minify
     protected $inlineJs = true;
 
     /**
-     * Set forCache directive
+     * Set forCache directive.
      *
-     * @param boolean $forCache
+     * @param bool $forCache
      *
      * @return self
      */
@@ -32,9 +33,9 @@ class Minify
     }
 
     /**
-     * Set inlineCss directive
+     * Set inlineCss directive.
      *
-     * @param boolean $inlineCss
+     * @param bool $inlineCss
      *
      * @return self
      */
@@ -46,9 +47,9 @@ class Minify
     }
 
     /**
-     * Set inlineJs directive
+     * Set inlineJs directive.
      *
-     * @param boolean $inlineJs
+     * @param bool $inlineJs
      *
      * @return self
      */
@@ -60,7 +61,7 @@ class Minify
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -92,7 +93,7 @@ class Minify
     }
 
     /**
-     * Minify html code
+     * Minify html code.
      *
      * @param ResponseInterface $response
      *
@@ -123,7 +124,7 @@ class Minify
     }
 
     /**
-     * Minify css code
+     * Minify css code.
      *
      * @param ResponseInterface $response
      *
@@ -138,7 +139,7 @@ class Minify
     }
 
     /**
-     * Minify js code
+     * Minify js code.
      *
      * @param ResponseInterface $response
      *

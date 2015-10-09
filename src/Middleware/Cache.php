@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware as Factory;
@@ -10,7 +11,7 @@ use Psr\Cache\CacheItemPoolInterface;
 use Datetime;
 
 /**
- * Middleware to cache the response using Cache-Control and other directives
+ * Middleware to cache the response using Cache-Control and other directives.
  */
 class Cache
 {
@@ -20,7 +21,7 @@ class Cache
     protected $cache;
 
     /**
-     * Constructor. Set the cache pool
+     * Constructor. Set the cache pool.
      *
      * @param CacheItemPoolInterface|null $cache
      */
@@ -32,7 +33,7 @@ class Cache
     }
 
     /**
-     * Set the psr-6 cache pool used
+     * Set the psr-6 cache pool used.
      *
      * @param CacheItemPoolInterface $cache
      */
@@ -42,7 +43,7 @@ class Cache
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -86,7 +87,7 @@ class Cache
     }
 
     /**
-     * Check the cache headers and return the expiration time
+     * Check the cache headers and return the expiration time.
      *
      * @param ResponseInterface $response
      *
@@ -115,7 +116,7 @@ class Cache
     }
 
     /**
-     * Returns the id used to cache a request
+     * Returns the id used to cache a request.
      *
      * @param ServerRequestInterface $request
      *

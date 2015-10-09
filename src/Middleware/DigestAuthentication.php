@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\AuthenticationTrait;
@@ -6,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to create a digest http authentication
+ * Middleware to create a digest http authentication.
  */
 class DigestAuthentication
 {
@@ -15,7 +16,7 @@ class DigestAuthentication
     protected $nonce;
 
     /**
-     * Set the nonce value
+     * Set the nonce value.
      *
      * @param string $nonce
      *
@@ -29,7 +30,7 @@ class DigestAuthentication
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -48,11 +49,11 @@ class DigestAuthentication
     }
 
     /**
-     * Login or check the user credentials
+     * Login or check the user credentials.
      *
      * @param ServerRequestInterface $request
      *
-     * @return boolean
+     * @return bool
      */
     protected function login(ServerRequestInterface $request)
     {
@@ -73,13 +74,13 @@ class DigestAuthentication
     }
 
     /**
-     * Validates the user authentication
+     * Validates the user authentication.
      *
      * @param array  $authorization
      * @param string $method
      * @param string $password
      *
-     * @return boolean
+     * @return bool
      */
     protected function checkAuthentication(array $authorization, $method, $password)
     {

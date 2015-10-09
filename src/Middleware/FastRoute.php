@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\RouterTrait;
@@ -16,7 +17,7 @@ class FastRoute
     protected $router;
 
     /**
-     * Constructor. Set Dispatcher instance
+     * Constructor. Set Dispatcher instance.
      *
      * @param Dispatcher $router
      */
@@ -28,7 +29,7 @@ class FastRoute
     }
 
     /**
-     * Extra arguments passed to the controller
+     * Extra arguments passed to the controller.
      *
      * @param Dispatcher $router
      *
@@ -42,7 +43,7 @@ class FastRoute
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

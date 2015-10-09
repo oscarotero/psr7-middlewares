@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 
 class SaveReadResponseTest extends Base
@@ -17,12 +18,12 @@ class SaveReadResponseTest extends Base
             ],[
                 '/index.json',
                 '/index.json',
-                '{"hello": "world"}'
+                '{"hello": "world"}',
             ],[
                 '/',
                 '/index.html',
-                'Index'
-            ]
+                'Index',
+            ],
         ];
     }
 

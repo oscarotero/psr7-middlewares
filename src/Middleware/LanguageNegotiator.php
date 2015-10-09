@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
@@ -7,7 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware returns the client preferred language
+ * Middleware returns the client preferred language.
  */
 class LanguageNegotiator
 {
@@ -16,7 +17,7 @@ class LanguageNegotiator
     protected $languages = [];
 
     /**
-     * Returns the language
+     * Returns the language.
      *
      * @param ServerRequestInterface $request
      *
@@ -40,7 +41,7 @@ class LanguageNegotiator
     }
 
     /**
-     * Configure the available languages
+     * Configure the available languages.
      *
      * @param array $languages
      *
@@ -54,7 +55,7 @@ class LanguageNegotiator
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -75,7 +76,7 @@ class LanguageNegotiator
     }
 
     /**
-     * Returns the language using the Accept-Language header
+     * Returns the language using the Accept-Language header.
      *
      * @return null|string
      */

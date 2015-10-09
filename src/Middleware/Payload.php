@@ -1,21 +1,23 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to parse the body
+ * Middleware to parse the body.
  */
 class Payload
 {
     protected $associative = false;
 
     /**
-     * To convert the objects into associative arrays
+     * To convert the objects into associative arrays.
+     *
      * @see http://php.net/json_decode
      *
-     * @param boolean $associative
+     * @param bool $associative
      *
      * @return self
      */
@@ -27,7 +29,7 @@ class Payload
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -40,7 +42,7 @@ class Payload
     }
 
     /**
-     * Handle the payload
+     * Handle the payload.
      *
      * @param ServerRequestInterface $request
      *

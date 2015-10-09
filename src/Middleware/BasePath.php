@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\BasePathTrait;
@@ -6,14 +7,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to strip the path prefix
+ * Middleware to strip the path prefix.
  */
 class BasePath
 {
     use BasePathTrait;
 
     /**
-     * Constructor. Set the path prefix
+     * Constructor. Set the path prefix.
      *
      * @param string|null $basePath
      */
@@ -25,7 +26,7 @@ class BasePath
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

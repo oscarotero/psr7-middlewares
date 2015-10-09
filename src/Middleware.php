@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares;
 
 use Psr\Http\Message\Stream;
@@ -12,7 +13,7 @@ class Middleware
     protected static $streamFactory;
 
     /**
-     * Set the stream factory used by some middlewares
+     * Set the stream factory used by some middlewares.
      *
      * @param callable $streamFactory
      */
@@ -22,7 +23,7 @@ class Middleware
     }
 
     /**
-     * Get the stream factory
+     * Get the stream factory.
      *
      * @return Stream
      */
@@ -40,7 +41,7 @@ class Middleware
     }
 
     /**
-     * Create instances of the middlewares
+     * Create instances of the middlewares.
      *
      * @param string $name
      * @param array  $args
@@ -61,7 +62,7 @@ class Middleware
     }
 
     /**
-     * Store an attribute in the request
+     * Store an attribute in the request.
      *
      * @param ServerRequestInterface $request
      * @param string                 $name
@@ -78,7 +79,7 @@ class Middleware
     }
 
     /**
-     * Retrieves an attribute from the request
+     * Retrieves an attribute from the request.
      *
      * @param ServerRequestInterface $request
      * @param string                 $name
@@ -95,12 +96,12 @@ class Middleware
     }
 
     /**
-     * Check whether an attribute exists
+     * Check whether an attribute exists.
      *
      * @param ServerRequestInterface $request
      * @param string                 $name
      *
-     * @return boolean
+     * @return bool
      */
     public static function hasAttribute(ServerRequestInterface $request, $name)
     {

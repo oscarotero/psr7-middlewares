@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
@@ -6,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to generate UUID on each request
+ * Middleware to generate UUID on each request.
  */
 class Uuid
 {
@@ -16,7 +17,7 @@ class Uuid
     protected $header = 'X-Uuid';
 
     /**
-     * Returns the Uuid instance
+     * Returns the Uuid instance.
      *
      * @param ServerRequestInterface $request
      *
@@ -28,11 +29,11 @@ class Uuid
     }
 
     /**
-     * Constructor. Set the version of UUID
+     * Constructor. Set the version of UUID.
      *
-     * @param integer|null $version
-     * @param mixed        $arg1
-     * @param mixed        $arg2
+     * @param int|null $version
+     * @param mixed    $arg1
+     * @param mixed    $arg2
      */
     public function __construct($version = null)
     {
@@ -42,18 +43,18 @@ class Uuid
     }
 
     /**
-     * Choose the Uuid version
+     * Choose the Uuid version.
      *
-     * @param integer $version 1, 3, 4 or 5
-     * @param mixed   $arg1
-     * @param mixed   $arg2
+     * @param int   $version 1, 3, 4 or 5
+     * @param mixed $arg1
+     * @param mixed $arg2
      *
      * @return self
      */
     public function version($version)
     {
         if (!in_array($version, [1, 3, 4, 5])) {
-            throw new \InvalidArgumentException("Only 1, 3, 4 and 5 versions are available");
+            throw new \InvalidArgumentException('Only 1, 3, 4 and 5 versions are available');
         }
 
         $this->version = func_get_args();
@@ -63,7 +64,7 @@ class Uuid
 
     /**
      * Set whether the Uuid is stored in the header.
-     * Set false to do not store
+     * Set false to do not store.
      *
      * @param false|string $header
      *
@@ -77,7 +78,7 @@ class Uuid
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -98,7 +99,7 @@ class Uuid
     }
 
     /**
-     * Handle the payload
+     * Handle the payload.
      *
      * @param ServerRequestInterface $request
      *

@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
@@ -15,7 +16,7 @@ class AuraSession
     protected $name;
 
     /**
-     * Returns the session instance
+     * Returns the session instance.
      *
      * @param ServerRequestInterface $request
      *
@@ -27,7 +28,7 @@ class AuraSession
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionFactory|null $factory
      */
@@ -39,7 +40,7 @@ class AuraSession
     }
 
     /**
-     * Set the session name
+     * Set the session name.
      *
      * @param string $name
      *
@@ -53,7 +54,7 @@ class AuraSession
     }
 
     /**
-     * Set the session factory
+     * Set the session factory.
      *
      * @param SessionFactory $factory
      *
@@ -67,7 +68,7 @@ class AuraSession
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

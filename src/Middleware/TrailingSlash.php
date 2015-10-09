@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\BasePathTrait;
@@ -6,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to add or remove the trailing slash
+ * Middleware to add or remove the trailing slash.
  */
 class TrailingSlash
 {
@@ -15,9 +16,9 @@ class TrailingSlash
     protected $addSlash;
 
     /**
-     * Constructor. Configure whether add or remove the slash
+     * Constructor. Configure whether add or remove the slash.
      *
-     * @param boolean $addSlash
+     * @param bool $addSlash
      */
     public function __construct($addSlash = false)
     {
@@ -25,9 +26,9 @@ class TrailingSlash
     }
 
     /**
-     * Configure whether the path should be added or removed
+     * Configure whether the path should be added or removed.
      *
-     * @param boolean $addSlash
+     * @param bool $addSlash
      *
      * @return self
      */
@@ -39,7 +40,7 @@ class TrailingSlash
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

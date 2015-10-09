@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
@@ -20,7 +21,7 @@ class AuraRouter
     protected $router;
 
     /**
-     * Returns the route instance
+     * Returns the route instance.
      *
      * @param ServerRequestInterface $request
      *
@@ -32,7 +33,7 @@ class AuraRouter
     }
 
     /**
-     * Constructor.Set the RouterContainer instance
+     * Constructor.Set the RouterContainer instance.
      *
      * @param RouterContainer $router
      */
@@ -44,7 +45,7 @@ class AuraRouter
     }
 
     /**
-     * Extra arguments passed to the controller
+     * Extra arguments passed to the controller.
      *
      * @param RouterContainer $router
      *
@@ -58,7 +59,7 @@ class AuraRouter
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

@@ -1,8 +1,9 @@
 <?php
+
 namespace Psr7Middlewares\Utils;
 
 /**
- * Utilities used by authentication middlewares
+ * Utilities used by authentication middlewares.
  */
 trait AuthenticationTrait
 {
@@ -22,7 +23,7 @@ trait AuthenticationTrait
     }
 
     /**
-     * Configure the users and passwords
+     * Configure the users and passwords.
      *
      * @param array $users [username => password]
      *
@@ -36,7 +37,7 @@ trait AuthenticationTrait
     }
 
     /**
-     * Set the realm value
+     * Set the realm value.
      *
      * @param string $realm
      *

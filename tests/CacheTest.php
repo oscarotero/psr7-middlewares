@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 use MatthiasMullie\Scrapbook\Adapters\MemoryStore;
 use MatthiasMullie\Scrapbook\Psr6\Pool;

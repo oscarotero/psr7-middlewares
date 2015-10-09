@@ -1,15 +1,16 @@
 <?php
+
 namespace Psr7Middlewares\Utils;
 
 /**
- * Utilities used by middlewares with basePath options
+ * Utilities used by middlewares with basePath options.
  */
 trait BasePathTrait
 {
     protected $basePath = '';
 
     /**
-     * Set the basepath used in the request
+     * Set the basepath used in the request.
      *
      * @param string $basePath
      *
@@ -23,7 +24,7 @@ trait BasePathTrait
     }
 
     /**
-     * Removes the basepath from a path
+     * Removes the basepath from a path.
      *
      * @param string $path
      *

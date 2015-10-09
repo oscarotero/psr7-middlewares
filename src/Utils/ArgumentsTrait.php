@@ -1,15 +1,16 @@
 <?php
+
 namespace Psr7Middlewares\Utils;
 
 /**
- * Trait used by all middlewares with arguments() option
+ * Trait used by all middlewares with arguments() option.
  */
 trait ArgumentsTrait
 {
     protected $arguments = [];
 
     /**
-     * Extra arguments passed to the controller
+     * Extra arguments passed to the controller.
      *
      * @return self
      */

@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\AuthenticationTrait;
@@ -6,14 +7,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to create basic http authentication
+ * Middleware to create basic http authentication.
  */
 class BasicAuthentication
 {
     use AuthenticationTrait;
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -39,7 +40,7 @@ class BasicAuthentication
      * @param string $username
      * @param string $password
      *
-     * @return boolean
+     * @return bool
      */
     protected function checkUserPassword($username, $password)
     {

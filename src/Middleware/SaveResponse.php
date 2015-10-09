@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\CacheTrait;
@@ -8,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * Middleware to save the response into a file
+ * Middleware to save the response into a file.
  */
 class SaveResponse
 {
@@ -16,7 +17,7 @@ class SaveResponse
     use FileTrait;
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -36,7 +37,7 @@ class SaveResponse
     }
 
     /**
-     * Write the stream to the given path
+     * Write the stream to the given path.
      *
      * @param StreamInterface $stream
      * @param string          $path

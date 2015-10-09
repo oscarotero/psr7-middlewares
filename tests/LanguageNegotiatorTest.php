@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\LanguageNegotiator;
 
@@ -14,24 +15,24 @@ class LanguageNegotiatorTest extends Base
             ],[
                 'gl-es, es;q=0.8, en;q=0.7',
                 ['es', 'en'],
-                'es'
+                'es',
             ],[
                 'gl-es, es;q=0.8, en;q=0.7',
                 ['en', 'es'],
-                'es'
+                'es',
             ],[
                 '',
                 [],
-                null
+                null,
             ],[
                 '',
                 ['es', 'en'],
-                'es'
+                'es',
             ],[
                 '',
                 ['en', 'es'],
-                'en'
-            ]
+                'en',
+            ],
         ];
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
@@ -6,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware returns the client ip
+ * Middleware returns the client ip.
  */
 class ClientIp
 {
@@ -22,7 +23,7 @@ class ClientIp
     ];
 
     /**
-     * Returns all ips found
+     * Returns all ips found.
      *
      * @param ServerRequestInterface $request
      *
@@ -34,7 +35,7 @@ class ClientIp
     }
 
     /**
-     * Return the client ip
+     * Return the client ip.
      *
      * @param ServerRequestInterface $request
      *
@@ -60,7 +61,7 @@ class ClientIp
     }
 
     /**
-     * Configure the trusted headers
+     * Configure the trusted headers.
      *
      * @param array $headers
      *
@@ -74,7 +75,7 @@ class ClientIp
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

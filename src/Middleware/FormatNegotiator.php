@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
@@ -7,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use Negotiation\Negotiator;
 
 /**
- * Middleware returns the client preferred format
+ * Middleware returns the client preferred format.
  */
 class FormatNegotiator
 {
@@ -15,26 +16,26 @@ class FormatNegotiator
 
     protected $default = 'html';
     protected $formats = [
-        'html'  => ['text/html', 'application/xhtml+xml'],
-        'css'   => ['text/css'],
-        'gif'   => ['image/gif'],
-        'png'   => ['image/png', 'image/x-png'],
-        'jpg'   => ['image/jpeg', 'image/jpg'],
-        'jpeg'  => ['image/jpeg', 'image/jpg'],
-        'json'  => ['application/json', 'text/json', 'application/x-json'],
+        'html' => ['text/html', 'application/xhtml+xml'],
+        'css' => ['text/css'],
+        'gif' => ['image/gif'],
+        'png' => ['image/png', 'image/x-png'],
+        'jpg' => ['image/jpeg', 'image/jpg'],
+        'jpeg' => ['image/jpeg', 'image/jpg'],
+        'json' => ['application/json', 'text/json', 'application/x-json'],
         'jsonp' => ['text/javascript', 'application/javascript', 'application/x-javascript'],
-        'js'    => ['text/javascript', 'application/javascript', 'application/x-javascript'],
-        'pdf'   => ['application/pdf', 'application/x-download'],
-        'rdf'   => ['application/rdf+xml'],
-        'rss'   => ['application/rss+xml'],
-        'atom'  => ['application/atom+xml'],
-        'xml'   => ['text/xml', 'application/xml', 'application/x-xml'],
-        'txt'   => ['text/plain'],
-        'zip'   => ['application/zip', 'application/x-zip', 'application/x-zip-compressed'],
+        'js' => ['text/javascript', 'application/javascript', 'application/x-javascript'],
+        'pdf' => ['application/pdf', 'application/x-download'],
+        'rdf' => ['application/rdf+xml'],
+        'rss' => ['application/rss+xml'],
+        'atom' => ['application/atom+xml'],
+        'xml' => ['text/xml', 'application/xml', 'application/x-xml'],
+        'txt' => ['text/plain'],
+        'zip' => ['application/zip', 'application/x-zip', 'application/x-zip-compressed'],
     ];
 
     /**
-     * Returns the format
+     * Returns the format.
      *
      * @param ServerRequestInterface $request
      *
@@ -46,7 +47,7 @@ class FormatNegotiator
     }
 
     /**
-     * Add a new format
+     * Add a new format.
      *
      * @param string $format
      * @param array  $mimeTypes
@@ -61,7 +62,7 @@ class FormatNegotiator
     }
 
     /**
-     * Set the default format
+     * Set the default format.
      *
      * @param string $format
      *
@@ -75,7 +76,7 @@ class FormatNegotiator
     }
 
     /**
-     * Execute the middleware
+     * Execute the middleware.
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
@@ -95,7 +96,7 @@ class FormatNegotiator
     }
 
     /**
-     * Returns the format using the file extension
+     * Returns the format using the file extension.
      *
      * @return null|string
      */
@@ -107,7 +108,7 @@ class FormatNegotiator
     }
 
     /**
-     * Returns the format using the Accept header
+     * Returns the format using the Accept header.
      *
      * @return null|string
      */

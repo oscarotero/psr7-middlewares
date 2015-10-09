@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\ErrorHandler;
 
@@ -23,7 +24,7 @@ class ErrorHandlerTest extends Base
 
     public function testException()
     {
-        $exception = new \Exception("Error Processing Request");
+        $exception = new \Exception('Error Processing Request');
 
         $response = $this->execute(
             [

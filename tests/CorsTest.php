@@ -1,4 +1,5 @@
 <?php
+
 use Psr7Middlewares\Middleware;
 use Neomerx\Cors\Strategies\Settings;
 use Neomerx\Cors\Contracts\Constants\CorsResponseHeaders;
@@ -12,30 +13,30 @@ class CorsTest extends Base
         $this->settings = (new Settings())
             ->setServerOrigin([
                 'scheme' => 'http',
-                'host'   => 'example.com',
-                'port'   => '123',
+                'host' => 'example.com',
+                'port' => '123',
             ])
             ->setRequestAllowedOrigins([
-                'http://good.example.com:321'                => true,
-                'http://evil.example.com:123'                => null,
-                CorsResponseHeaders::VALUE_ALLOW_ORIGIN_ALL  => null,
+                'http://good.example.com:321' => true,
+                'http://evil.example.com:123' => null,
+                CorsResponseHeaders::VALUE_ALLOW_ORIGIN_ALL => null,
                 CorsResponseHeaders::VALUE_ALLOW_ORIGIN_NULL => null,
             ])
             ->setRequestAllowedMethods([
-                'GET'    => true,
-                'PATCH'  => null,
-                'POST'   => true,
-                'PUT'    => null,
+                'GET' => true,
+                'PATCH' => null,
+                'POST' => true,
+                'PUT' => null,
                 'DELETE' => true,
             ])
             ->setRequestAllowedHeaders([
-                'content-type'            => true,
-                'some-disabled-header'    => null,
+                'content-type' => true,
+                'some-disabled-header' => null,
                 'x-enabled-custom-header' => true,
             ])
             ->setResponseExposedHeaders([
-                'Content-Type'      => true,
-                'X-Custom-Header'   => true,
+                'Content-Type' => true,
+                'X-Custom-Header' => true,
                 'X-Disabled-Header' => null,
             ])
             ->setRequestCredentialsSupported(false)
