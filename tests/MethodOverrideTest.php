@@ -10,6 +10,7 @@ class MethodOverrideTest extends Base
             ['GET', 'HEAD', 200],
             ['POST', 'HEAD', 405],
             ['GET', 'POST', 405],
+            ['GET', 'GET', 200],
         ];
     }
 

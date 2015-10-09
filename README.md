@@ -38,6 +38,9 @@ $dispatcher = $relay->newInstance([
     //Handle errors
     Middleware::errorHandler('error_handler_function')->catchExceptions(true),
 
+    //Override the method using X-Http-Method-Override header
+    Middleware::methodOverride(),
+
     //Parse the request payload
     Middleware::payload(),
 
@@ -90,6 +93,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
 * [LanguageNegotiation](#languagenegotiation)
+* [MethodOverride](#methodoverride)
 * [Minify](#minify)
 * [Payload](#payload)
 * [ReadResponse](#readresponse)
@@ -419,6 +423,22 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
+]);
+```
+
+### MethodOverride
+
+Overrides the request method using the `X-Http-Method-Override` header. This is useful for clients unable to send other methods than GET and POST:
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::MethodOverride()
+        ->header('X-Http-Method-Override'), //(optional) to use a different http header
+        ->get(['HEAD', 'CONNECT', 'TRACE', 'OPTIONS']), //(optional) to customize the allowed GET overrided methods
+        ->post(['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK']), //(optional) to customize the allowed POST overrided methods
 ]);
 ```
 
