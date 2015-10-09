@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Utilities used by cache related middlewares.
+ * Utilities used by routers related middlewares.
  */
 trait RouterTrait
 {

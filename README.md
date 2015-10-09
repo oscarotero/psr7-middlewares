@@ -102,6 +102,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [ReadResponse](#readresponse)
 * [Robots](#robots)
 * [SaveResponse](#saveresponse)
+* [Shutdown](#shutdown)
 * [TrailingSlash](#trailingslash)
 * [Uuid](#uuid)
 
@@ -496,7 +497,6 @@ $dispatcher = $relay->getInstance([
         ->basePath('public') //(optional) basepath ignored from the request uri
 ]);
 ```
-```
 
 ### Robots
 
@@ -530,6 +530,25 @@ $dispatcher = $relay->getInstance([
     Middleware::SaveResponse()
         ->storage('path/to/document/root') //Path where save the responses
         ->basePath('public') //(optional) basepath ignored from the request uri
+]);
+```
+
+### Shutdown
+
+Useful to display a 503 maintenance page. You need to specify a handler.
+
+```php
+use Psr7Middlewares\Middleware;
+
+function shutdownHandler ($request, $response, $app) {
+    $response->getBody()->write('Service unavailable');
+}
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Shutdown()
+        ->handler('shutdownHandler') // Callable that generate the response
+        ->arguments($app) //(optional) to add extra arguments to the handler
 ]);
 ```
 
