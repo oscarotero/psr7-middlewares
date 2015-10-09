@@ -17,18 +17,6 @@ class MethodOverride
     protected $post = ['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'];
 
     /**
-     * Constructor. Set the trusted ips.
-     *
-     * @param array|null $trusted
-     */
-    public function __construct(array $trusted = null)
-    {
-        if ($trusted !== null) {
-            $this->trusted($trusted);
-        }
-    }
-
-    /**
      * Set allowed method for GET.
      *
      * @return self
@@ -47,7 +35,7 @@ class MethodOverride
      */
     public function post(array $methods)
     {
-        $this->post = $post;
+        $this->post = $methods;
 
         return $this;
     }

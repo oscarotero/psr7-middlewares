@@ -70,7 +70,7 @@ class FormatNegotiator
      */
     public function defaultFormat($format)
     {
-        $this->default = $default;
+        $this->default = $format;
 
         return $this;
     }

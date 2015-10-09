@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares;
 
-use Psr\Http\Message\Stream;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
 
@@ -25,7 +25,7 @@ class Middleware
     /**
      * Get the stream factory.
      *
-     * @return Stream
+     * @return StreamInterface
      */
     public static function createStream($file = 'php://temp', $mode = 'r+')
     {
