@@ -62,10 +62,10 @@ class Uuid
     }
 
     /**
-     * Check whether the Uuid is stored in the header.
+     * Set whether the Uuid is stored in the header.
      * Set false to do not store
      *
-     * @param false|string $name
+     * @param false|string $header
      *
      * @return self
      */
