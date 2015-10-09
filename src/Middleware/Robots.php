@@ -27,7 +27,7 @@ class Robots
             $body = Middleware::createStream();
             $body->write("User-Agent: *\nDisallow: /");
 
-            return $response->withBody($body)->withHeader('Content-Type', 'text/plain');
+            return $response->withBody($body);
         }
 
         $response = $next($request, $response);
