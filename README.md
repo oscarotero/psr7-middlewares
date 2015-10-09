@@ -41,6 +41,9 @@ $dispatcher = $relay->newInstance([
     //Override the method using X-Http-Method-Override header
     Middleware::methodOverride(),
 
+    //Block search engines robots indexing
+    Middleware::robots(),
+
     //Parse the request payload
     Middleware::payload(),
 
@@ -97,6 +100,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Minify](#minify)
 * [Payload](#payload)
 * [ReadResponse](#readresponse)
+* [Robots](#robots)
 * [SaveResponse](#saveresponse)
 * [TrailingSlash](#trailingslash)
 * [Uuid](#uuid)
@@ -490,6 +494,20 @@ $dispatcher = $relay->getInstance([
     Middleware::ReadResponse()
         ->storage('path/to/document/root') //Path where are the files 
         ->basePath('public') //(optional) basepath ignored from the request uri
+]);
+```
+```
+
+### Robots
+
+Disables the robots of the search engines for non-production environment. Adds automatically the header `X-Robots-Tag: noindex, nofollow, noarchive` in all responses and returns a default body for `/robots.txt` request.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Robots()
 ]);
 ```
 
