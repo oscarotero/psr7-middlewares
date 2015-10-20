@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Utils;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr7Middlewares\Middleware\FormatNegotiator;
 
 /**
@@ -16,11 +16,11 @@ trait FileTrait
     /**
      * Returns the filename of the response file.
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      *
      * @return string
      */
-    protected function getFilename(ServerRequestInterface $request)
+    protected function getFilename(RequestInterface $request)
     {
         $path = $this->getBasePath($request->getUri()->getPath());
 

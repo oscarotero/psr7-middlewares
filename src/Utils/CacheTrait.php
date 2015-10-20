@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Utils;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -13,12 +13,12 @@ trait CacheTrait
     /**
      * Check whether the response can be cached or not.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      *
      * @return bool
      */
-    protected static function isCacheable(ServerRequestInterface $request, ResponseInterface $response)
+    protected static function isCacheable(RequestInterface $request, ResponseInterface $response)
     {
         if ($request->getMethod() !== 'GET') {
             return false;

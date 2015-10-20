@@ -3,7 +3,7 @@
 namespace Psr7Middlewares\Utils;
 
 use RuntimeException;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -14,14 +14,14 @@ trait RouterTrait
     /**
      * Execute the target.
      *
-     * @param mixed                  $target
-     * @param array                  $extraArguments
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param mixed             $target
+     * @param array             $extraArguments
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
-    protected static function executeTarget($target, $extraArguments = [], ServerRequestInterface $request, ResponseInterface $response)
+    protected static function executeTarget($target, $extraArguments = [], RequestInterface $request, ResponseInterface $response)
     {
         try {
             ob_start();
