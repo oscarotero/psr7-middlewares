@@ -3,7 +3,6 @@
 namespace Psr7Middlewares\Utils;
 
 use Psr\Http\Message\RequestInterface;
-use Psr7Middlewares\Middleware\FormatNegotiator;
 
 /**
  * Common methods used by middlewares that read/write files.
@@ -36,7 +35,8 @@ trait FileTrait
                 $path .= "/{$filename}";
             }
 
-            $filename = 'index.'.(FormatNegotiator::getFormat($request) ?: 'html');
+            $extension = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION)) ?: 'html';
+            $filename = "index.{$extension}";
         }
 
         return "{$this->storage}{$path}/{$filename}";
