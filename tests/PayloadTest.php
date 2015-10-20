@@ -8,16 +8,17 @@ class PayloadTest extends Base
     {
         return [
             ['application/json', '{"bar":"foo"}', ['bar' => 'foo'], true],
-            ['application/json', '{"bar":"foo"}', (object) ['bar' => 'foo'], false],
-            ['application/x-www-form-urlencoded', 'bar=foo', ['bar' => 'foo'], false],
-            ['application/x-www-form-urlencoded', '', [], false],
+            ['application/json', '{"bar":"foo"}', (object) ['bar' => 'foo']],
+            ['application/x-www-form-urlencoded', 'bar=foo', ['bar' => 'foo']],
+            ['application/x-www-form-urlencoded', '', []],
+            ['text/csv', "one,two\nthree,four", [['one', 'two'], ['three', 'four']]],
         ];
     }
 
     /**
      * @dataProvider payloadProvider
      */
-    public function testTrailingSlash($header, $body, $result, $associative)
+    public function testTrailingSlash($header, $body, $result, $associative = false)
     {
         $request = $this->request('', ['Content-Type' => $header])
             ->withMethod('POST')

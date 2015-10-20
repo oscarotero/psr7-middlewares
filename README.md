@@ -9,7 +9,7 @@ Collection of PSR-7 middlewares
 
 * PHP >= 5.5
 * A PSR-7 HTTP Message implementation, for example [zend-diactoros](https://github.com/zendframework/zend-diactoros)
-* A PSR-7 middleware dispatcher. For example [Relay](https://github.com/relayphp/Relay.Relay) or any other similar.
+* A PSR-7 middleware dispatcher. For example [Relay](https://github.com/relayphp/Relay.Relay) or any other compatible.
 
 ## Usage example:
 
@@ -108,7 +108,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 
 ### AuraRouter
 
-To use [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You need to use the 3.x version, compatible with psr-7:
+To use [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You need the 3.x version, compatible with psr-7:
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -131,7 +131,7 @@ $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
     //Write directly in the response's body
     $response->getBody()->write('Hello '.$name);
 
-    //or echo the output (it will be captured and passed to body stream)
+    //or echo the output (it will be captured and writted into body)
     echo 'Hello world';
 
     //or return a string
@@ -185,7 +185,7 @@ $dispatcher = $relay->getInstance([
 
 ### BasicAuthentication
 
-Implements the [basic http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed:
+Implements the [basic http authentication](http://php.net/manual/en/features.http-auth.php). You have to provide an array with all users and password:
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -222,7 +222,7 @@ $dispatcher = $relay->getInstance([
 
 ### ClientIp
 
-Detects the client ip(s). You can configure the allowed headers.
+Detects the client ip(s).
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -242,7 +242,7 @@ $dispatcher = $relay->getInstance([
         $ip = ClientIp::getIp($request);
 
         //Get all ips found in the headers
-        $all_ips = array_implode(', ', ClientIp::getIps($request));
+        $all_ips = ClientIp::getIps($request);
 
         return $next($request, $response);
     }
@@ -274,7 +274,7 @@ $dispatcher = $relay->getInstance([
 
 ### DigestAuthentication
 
-Implements the [digest http authentication](http://php.net/manual/en/features.http-auth.php). You have to pass an array with all users and password allowed as first argument:
+Implements the [digest http authentication](http://php.net/manual/en/features.http-auth.php). You have to provide an array with the users and password:
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -293,7 +293,7 @@ $dispatcher = $relay->getInstance([
 
 ### ErrorHandler
 
-Executes a handler if the response returned by the next middlewares has any error (status code 400-599). You can catch also the exceptions throwed. To use it with an error handler like [whoops](https://github.com/filp/whoops), you can register it to catch exceptions and other errors using the methods `before` and `after`. These methods receives a callable wrapping your handler that returns a ResponseInterface object.
+Executes a handler if the response returned by the next middlewares has any error (status code 400-599). You can catch also the exceptions throwed or even use [whoops](https://github.com/filp/whoops) as error handler.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -326,12 +326,8 @@ $dispatcher = $relay->getInstance([
         //(optional) append arguments to the handler
         ->arguments($myApp)
 
-        //(optional) register your function to catch exceptions or other errors
-        ->before(function ($handler) use ($whoops) {
-           $whoops->pushHandler(function () use ($handler) {
-                echo $handler()->getBody();
-           });
-        })
+        //(optional) provide a whoops instance to capture errors and exceptions
+        ->whoops($whoops)
 
         //(optional) unregister the error catcher
         ->after(function ($handler) use ($whoops) {
@@ -375,7 +371,7 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    //needed to capture the user ips
+    //needed to capture the user ips before
     Middleware::ClientIp(),
 
     //set the firewall
@@ -387,7 +383,7 @@ $dispatcher = $relay->getInstance([
 
 ### FormatNegotiation
 
-Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. It also adds the `Content-Type` header to the response if it's missing.
+Uses [willdurand/Negotiation (2.x)](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. It also adds the `Content-Type` header to the response if it's missing.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -464,7 +460,7 @@ $dispatcher = $relay->getInstance([
 
 ### Payload
 
-Parses the body of the request if it's not parsed and the method is GET, POST or PUT. It has support for json and url encoded format.
+Parses the body of the request if it's not parsed and the method is POST, PUT or DELETE. It has support for json, csv and url encoded format.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -493,7 +489,7 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::ReadResponse()
-        ->storage('path/to/document/root') //Path where are the files 
+        ->storage('path/to/document/root') //Path where the files are stored
         ->basePath('public') //(optional) basepath ignored from the request uri
 ]);
 ```
@@ -528,7 +524,7 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::SaveResponse()
-        ->storage('path/to/document/root') //Path where save the responses
+        ->storage('path/to/document/root') //Path directory where save the responses
         ->basePath('public') //(optional) basepath ignored from the request uri
 ]);
 ```
@@ -554,7 +550,7 @@ $dispatcher = $relay->getInstance([
 
 ### TrailingSlash
 
-Removes the trailing slash of the path. For example, `/post/23/` will be converted to `/post/23`. If the path is `/` it won't be converted. Useful if you have problems with the router.
+Removes (or adds) the trailing slash of the path. For example, `/post/23/` will be converted to `/post/23`. If the path is `/` it won't be converted. Useful if you have problems with the router.
 
 ```php
 use Psr7Middlewares\Middleware;

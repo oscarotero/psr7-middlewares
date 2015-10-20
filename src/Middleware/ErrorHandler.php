@@ -21,6 +21,7 @@ class ErrorHandler
     protected $handler;
     protected $before;
     protected $after;
+    protected $whoops;
     protected $catchExceptions = false;
 
     /**
@@ -57,6 +58,20 @@ class ErrorHandler
     public function handler($handler)
     {
         $this->handler = $handler;
+
+        return $this;
+    }
+
+    /**
+     * Set an instance of Whoops
+     *
+     * @param \Whoops\Run $whoops
+     *
+     * @return self
+     */
+    public function whoops(\Whoops\Run $whoops)
+    {
+        $this->whoops = $whoops;
 
         return $this;
     }
@@ -113,12 +128,14 @@ class ErrorHandler
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $handler = function () use ($request, $response) {
-            return self::executeTarget($this->handler, $this->arguments, $request, $response);
-        };
+        if ($this->whoops) {
+            $handler = function () use ($request, $response) {
+                return self::executeTarget($this->handler, $this->arguments, $request, $response);
+            };
 
-        if ($this->before !== null) {
-            call_user_func($this->before, $handler);
+            $this->whoops->pushHandler(function () use ($handler) {
+                echo $handler()->getBody();
+            });
         }
 
         ob_start();
@@ -140,8 +157,8 @@ class ErrorHandler
             return self::executeTarget($this->handler, $this->arguments, $request, $response);
         }
 
-        if ($this->after !== null) {
-            call_user_func($this->after, $handler);
+        if ($this->whoops) {
+            $this->whoops->popHandler();
         }
 
         return $response;
