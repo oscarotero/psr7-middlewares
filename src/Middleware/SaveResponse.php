@@ -29,7 +29,7 @@ class SaveResponse
     {
         $response = $next($request, $response);
 
-        if (!count($request->getUri()->getQuery()) && static::isCacheable($request, $response)) {
+        if (empty($request->getUri()->getQuery()) && static::isCacheable($request, $response)) {
             static::writeStream($response->getBody(), $this->getFilename($request));
         }
 
