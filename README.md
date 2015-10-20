@@ -32,6 +32,9 @@ $relay = new RelayBuilder();
 
 $dispatcher = $relay->newInstance([
 
+    //Calculate the response time
+    Middleware::responseTime(),
+
     //Add an Uuid to request
     Middleware::uuid(),
     
@@ -100,6 +103,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Minify](#minify)
 * [Payload](#payload)
 * [ReadResponse](#readresponse)
+* [ResponseTime](#responseTime)
 * [Robots](#robots)
 * [SaveResponse](#saveresponse)
 * [Shutdown](#shutdown)
@@ -491,6 +495,19 @@ $dispatcher = $relay->getInstance([
     Middleware::ReadResponse()
         ->storage('path/to/document/root') //Path where the files are stored
         ->basePath('public') //(optional) basepath ignored from the request uri
+]);
+```
+
+### ResponseTime
+
+Calculates the response time (in miliseconds) and saves it into `X-Response-Time` header:
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::ResponseTime()
 ]);
 ```
 
