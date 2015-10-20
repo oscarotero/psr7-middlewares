@@ -2,8 +2,10 @@
 
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Middleware to parse the body.
@@ -58,14 +60,76 @@ class Payload
 
         //json
         if (stripos($contentType, 'application/json') === 0) {
-            return $request->withParsedBody(json_decode((string) $request->getBody(), $this->associative));
+            return $request
+                ->withParsedBody($this->parseJson($request->getBody()))
+                ->withBody(Middleware::createStream());
         }
 
         //urlencoded
         if (stripos($contentType, 'application/x-www-form-urlencoded') === 0) {
-            parse_str((string) $request->getBody(), $data);
-
-            return $request->withParsedBody($data ?: []);
+            return $request
+                ->withParsedBody($this->parseUrlEncoded($request->getBody()))
+                ->withBody(Middleware::createStream());
         }
+
+        //csv
+        if (stripos($contentType, 'text/csv') === 0) {
+            return $request
+                ->withParsedBody($this->parseCsv($request->getBody()))
+                ->withBody(Middleware::createStream());
+        }
+
+        return $request;
+    }
+
+    /**
+     * Parses json
+     * 
+     * @param StreamInterface $body
+     * 
+     * @return array
+     */
+    protected function parseJson(StreamInterface $body)
+    {
+        return json_decode((string) $body, $this->associative);
+    }
+
+    /**
+     * Parses url-encoded strings
+     * 
+     * @param StreamInterface $body
+     * 
+     * @return array
+     */
+    protected function parseUrlEncoded(StreamInterface $body)
+    {
+        parse_str((string) $body, $data);
+
+        return $data ?: [];
+    }
+
+    /**
+     * Parses csv
+     * 
+     * @param StreamInterface $body
+     * 
+     * @return array
+     */
+    protected function parseCsv(StreamInterface $body)
+    {
+        if ($body->isSeekable()) {
+            $body->rewind();
+        }
+
+        $stream = $body->detach();
+        $data = [];
+
+        while (($row = fgetcsv($stream)) !== false) {
+            $data[] = $row;
+        }
+
+        fclose($stream);
+
+        return $data;
     }
 }
