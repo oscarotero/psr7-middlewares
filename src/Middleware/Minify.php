@@ -7,7 +7,7 @@ use Psr7Middlewares\Utils\CacheTrait;
 use Minify_HTML as HtmlMinify;
 use CSSmin as CssMinify;
 use JSMinPlus as JsMinify;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class Minify
@@ -63,12 +63,12 @@ class Minify
     /**
      * Execute the middleware.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($this->forCache && !static::isCacheable($request, $response)) {
             return $next($request, $response);

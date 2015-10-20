@@ -5,7 +5,7 @@ namespace Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware as Factory;
 use Psr7Middlewares\Utils\CacheTrait;
 use Psr7Middlewares\Utils\StorageTrait;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Datetime;
@@ -45,13 +45,13 @@ class Cache
     /**
      * Execute the middleware.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
-     * @param callable               $next
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
+     * @param callable          $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         $item = $this->cache->getItem(static::getCacheKey($request));
 
@@ -118,11 +118,11 @@ class Cache
     /**
      * Returns the id used to cache a request.
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      *
      * @return string
      */
-    protected function getCacheKey(ServerRequestInterface $request)
+    protected function getCacheKey(RequestInterface $request)
     {
         return $request->getMethod().md5((string) $request->getUri());
     }

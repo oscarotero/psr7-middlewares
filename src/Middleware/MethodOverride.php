@@ -3,7 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -43,12 +43,12 @@ class MethodOverride
     /**
      * Execute the middleware.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         $method = $this->getOverrideMethod($request);
 
@@ -70,11 +70,11 @@ class MethodOverride
     /**
      * Returns the override method.
      * 
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * 
      * @return string|null
      */
-    protected function getOverrideMethod(ServerRequestInterface $request)
+    protected function getOverrideMethod(RequestInterface $request)
     {
         $method = $request->getHeaderLine(self::HEADER);
 
@@ -86,11 +86,11 @@ class MethodOverride
     /**
      * Returns the allowed override methods.
      * 
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      * 
      * @return array
      */
-    protected function getAllowedOverrideMethods(ServerRequestInterface $request)
+    protected function getAllowedOverrideMethods(RequestInterface $request)
     {
         switch ($request->getMethod()) {
             case 'GET':

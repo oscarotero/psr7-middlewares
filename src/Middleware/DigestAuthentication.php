@@ -3,7 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils\AuthenticationTrait;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -32,12 +32,12 @@ class DigestAuthentication
     /**
      * Execute the middleware.
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($this->login($request)) {
             return $next($request, $response);
@@ -51,11 +51,11 @@ class DigestAuthentication
     /**
      * Login or check the user credentials.
      *
-     * @param ServerRequestInterface $request
+     * @param RequestInterface $request
      *
      * @return bool
      */
-    protected function login(ServerRequestInterface $request)
+    protected function login(RequestInterface $request)
     {
         //Check header
         $authorization = static::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
