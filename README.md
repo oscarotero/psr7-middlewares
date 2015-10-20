@@ -128,7 +128,7 @@ $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
     //You can get also the route instance
     $route = AuraRouter::getRoute($request);
 
-    //Write directly in the body's response
+    //Write directly in the response's body
     $response->getBody()->write('Hello '.$name);
 
     //or echo the output (it will be captured and passed to body stream)
