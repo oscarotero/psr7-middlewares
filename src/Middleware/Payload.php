@@ -83,7 +83,7 @@ class Payload
     }
 
     /**
-     * Parses json
+     * Parses json.
      * 
      * @param StreamInterface $body
      * 
@@ -95,7 +95,7 @@ class Payload
     }
 
     /**
-     * Parses url-encoded strings
+     * Parses url-encoded strings.
      * 
      * @param StreamInterface $body
      * 
@@ -109,7 +109,7 @@ class Payload
     }
 
     /**
-     * Parses csv
+     * Parses csv.
      * 
      * @param StreamInterface $body
      * 

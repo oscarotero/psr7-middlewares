@@ -95,7 +95,7 @@ class Uuid
     }
 
     /**
-     * Generate the uuid with the current configuration
+     * Generate the uuid with the current configuration.
      *
      * @return string
      */

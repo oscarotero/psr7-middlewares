@@ -63,7 +63,7 @@ class ErrorHandler
     }
 
     /**
-     * Set an instance of Whoops
+     * Set an instance of Whoops.
      *
      * @param \Whoops\Run $whoops
      *
