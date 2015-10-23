@@ -2,6 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
+use RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Neomerx\Cors\Analyzer;
@@ -54,6 +55,10 @@ class Cors
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
+        if ($this->settings === null) {
+            throw new RuntimeException('No settings provided for Cors middleware');
+        }
+
         $cors = Analyzer::instance($this->settings)->analyze($request);
 
         switch ($cors->getRequestType()) {

@@ -94,7 +94,7 @@ class Uuid
 
         $request = Middleware::setAttribute($request, self::KEY, $uuid);
 
-        if ($this->header) {
+        if (!empty($this->header)) {
             $request = $request->withHeader($this->header, (string) $uuid);
         }
 
