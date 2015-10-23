@@ -13,6 +13,9 @@ class DigestAuthentication
 {
     use AuthenticationTrait;
 
+    /**
+     * @var string|null The nonce value
+     */
     protected $nonce;
 
     /**

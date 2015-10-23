@@ -13,6 +13,9 @@ class ClientIp
 {
     const KEY = 'CLIENT_IPS';
 
+    /**
+     * @var array The trusted headers
+     */
     protected $headers = [
         'Forwarded',
         'Forwarded-For',

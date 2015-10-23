@@ -12,7 +12,14 @@ class AuraSession
 {
     const KEY = 'AURA_SESSION';
 
+    /**
+     * @var SessionFactory|null
+     */
     protected $factory;
+
+    /**
+     * @var string|null The session name
+     */
     protected $name;
 
     /**

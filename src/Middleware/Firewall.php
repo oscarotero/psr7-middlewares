@@ -13,7 +13,14 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Firewall
 {
+    /**
+     * @var array|null Trusted ips
+     */
     protected $trusted;
+
+    /**
+     * @var array|null Untrusted ips
+     */
     protected $untrusted;
 
     /**
@@ -66,7 +73,7 @@ class Firewall
             throw new RuntimeException('Firewall middleware needs ClientIp executed before');
         }
 
-        $ips = ClientIp::getIps($request);
+        $ips = ClientIp::getIps($request) ?: [];
         $firewall = new IpFirewall();
 
         if (!empty($this->trusted)) {

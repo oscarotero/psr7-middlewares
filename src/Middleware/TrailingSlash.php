@@ -13,6 +13,9 @@ class TrailingSlash
 {
     use BasePathTrait;
 
+    /**
+     * @var bool Add or remove the slash
+     */
     protected $addSlash;
 
     /**

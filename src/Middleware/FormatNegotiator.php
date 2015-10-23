@@ -14,7 +14,14 @@ class FormatNegotiator
 {
     const KEY = 'FORMAT';
 
+    /**
+     * @var string Default format
+     */
     protected $default = 'html';
+
+    /**
+     * @var array Available formats with the available mime types
+     */
     protected $formats = [
         'html' => ['text/html', 'application/xhtml+xml'],
         'css' => ['text/css'],

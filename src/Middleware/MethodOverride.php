@@ -13,7 +13,14 @@ class MethodOverride
 {
     const HEADER = 'X-Http-Method-Override';
 
+    /**
+     * @var array Allowed methods overrided in GET
+     */
     protected $get = ['HEAD', 'CONNECT', 'TRACE', 'OPTIONS'];
+
+    /**
+     * @var array Allowed methods overrided in POST
+     */
     protected $post = ['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'];
 
     /**

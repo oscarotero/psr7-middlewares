@@ -18,6 +18,9 @@ class AuraRouter
 
     const KEY = 'AURA_ROUTE';
 
+    /**
+     * @var RouterContainer|null The router container
+     */
     protected $router;
 
     /**

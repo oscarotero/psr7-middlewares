@@ -18,10 +18,19 @@ class ErrorHandler
     use RouterTrait;
     use ArgumentsTrait;
 
+    /**
+     * @var callable|string|null Error handler
+     */
     protected $handler;
-    protected $before;
-    protected $after;
+
+    /**
+     * @var \Woops\Run|null To handle errors using whoops
+     */
     protected $whoops;
+
+    /**
+     * @var bool Whether or not catch exceptions
+     */
     protected $catchExceptions = false;
 
     /**
@@ -86,34 +95,6 @@ class ErrorHandler
     public function catchExceptions($catch = true)
     {
         $this->catchExceptions = (boolean) $catch;
-
-        return $this;
-    }
-
-    /**
-     * Register a handler executed before.
-     *
-     * @param callable $handler
-     *
-     * @return self
-     */
-    public function before(callable $handler)
-    {
-        $this->before = $handler;
-
-        return $this;
-    }
-
-    /**
-     * Register a handler executed after.
-     *
-     * @param callable $handler
-     *
-     * @return self
-     */
-    public function after(callable $handler)
-    {
-        $this->after = $handler;
 
         return $this;
     }

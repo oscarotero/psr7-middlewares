@@ -16,6 +16,9 @@ class Shutdown
     use RouterTrait;
     use ArgumentsTrait;
 
+    /**
+     * @var callable|string|null The handler used
+     */
     protected $handler;
 
     /**

@@ -14,8 +14,19 @@ class Minify
 {
     use CacheTrait;
 
+    /**
+     * @var bool Minify only cacheable responses
+     */
     protected $forCache = false;
+
+    /**
+     * @var bool Minify inline css
+     */
     protected $inlineCss = true;
+
+    /**
+     * @var bool Minify inline js
+     */
     protected $inlineJs = true;
 
     /**

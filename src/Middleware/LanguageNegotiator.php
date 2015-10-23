@@ -14,6 +14,9 @@ class LanguageNegotiator
 {
     const KEY = 'LANGUAGE';
 
+    /**
+     * @var array Allowed languages
+     */
     protected $languages = [];
 
     /**

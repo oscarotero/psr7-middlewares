@@ -13,8 +13,15 @@ class Uuid
 {
     const KEY = 'UUID';
 
-    protected $version = [1];
+    /**
+     * @var string|false The header name to use 
+     */
     protected $header = 'X-Uuid';
+
+    /**
+     * @var array The version and arguments needed to generate the Uuid
+     */
+    protected $version = [1];
 
     /**
      * Returns the Uuid instance.

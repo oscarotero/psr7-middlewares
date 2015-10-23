@@ -12,6 +12,9 @@ use Psr\Http\Message\StreamInterface;
  */
 class Payload
 {
+    /**
+     * @var bool Whether convert the object into associative arrays
+     */
     protected $associative = false;
 
     /**

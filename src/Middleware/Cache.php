@@ -18,6 +18,9 @@ class Cache
     use CacheTrait;
     use StorageTrait;
 
+    /**
+     * @var CacheItemPoolInterface The cache implementation used
+     */
     protected $cache;
 
     /**

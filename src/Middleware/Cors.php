@@ -13,6 +13,9 @@ use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
  */
 class Cors
 {
+    /**
+     * @var SettingsStrategyInterface|null The settings used by the Analyzer
+     */
     protected $settings;
 
     /**

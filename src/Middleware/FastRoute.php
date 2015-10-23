@@ -14,12 +14,15 @@ class FastRoute
     use RouterTrait;
     use ArgumentsTrait;
 
+    /**
+     * @var Dispatcher|null FastRoute dispatcher
+     */
     protected $router;
 
     /**
      * Constructor. Set Dispatcher instance.
      *
-     * @param Dispatcher $router
+     * @param Dispatcher|null $router
      */
     public function __construct(Dispatcher $router = null)
     {
