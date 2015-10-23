@@ -333,11 +333,6 @@ $dispatcher = $relay->getInstance([
         //(optional) provide a whoops instance to capture errors and exceptions
         ->whoops($whoops)
 
-        //(optional) unregister the error catcher
-        ->after(function ($handler) use ($whoops) {
-            $whoops->popHandler();
-        })
-
         //(optional) catch exceptions, if you don't use an external library for that
         ->catchExceptions(true)
 ]);
