@@ -110,12 +110,9 @@ class ErrorHandler
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($this->whoops) {
-            $handler = function () use ($request, $response) {
-                return self::executeTarget($this->handler, $this->arguments, $request, $response);
-            };
-
-            $this->whoops->pushHandler(function () use ($handler) {
-                echo $handler()->getBody();
+            $this->whoops->pushHandler(function ($exception) use ($request, $response) {
+                $request = Middleware::setAttribute($request, self::KEY, $exception);
+                echo self::executeTarget($this->handler, $this->arguments, $request, $response)->getBody();
             });
         }
 
