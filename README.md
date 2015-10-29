@@ -109,6 +109,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Shutdown](#shutdown)
 * [TrailingSlash](#trailingslash)
 * [Uuid](#uuid)
+* [When](#when)
 
 ### AuraRouter
 
@@ -602,6 +603,32 @@ $dispatcher = $relay->getInstance([
     }
 ]);
 ```
+
+### When
+
+Execute a middleware only if a condition is evaluated as true. This is useful to add middleware only under some circunstances or environments.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::When()
+        ->condition(getenv('ENV') === 'production') //The condition to be evaluated
+        ->middleware(Middleware::minify()),          //The middleware to be executed when the condition is true
+
+    //You can use also callables:
+    Middleware::when()
+        ->condition(function ($request, $response) {
+            return $request->hasHeader('X-Foo')
+        })
+        ->middleware(function ($request, $response, $next) {
+            //your code
+            return $next($request, $response);
+        })
+]);
+```
+
 
 ## Contribution
 
