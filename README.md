@@ -572,6 +572,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::TrailingSlash()
         ->addSlash(true) //(optional) to add the trailing slash instead remove
+        ->redirect() //(optional) to return a 302 response to the new path
         ->basePath('public') //(optional) basepath
 ]);
 ```
