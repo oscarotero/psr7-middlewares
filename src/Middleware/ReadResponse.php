@@ -2,8 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils\FileTrait;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ReadResponse
 {
-    use FileTrait;
+    use Utils\FileTrait;
 
     /**
      * Execute the middleware.

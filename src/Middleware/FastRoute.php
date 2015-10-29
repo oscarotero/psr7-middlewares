@@ -2,8 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils\RouterTrait;
-use Psr7Middlewares\Utils\ArgumentsTrait;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use FastRoute\Dispatcher;
@@ -11,8 +10,8 @@ use RuntimeException;
 
 class FastRoute
 {
-    use RouterTrait;
-    use ArgumentsTrait;
+    use Utils\RouterTrait;
+    use Utils\ArgumentsTrait;
 
     /**
      * @var Dispatcher|null FastRoute dispatcher

@@ -2,9 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware as Factory;
-use Psr7Middlewares\Utils\CacheTrait;
-use Psr7Middlewares\Utils\StorageTrait;
+use Psr7Middlewares\Utils;
+use Psr7Middlewares\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -15,8 +14,8 @@ use Datetime;
  */
 class Cache
 {
-    use CacheTrait;
-    use StorageTrait;
+    use Utils\CacheTrait;
+    use Utils\StorageTrait;
 
     /**
      * @var CacheItemPoolInterface The cache implementation used
@@ -61,7 +60,7 @@ class Cache
         if ($item->isHit()) {
             list($headers, $body) = $item->get();
 
-            $response = $response->withBody(Factory::createStream());
+            $response = $response->withBody(Middleware::createStream());
             $response->getBody()->write($body);
 
             foreach ($headers as $name => $header) {

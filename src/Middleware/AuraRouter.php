@@ -2,9 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils\RouterTrait;
-use Psr7Middlewares\Utils\ArgumentsTrait;
 use Aura\Router\RouterContainer;
 use Aura\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,8 +12,8 @@ use RuntimeException;
 
 class AuraRouter
 {
-    use RouterTrait;
-    use ArgumentsTrait;
+    use Utils\RouterTrait;
+    use Utils\ArgumentsTrait;
 
     const KEY = 'AURA_ROUTE';
 

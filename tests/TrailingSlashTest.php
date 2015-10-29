@@ -36,4 +36,17 @@ class TrailingSlashTest extends Base
 
         $this->assertEquals($result, (string) $response->getBody());
     }
+
+    public function testTrailingSlashRedirect()
+    {
+        $response = $this->execute(
+            [
+                Middleware::trailingSlash()->redirect()
+            ],
+            '/foo/bar/'
+        );
+
+        $this->assertEquals(302, (string) $response->getStatusCode());
+        $this->assertEquals('/foo/bar', $response->getHeaderLine('location'));
+    }
 }

@@ -2,17 +2,17 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware as Factory;
-use Psr7Middlewares\Utils\CacheTrait;
+use Psr7Middlewares\Utils;
+use Psr7Middlewares\Middleware;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Minify_HTML as HtmlMinify;
 use CSSmin as CssMinify;
 use JSMinPlus as JsMinify;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 class Minify
 {
-    use CacheTrait;
+    use Utils\CacheTrait;
 
     /**
      * @var bool Minify only cacheable responses
@@ -128,7 +128,7 @@ class Minify
             };
         }
 
-        $stream = Factory::createStream();
+        $stream = Middleware::createStream();
         $stream->write(HtmlMinify::minify((string) $response->getBody(), $options));
 
         return $response->withBody($stream);
@@ -143,7 +143,7 @@ class Minify
      */
     protected function minifyCss(ResponseInterface $response)
     {
-        $stream = Factory::createStream();
+        $stream = Middleware::createStream();
         $stream->write((new CssMinify())->run((string) $response->getBody()));
 
         return $response->withBody($stream);
@@ -158,7 +158,7 @@ class Minify
      */
     protected function minifyJs(ResponseInterface $response)
     {
-        $stream = Factory::createStream();
+        $stream = Middleware::createStream();
         $stream->write(JsMinify::minify((string) $response->getBody()));
 
         return $response->withBody($stream);

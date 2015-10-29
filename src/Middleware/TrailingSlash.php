@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils\BasePathTrait;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -11,7 +11,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class TrailingSlash
 {
-    use BasePathTrait;
+    use Utils\BasePathTrait;
+    use Utils\RedirectTrait;
 
     /**
      * @var bool Add or remove the slash
@@ -70,8 +71,11 @@ class TrailingSlash
             $path .= '/';
         }
 
-        $request = $request->withUri($uri->withPath($path));
+        //redirect
+        if ($this->redirect && ($uri->getPath() !== $path)) {
+            return self::getRedirectResponse($uri->withPath($path), $response);
+        }
 
-        return $next($request, $response);
+        return $next($request->withUri($uri->withPath($path)), $response);
     }
 }

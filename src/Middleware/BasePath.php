@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils\BasePathTrait;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class BasePath
 {
-    use BasePathTrait;
+    use Utils\BasePathTrait;
 
     /**
      * Constructor. Set the path prefix.

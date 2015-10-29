@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils\AuthenticationTrait;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class BasicAuthentication
 {
-    use AuthenticationTrait;
+    use Utils\AuthenticationTrait;
 
     /**
      * Execute the middleware.

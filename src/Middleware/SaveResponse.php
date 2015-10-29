@@ -2,8 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils\CacheTrait;
-use Psr7Middlewares\Utils\FileTrait;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -13,8 +12,8 @@ use Psr\Http\Message\StreamInterface;
  */
 class SaveResponse
 {
-    use CacheTrait;
-    use FileTrait;
+    use Utils\CacheTrait;
+    use Utils\FileTrait;
 
     /**
      * Execute the middleware.
