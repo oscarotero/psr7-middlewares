@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to add other middleware under a condition
+ * Middleware to add other middleware under a condition.
  */
 class When
 {
@@ -36,7 +36,7 @@ class When
     }
 
     /**
-     * Set the condition
+     * Set the condition.
      *
      * @param mixed $condition
      *
@@ -50,7 +50,7 @@ class When
     }
 
     /**
-     * Set the middleware
+     * Set the middleware.
      *
      * @param callable $middleware
      *

@@ -41,7 +41,7 @@ class TrailingSlashTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::trailingSlash()->redirect()
+                Middleware::trailingSlash()->redirect(),
             ],
             '/foo/bar/'
         );

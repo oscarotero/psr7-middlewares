@@ -26,7 +26,7 @@ class WhenTest extends Base
                 }),
                 function ($request, $response, $next) {
                     return $next($request, $response->withAddedHeader('X-Foo', 'Foo'));
-                }
+                },
             ]
         );
 

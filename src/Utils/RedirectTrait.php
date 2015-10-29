@@ -28,9 +28,9 @@ trait RedirectTrait
     }
 
     /**
-     * Returns a redirect response
+     * Returns a redirect response.
      * 
-     * @param UriInterface $uri
+     * @param UriInterface      $uri
      * @param ResponseInterface $response
      */
     protected static function getRedirectResponse(UriInterface $uri, ResponseInterface $response)
