@@ -22,7 +22,7 @@
 	},
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",
-		"relay/relay": "0.2",
+		"relay/relay": "1.*",
 		"nikic/fast-route": "0.*",
 		"aura/router": "3.0.0-beta2",
 		"aura/session": "2.*",
@@ -32,7 +32,8 @@
 		"mrclay/minify": "^2.2",
 		"matthiasmullie/scrapbook": "dev-master",
 		"ramsey/uuid": "^2.8",
-		"neomerx/cors-psr7": "^0.2.0"
+		"neomerx/cors-psr7": "^0.2.0",
+		"maximebf/debugbar": "~1.10"
 	},
 	"suggest": {
 		"aura/router": "To use Middleware::auraRouter",
@@ -42,7 +43,8 @@
 		"m6web/firewall": "To use Middleware::firewall()",
 		"mrclay/minify": "To use Middleware::minify()",
 		"ramsey/uuid": "To use Middleware::uuid()",
-		"neomerx/cors-psr7": "To use Middleware::cors()"
+		"neomerx/cors-psr7": "To use Middleware::cors()",
+		"maximebf/debugbar": "To use Middleware::debugBar()"
 	},
 	"autoload": {
 		"psr-4": {

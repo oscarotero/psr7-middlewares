@@ -3,8 +3,10 @@
 namespace Psr7Middlewares\Middleware;
 
 use DebugBar\DebugBar as Bar;
+use Psr7Middlewares\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 /**
  * Middleware to render a debugbar in html responses.
@@ -51,7 +53,11 @@ class DebugBar
     {
         $response = $next($request, $response);
 
-        if (strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION)) === 'html' || strpos($header, 'html') !== false) {
+        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+            throw new RuntimeException('DebugBar middleware needs FormatNegotiator executed before');
+        }
+
+        if (FormatNegotiator::getFormat($request) === 'html') {
             if ($this->debugBar === null) {
                 throw new RuntimeException('No DebugBar instance has been provided');
             }

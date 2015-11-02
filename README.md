@@ -71,6 +71,9 @@ $dispatcher = $relay->newInstance([
     //Detects the format
     Middleware::formatNegotiator(),
 
+    //Adds the php debug bar
+    Middleware::debugBar($app->get('debugbar')),
+
     //Execute fast route
     Middleware::fastRoute($app->get('dispatcher')),
 
@@ -93,6 +96,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Cache](#cache)
 * [ClientIp](#clientip)
 * [Cors](#cors)
+* [DebugBar](#debugbar)
 * [DigestAuthentication](#digestauthentication)
 * [ErrorHandler](#errorhandler)
 * [FastRoute](#fastroute)
@@ -274,6 +278,19 @@ $dispatcher = $relay->getInstance([
 
     Middleware::Cors()
         ->settings($settings)
+]);
+```
+
+### DebugBar
+
+Inserts the [PHP debug bar](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+    Middleware::formatNegotiator(),
+    Middleware::DebugBar(new DebugBar\StandardDebugBar())
 ]);
 ```
 
