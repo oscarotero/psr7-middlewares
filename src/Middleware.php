@@ -107,6 +107,10 @@ class Middleware
     {
         $attributes = $request->getAttribute(self::KEY);
 
+        if (empty($attributes)) {
+            return false;
+        }
+
         return array_key_exists($name, $attributes);
     }
 }
