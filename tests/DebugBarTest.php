@@ -10,7 +10,7 @@ class DebugBarTest extends Base
 
         $response = $this->execute([
             Middleware::FormatNegotiator(),
-            Middleware::DebugBar($debugBar)
+            Middleware::DebugBar($debugBar),
         ]);
 
         $body = (string) $response->getBody();
@@ -25,7 +25,7 @@ class DebugBarTest extends Base
 
         $response = $this->execute([
             Middleware::FormatNegotiator(),
-            Middleware::DebugBar($debugBar)
+            Middleware::DebugBar($debugBar),
         ], 'data.json');
 
         $body = (string) $response->getBody();
