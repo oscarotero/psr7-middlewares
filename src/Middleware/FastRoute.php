@@ -6,7 +6,6 @@ use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use FastRoute\Dispatcher;
-use RuntimeException;
 
 class FastRoute
 {

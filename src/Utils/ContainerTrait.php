@@ -2,8 +2,6 @@
 
 namespace Psr7Middlewares\Utils;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
 

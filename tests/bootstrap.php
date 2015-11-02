@@ -8,7 +8,7 @@ include_once __DIR__.'/Base.php';
 PHPUnit_Framework_Error_Notice::$enabled = true;
 
 /**
- * Minimal Container used for testing
+ * Minimal Container used for testing.
  */
 class ServiceContainer implements Interop\Container\ContainerInterface
 {
