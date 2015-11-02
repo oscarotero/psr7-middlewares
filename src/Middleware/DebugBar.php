@@ -4,7 +4,7 @@ namespace Psr7Middlewares\Middleware;
 
 use DebugBar\DebugBar as Bar;
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
@@ -44,12 +44,13 @@ class DebugBar
     /**
      * Execute the middleware.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
+     * @param ServerRequestInterface  $request
+     * @param ResponseInterface       $response
+     * @param callable                $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $response = $next($request, $response);
 

@@ -35,6 +35,7 @@ EOT;
         $response->getBody()->write($body);
 
         $middlewares = [
+            Middleware::FormatNegotiator(),
             Middleware::Minify(),
         ];
 

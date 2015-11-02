@@ -4,11 +4,12 @@ namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Minify_HTML as HtmlMinify;
 use CSSmin as CssMinify;
 use JSMinPlus as JsMinify;
+use RuntimeException;
 
 class Minify
 {
@@ -74,33 +75,35 @@ class Minify
     /**
      * Execute the middleware.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
+     * @param ServerRequestInterface  $request
+     * @param ResponseInterface       $response
+     * @param callable                $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($this->forCache && !static::isCacheable($request, $response)) {
             return $next($request, $response);
         }
 
-        $header = $response->getHeaderLine('Content-Type');
-        $extension = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
-
-        if ($extension === 'css' || strpos($header, 'txt/css') !== false) {
-            return $next($request, $this->minifyCss($response));
+        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+            throw new RuntimeException('Minify middleware needs FormatNegotiator executed before');
         }
 
-        if ($extension === 'js' || strpos($header, '/javascript') !== false) {
-            return $next($request, $this->minifyJs($response));
-        }
+        switch (FormatNegotiator::getFormat($request)) {
+            case 'css':
+                return $next($request, $this->minifyCss($response));
 
-        if ($extension === 'html' || strpos($header, 'html') !== false) {
-            return $next($request, $this->minifyHtml($response));
-        }
+            case 'js':
+                return $next($request, $this->minifyJs($response));
 
-        return $next($request, $response);
+            case 'html':
+                return $next($request, $this->minifyHtml($response));
+
+            default:
+                return $next($request, $response);
+        }
     }
 
     /**
