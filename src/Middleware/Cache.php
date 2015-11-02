@@ -105,7 +105,7 @@ class Cache
 
             //Max age
             if (isset($cacheControl['max-age'])) {
-                return time() + (int) $cacheControl['max-age'];
+                return new Datetime('@'.(time() + (int) $cacheControl['max-age']));
             }
         }
 
