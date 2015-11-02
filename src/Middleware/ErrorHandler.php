@@ -23,7 +23,7 @@ class ErrorHandler
     protected $handler;
 
     /**
-     * @var \Woops\Run|null To handle errors using whoops
+     * @var \Whoops\Run|null To handle errors using whoops
      */
     protected $whoops;
 
@@ -110,8 +110,7 @@ class ErrorHandler
     {
         if ($this->whoops) {
             $this->whoops->pushHandler(function ($exception) use ($request, $response) {
-                $request = Middleware::setAttribute($request, self::KEY, $exception);
-                echo self::executeTarget($this->handler, $this->arguments, $request, $response)->getBody();
+                echo self::executeTarget($this->handler, $this->arguments, Middleware::setAttribute($request, self::KEY, $exception), $response)->getBody();
             });
         }
 
