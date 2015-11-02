@@ -85,6 +85,7 @@ class Uuid
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
+     * @param callable               $next
      *
      * @return ResponseInterface
      */

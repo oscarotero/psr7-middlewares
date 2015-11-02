@@ -18,6 +18,7 @@ class Robots
      *
      * @param RequestInterface  $request
      * @param ResponseInterface $response
+     * @param callable          $next
      *
      * @return ResponseInterface
      */
