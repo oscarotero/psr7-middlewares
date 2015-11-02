@@ -12,6 +12,7 @@ class FastRoute
 {
     use Utils\RouterTrait;
     use Utils\ArgumentsTrait;
+    use Utils\ContainerTrait;
 
     /**
      * @var Dispatcher|null FastRoute dispatcher
@@ -55,11 +56,8 @@ class FastRoute
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->router === null) {
-            throw new RuntimeException('No FastRoute\\Dispatcher instance has been provided');
-        }
-
-        $route = $this->router->dispatch($request->getMethod(), $request->getUri()->getPath());
+        $router = $this->router ?: $this->getFromContainer(Dispatcher::CLASS);
+        $route = $router->dispatch($request->getMethod(), $request->getUri()->getPath());
 
         if ($route[0] === Dispatcher::NOT_FOUND) {
             return $response->withStatus(404);

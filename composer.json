@@ -18,7 +18,8 @@
 		"issues": "https://github.com/oscarotero/psr7-middlewares/issues"
 	},
 	"require": {
-		"php": ">=5.5.0"
+		"php": ">=5.5.0",
+		"container-interop/container-interop": "^1.1"
 	},
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",

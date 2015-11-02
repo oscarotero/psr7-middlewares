@@ -2,6 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils;
 use DebugBar\DebugBar as Bar;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,6 +14,8 @@ use RuntimeException;
  */
 class DebugBar
 {
+    use Utils\ContainerTrait;
+
     protected $debugBar;
 
     /**
@@ -59,11 +62,8 @@ class DebugBar
         }
 
         if (FormatNegotiator::getFormat($request) === 'html') {
-            if ($this->debugBar === null) {
-                throw new RuntimeException('No DebugBar instance has been provided');
-            }
-
-            $renderer = $this->debugBar->getJavascriptRenderer();
+            $debugBar = $this->debugBar ?: $this->getFromContainer(Bar::CLASS);
+            $renderer = $debugBar->getJavascriptRenderer();
 
             ob_start();
             echo '<style>';

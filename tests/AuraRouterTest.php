@@ -6,7 +6,7 @@ use Aura\Router\RouterContainer;
 
 class AuraRouterTest extends Base
 {
-    public function testAuraRouter()
+    protected function getRouter()
     {
         //Create router
         $router = new RouterContainer();
@@ -23,10 +23,35 @@ class AuraRouterTest extends Base
             return $response;
         });
 
+        return $router;
+    }
+
+    public function testAuraRouter()
+    {
         //Test
         $response = $this->execute(
             [
-                Middleware::AuraRouter($router),
+                Middleware::AuraRouter()
+                    ->router($this->getRouter()),
+            ],
+            'http://domain.com/user/oscarotero/35'
+        );
+
+        $this->assertEquals('Ok', (string) $response->getBody());
+    }
+
+    public function testAuraRouterContainer()
+    {
+        $container = new ServiceContainer();
+        $container->set('router', function () {
+            return $this->getRouter();
+        });
+
+        //Test
+        $response = $this->execute(
+            [
+                Middleware::AuraRouter()
+                    ->from($container, 'router'),
             ],
             'http://domain.com/user/oscarotero/35'
         );

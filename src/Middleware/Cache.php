@@ -16,6 +16,7 @@ class Cache
 {
     use Utils\CacheTrait;
     use Utils\StorageTrait;
+    use Utils\ContainerTrait;
 
     /**
      * @var CacheItemPoolInterface The cache implementation used
@@ -55,7 +56,9 @@ class Cache
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $item = $this->cache->getItem(static::getCacheKey($request));
+        $cache = $this->cache ?: $this->getFromContainer(CacheItemPoolInterface::CLASS);
+
+        $item = $cache->getItem(static::getCacheKey($request));
 
         if ($item->isHit()) {
             list($headers, $body) = $item->get();
@@ -82,7 +85,7 @@ class Cache
                 $item->expiresAt($time);
             }
 
-            $this->cache->save($item);
+            $cache->save($item);
         }
 
         return $response;

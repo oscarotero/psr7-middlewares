@@ -6,6 +6,7 @@ use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Whoops\Run;
 
 /**
  * Middleware to handle php errors and exceptions.
@@ -23,7 +24,7 @@ class ErrorHandler
     protected $handler;
 
     /**
-     * @var \Whoops\Run|null To handle errors using whoops
+     * @var Run|null To handle errors using whoops
      */
     protected $whoops;
 
@@ -73,11 +74,11 @@ class ErrorHandler
     /**
      * Set an instance of Whoops.
      *
-     * @param \Whoops\Run $whoops
+     * @param Run $whoops
      *
      * @return self
      */
-    public function whoops(\Whoops\Run $whoops)
+    public function whoops(Run $whoops)
     {
         $this->whoops = $whoops;
 

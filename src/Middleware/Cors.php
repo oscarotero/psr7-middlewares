@@ -2,18 +2,21 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use RuntimeException;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Neomerx\Cors\Analyzer;
 use Neomerx\Cors\Contracts\AnalysisResultInterface;
 use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
+use RuntimeException;
 
 /**
  * Middleware to implement Cors.
  */
 class Cors
 {
+    use Utils\ContainerTrait;
+
     /**
      * @var SettingsStrategyInterface|null The settings used by the Analyzer
      */
@@ -56,11 +59,8 @@ class Cors
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->settings === null) {
-            throw new RuntimeException('No settings provided for Cors middleware');
-        }
-
-        $cors = Analyzer::instance($this->settings)->analyze($request);
+        $settings = $this->settings ?: $this->getFromContainer(SettingsStrategyInterface::CLASS);
+        $cors = Analyzer::instance($settings)->analyze($request);
 
         switch ($cors->getRequestType()) {
             case AnalysisResultInterface::ERR_NO_HOST_HEADER:

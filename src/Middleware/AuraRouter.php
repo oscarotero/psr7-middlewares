@@ -14,6 +14,7 @@ class AuraRouter
 {
     use Utils\RouterTrait;
     use Utils\ArgumentsTrait;
+    use Utils\ContainerTrait;
 
     const KEY = 'AURA_ROUTE';
 
@@ -71,11 +72,13 @@ class AuraRouter
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->router === null) {
+        $router = $this->router ?: $this->getFromContainer(RouterContainer::CLASS);
+
+        if (empty($router)) {
             throw new RuntimeException('No RouterContainer instance has been provided');
         }
 
-        $matcher = $this->router->getMatcher();
+        $matcher = $router->getMatcher();
         $route = $matcher->match($request);
 
         if (!$route) {

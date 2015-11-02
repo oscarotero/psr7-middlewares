@@ -2,6 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
+use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
 use Aura\Session\SessionFactory;
 use Aura\Session\Session;
@@ -10,6 +11,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class AuraSession
 {
+    use Utils\ContainerTrait;
+
     const KEY = 'AURA_SESSION';
 
     /**
@@ -85,7 +88,7 @@ class AuraSession
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $factory = $this->factory ?: new SessionFactory();
+        $factory = $this->factory ?: $this->getFromContainer(SessionFactory::CLASS, false) ?: new SessionFactory();
         $session = $factory->newInstance($request->getCookieParams());
 
         if ($this->name !== null) {
