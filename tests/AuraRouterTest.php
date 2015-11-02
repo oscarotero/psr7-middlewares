@@ -43,9 +43,7 @@ class AuraRouterTest extends Base
     public function testAuraRouterContainer()
     {
         $container = new ServiceContainer();
-        $container->set('router', function () {
-            return $this->getRouter();
-        });
+        $container->set('router', $this->getRouter());
 
         //Test
         $response = $this->execute(

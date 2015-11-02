@@ -21,7 +21,7 @@ class ServiceContainer implements Interop\Container\ContainerInterface
 
     public function get($id)
     {
-        return call_user_func($this->items[$id], $this);
+        return $this->items[$id];
     }
 
     public function has($id)

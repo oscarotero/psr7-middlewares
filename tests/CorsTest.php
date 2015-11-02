@@ -68,4 +68,22 @@ class CorsTest extends Base
 
         $this->assertEquals($statusCode, $response->getStatusCode());
     }
+
+    /**
+     * @dataProvider corsProvider
+     */
+    public function testCorsContainer($url, $statusCode)
+    {
+        $container = new ServiceContainer();
+        $container->set('settings', $this->settings);
+
+        $response = $this->execute(
+            [
+                Middleware::cors()->from($container, 'settings'),
+            ],
+            $url
+        );
+
+        $this->assertEquals($statusCode, $response->getStatusCode());
+    }
 }

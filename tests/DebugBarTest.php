@@ -21,11 +21,12 @@ class DebugBarTest extends Base
 
     public function testFormat()
     {
-        $debugBar = new DebugBar\StandardDebugBar();
+        $container = new ServiceContainer();
+        $container->set('debugbar', new DebugBar\StandardDebugBar());
 
         $response = $this->execute([
             Middleware::FormatNegotiator(),
-            Middleware::DebugBar($debugBar),
+            Middleware::DebugBar()->from($container, 'debugbar'),
         ], 'data.json');
 
         $body = (string) $response->getBody();
