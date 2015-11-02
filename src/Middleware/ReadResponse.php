@@ -25,6 +25,10 @@ class ReadResponse
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
+        if ($request->getMethod() !== 'GET') {
+            return $response->withStatus(405);
+        }
+
         $file = $this->getFilename($request);
 
         if (!is_file($file)) {
