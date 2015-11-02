@@ -44,9 +44,9 @@ class DebugBar
     /**
      * Execute the middleware.
      *
-     * @param ServerRequestInterface  $request
-     * @param ResponseInterface       $response
-     * @param callable                $next
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param callable               $next
      *
      * @return ResponseInterface
      */
