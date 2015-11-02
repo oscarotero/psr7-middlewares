@@ -155,7 +155,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::AuraRouter()
         ->router($routerContainer) //Instance of Aura\Router\RouterContainer
-        ->arguments($myApp) //(optional) append more arguments to the controller
+        ->arguments($myApp)        //(optional) append more arguments to the controller
 ]);
 ```
 
@@ -309,7 +309,7 @@ $dispatcher = $relay->getInstance([
             'username2' => 'password2'
         ])
         ->realm('My realm') //(optional) custom realm value
-        ->nonce(uniqid()) //(optional) custom nonce value
+        ->nonce(uniqid())   //(optional) custom nonce value
 ]);
 ```
 
@@ -372,7 +372,7 @@ $router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
 $dispatcher = $relay->getInstance([
 
     Middleware::FastRoute()
-        ->router($router) //Instance of FastRoute\Dispatcher
+        ->router($router)  //Instance of FastRoute\Dispatcher
         ->argument($myApp) //(optional) arguments appended to the controller
 ]);
 ```
@@ -393,7 +393,7 @@ $dispatcher = $relay->getInstance([
 
     //set the firewall
     Middleware::Firewall()
-        ->trusted(['123.0.0.*']) //(optional) ips allowed
+        ->trusted(['123.0.0.*'])   //(optional) ips allowed
         ->untrusted(['123.0.0.1']) //(optional) ips not allowed
 ]);
 ```
@@ -468,10 +468,13 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
     
+    //needed to get the format of the response
+    Middleware::formatNegotiator(),
+
     Middleware::Minify()
-        ->forCache(true) //(optional) only minify cacheable responses (see SaveResponse)
+        ->forCache(true)   //(optional) only minify cacheable responses
         ->inlineCss(false) //(optional) enable/disable inline css minification
-        ->inlineJs(false) //(optional) enable/disable inline js minification
+        ->inlineJs(false)  //(optional) enable/disable inline js minification
 ]);
 ```
 
@@ -507,7 +510,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::ReadResponse()
         ->storage('path/to/document/root') //Path where the files are stored
-        ->basePath('public') //(optional) basepath ignored from the request uri
+        ->basePath('public')               //(optional) basepath ignored from the request uri
 ]);
 ```
 
@@ -555,7 +558,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::SaveResponse()
         ->storage('path/to/document/root') //Path directory where save the responses
-        ->basePath('public') //(optional) basepath ignored from the request uri
+        ->basePath('public')               //(optional) basepath ignored from the request uri
 ]);
 ```
 
@@ -574,7 +577,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::Shutdown()
         ->handler('shutdownHandler') // Callable that generate the response
-        ->arguments($app) //(optional) to add extra arguments to the handler
+        ->arguments($app)            //(optional) to add extra arguments to the handler
 ]);
 ```
 
@@ -588,8 +591,8 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::TrailingSlash()
-        ->addSlash(true) //(optional) to add the trailing slash instead remove
-        ->redirect() //(optional) to return a 302 response to the new path
+        ->addSlash(true)     //(optional) to add the trailing slash instead remove
+        ->redirect()         //(optional) to return a 302 response to the new path
         ->basePath('public') //(optional) basepath
 ]);
 ```
@@ -605,7 +608,7 @@ use Psr7Middlewares\Middleware\Uuid;
 $dispatcher = $relay->getInstance([
 
     Middleware::Uuid()
-        ->version(4) //(optional) version of the identifier (1 by default). Versions 3 and 5 need more arguments (see https://github.com/ramsey/uuid#examples)
+        ->version(4)     //(optional) version of the identifier (1 by default). Versions 3 and 5 need more arguments (see https://github.com/ramsey/uuid#examples)
         ->header(false), //(optional) Name of the header to store the identifier (X-Uuid by default). Set false to don't save header
 
     function ($request, $response, $next) {
@@ -633,7 +636,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::When()
         ->condition(getenv('ENV') === 'production') //The condition to be evaluated
-        ->middleware(Middleware::minify()),          //The middleware to be executed when the condition is true
+        ->middleware(Middleware::minify()),         //The middleware to be executed when the condition is true
 
     //You can use also callables:
     Middleware::when()
