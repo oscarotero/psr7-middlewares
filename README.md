@@ -3,13 +3,22 @@
 [![Build Status](https://travis-ci.org/oscarotero/psr7-middlewares.svg)](https://travis-ci.org/oscarotero/psr7-middlewares)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/oscarotero/psr7-middlewares/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/oscarotero/psr7-middlewares/?branch=master)
 
-Collection of PSR-7 middlewares
+Collection of [PSR-7](http://www.php-fig.org/psr/psr-7/) middlewares
 
 ## Requirements
 
 * PHP >= 5.5
 * A PSR-7 HTTP Message implementation, for example [zend-diactoros](https://github.com/zendframework/zend-diactoros)
-* A PSR-7 middleware dispatcher. For example [Relay](https://github.com/relayphp/Relay.Relay) or any other compatible.
+* A PSR-7 middleware dispatcher. For example [Relay](https://github.com/relayphp/Relay.Relay) or any other compatible with the following signature:
+
+```php
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+function (RequestInterface $request, ResponseInterface $response, callable $next) {
+    // ...
+}
+```
 
 ## Usage example:
 
@@ -154,8 +163,8 @@ $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
 $dispatcher = $relay->getInstance([
 
     Middleware::AuraRouter()
-        ->router($routerContainer) //Instance of Aura\Router\RouterContainer
-        ->arguments($myApp)        //(optional) append more arguments to the controller
+        ->router($routerContainer)   //Instance of Aura\Router\RouterContainer
+        ->arguments($myApp)          //(optional) append more arguments to the controller
 ]);
 ```
 
@@ -649,6 +658,24 @@ $dispatcher = $relay->getInstance([
         })
 ]);
 ```
+
+## Combine with container interop
+
+If you're using any container compatible with the [Container Interoperability Project](https://github.com/container-interop/container-interop) you can use it to provide instances to some  middlewares (routers, debugbar, psr6 cache, etc). To do that, there's the method `->from($container, $id)` available in the following middlewares:
+
+```php
+$container = new MyContainerInterop();
+
+$dispatcher = $relay->getInstance([
+    Middleware::Cache()->from($container, 'cache'),
+    Middleware::Cors()->from($container, 'cors-settings'),
+    Middleware::DebugBar()->from($container, 'debug-bar'),
+    Middleware::AuraSession()->from($container, 'session-factory'),
+    Middleware::FastRouter()->from($container, 'fast-router'),
+]);
+```
+
+By using containers instead creating and passing the instances directly, these instances will be created (for example `$container->get('fast-router')`) only if the middleware is executed.
 
 
 ## Contribution
