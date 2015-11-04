@@ -18,11 +18,10 @@ trait RedirectTrait
      * Set HTTP redirect status code.
      *
      * @param int $redirectStatus Redirect HTTP status code
-     * @link http://php.net/manual/ru/http.constants.php#http.constants.redirect
      * 
      * @return self
      */
-    public function redirect($redirectStatus = HTTP_REDIRECT_FOUND)
+    public function redirect($redirectStatus = 302)
     {
         $this->redirectStatus = $redirectStatus;
 
