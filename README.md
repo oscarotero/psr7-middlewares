@@ -413,18 +413,18 @@ Uses [willdurand/Negotiation (2.x)](https://github.com/willdurand/Negotiation) t
 
 ```php
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Middleware\FormatNegotiation;
+use Psr7Middlewares\Middleware\FormatNegotiator;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::FormatNegotiation()
+    Middleware::FormatNegotiator()
         ->defaultFormat('html') //(optional) default format if it's unable to detect. (by default is "html")
         ->addFormat('pdf', ['application/pdf', 'application/x-download']) //(optional) add new formats and mimetypes
     },
 
     function ($request, $response, $next) {
         //get the format (for example: html)
-        $format = FormatNegotiation::getFormat($request);
+        $format = FormatNegotiator::getFormat($request);
 
         return $next($request, $response);
     }
@@ -437,16 +437,16 @@ Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to dete
 
 ```php
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Middleware\LanguageNegotiation;
+use Psr7Middlewares\Middleware\LanguageNegotiator;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::LanguageNegotiation()
+    Middleware::LanguageNegotiator()
         ->languages(['gl', 'en', 'es']), //Available languages
 
     function ($request, $response, $next) {
         //Get the preferred language
-        $language = LanguageNegotiation::getLanguage($request);
+        $language = LanguageNegotiator::getLanguage($request);
 
         return $next($request, $response);
     }
