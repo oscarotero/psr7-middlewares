@@ -1,9 +1,12 @@
 # psr7-middlewares
 
+
 [![Build Status](https://travis-ci.org/oscarotero/psr7-middlewares.svg)](https://travis-ci.org/oscarotero/psr7-middlewares)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/oscarotero/psr7-middlewares/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/oscarotero/psr7-middlewares/?branch=master)
 
-Collection of [PSR-7](http://www.php-fig.org/psr/psr-7/) middlewares
+Collection of [PSR-7](http://www.php-fig.org/psr/psr-7/) middlewares.
+
+It is installable and autoloadable via Composer as oscarotero/psr7-middlewares.
 
 ## Requirements
 
