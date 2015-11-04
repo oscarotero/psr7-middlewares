@@ -73,8 +73,8 @@ class TrailingSlash
         }
 
         //redirect
-        if ($this->redirect && ($uri->getPath() !== $path)) {
-            return self::getRedirectResponse($uri->withPath($path), $response);
+        if (is_int($this->redirectStatus) && ($uri->getPath() !== $path)) {
+            return self::getRedirectResponse($this->redirectStatus, $uri->withPath($path), $response);
         }
 
         return $next($request->withUri($uri->withPath($path)), $response);
