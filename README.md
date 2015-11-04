@@ -301,8 +301,11 @@ Inserts the [PHP debug bar](http://phpdebugbar.com/) in the html body. This midd
 use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
+
     Middleware::formatNegotiator(),
-    Middleware::DebugBar(new DebugBar\StandardDebugBar())
+
+    Middleware::DebugBar()
+        ->debugBar(new DebugBar\StandardDebugBar())
 ]);
 ```
 
@@ -354,17 +357,10 @@ $whoops = new Whoops\Run();
 $dispatcher = $relay->getInstance([
 
     Middleware::ErrorHandler()
-        //My error handler
-        ->handler('errorHandler')
-
-        //(optional) append arguments to the handler
-        ->arguments($myApp)
-
-        //(optional) provide a whoops instance to capture errors and exceptions
-        ->whoops($whoops)
-
-        //(optional) catch exceptions, if you don't use an external library for that
-        ->catchExceptions(true)
+        ->handler('errorHandler') //The error handler
+        ->arguments($myApp)       //(optional) extra arguments to the handler
+        ->whoops($whoops)         //(optional) provide a whoops instance to capture errors and exceptions
+        ->catchExceptions()       //(optional) to catch exceptions if you don't use an external library for that
 ]);
 ```
 
@@ -588,7 +584,7 @@ function shutdownHandler ($request, $response, $app) {
 $dispatcher = $relay->getInstance([
 
     Middleware::Shutdown()
-        ->handler('shutdownHandler') // Callable that generate the response
+        ->handler('shutdownHandler') //Callable that generate the response
         ->arguments($app)            //(optional) to add extra arguments to the handler
 ]);
 ```
@@ -603,9 +599,9 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::TrailingSlash()
-        ->addSlash(true)                //(optional) to add the trailing slash instead remove
-        ->redirect(301)  //(optional) to return a 301 (seo friendly) response to the new path
-        ->basePath('public')            //(optional) basepath
+        ->addSlash(true)     //(optional) to add the trailing slash instead remove
+        ->redirect(301)      //(optional) to return a 301 (seo friendly) or 302 response to the new path
+        ->basePath('public') //(optional) basepath
 ]);
 ```
 
