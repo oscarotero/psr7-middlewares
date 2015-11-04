@@ -11,18 +11,20 @@ use Psr\Http\Message\UriInterface;
  */
 trait RedirectTrait
 {
-    protected $redirect;
+    /** @var int Redirect HTTP status code */
+    protected $redirectStatus;
 
     /**
-     * Whether or not return a redirect.
-     * 
-     * @param bool $redirect
+     * Set HTTP redirect status code.
      *
+     * @param int $redirectStatus Redirect HTTP status code
+     * @link http://php.net/manual/ru/http.constants.php#http.constants.redirect
+     * 
      * @return self
      */
-    public function redirect($redirect = true)
+    public function redirect($redirectStatus = HTTP_REDIRECT_FOUND)
     {
-        $this->redirect = $redirect;
+        $this->redirectStatus = $redirectStatus;
 
         return $this;
     }
@@ -36,7 +38,7 @@ trait RedirectTrait
     protected static function getRedirectResponse(UriInterface $uri, ResponseInterface $response)
     {
         return $response
-            ->withStatus(302)
+            ->withStatus($this->redirectStatus)
             ->withHeader('Location', (string) $uri)
             ->withBody(Middleware::createStream());
     }
