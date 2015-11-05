@@ -129,7 +129,12 @@ class FormatNegotiator
         }
 
         $priorities = call_user_func_array('array_merge', array_values($this->formats));
-        $accept = (new Negotiator())->getBest($accept, $priorities);
+
+        try {
+            $accept = (new Negotiator())->getBest($accept, $priorities);
+        } catch (\Exception $exception) {
+            return;
+        }
 
         if ($accept) {
             $accept = $accept->getValue();

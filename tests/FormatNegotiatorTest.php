@@ -24,6 +24,10 @@ class FormatNegotiatorTest extends Base
                 '/',
                 'application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5',
                 'html',
+            ],[
+                '/',
+                'text/html, image/gif, image/jpeg, *; q=0.2, */*; q=0.2',
+                'html',
             ],
         ];
     }
