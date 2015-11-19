@@ -112,7 +112,9 @@ class ErrorHandler
     {
         if ($this->whoops) {
             $this->whoops->pushHandler(function ($exception) use ($request, $response) {
-                echo self::executeTarget($this->handler, $this->arguments, Middleware::setAttribute($request, self::KEY, $exception), $response)->getBody();
+                try {
+                    echo self::executeTarget($this->handler, $this->arguments, Middleware::setAttribute($request, self::KEY, $exception), $response)->getBody();
+                } catch (\Exception $exception) {}
             });
         }
 
@@ -132,7 +134,9 @@ class ErrorHandler
         ob_end_clean();
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
-            return self::executeTarget($this->handler, $this->arguments, $request, $response);
+            try {
+                return self::executeTarget($this->handler, $this->arguments, $request, $response);
+            } catch (\Exception $exception) {}
         }
 
         if ($this->whoops) {
