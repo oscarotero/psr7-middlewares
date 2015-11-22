@@ -4,6 +4,7 @@ namespace Psr7Middlewares\Utils;
 
 use Interop\Container\ContainerInterface;
 use InvalidArgumentException;
+use RuntimeException;
 
 /**
  * Trait to provide a container to load parameters.
