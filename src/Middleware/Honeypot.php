@@ -3,14 +3,17 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to span protection using honeypot technique.
+ * Middleware to span protection using the honeypot technique.
  */
 class Honeypot
 {
+    use Utils\FormTrait;
+
     /**
      * @var string The honeypot input name
      */
@@ -68,16 +71,13 @@ class Honeypot
             return $next($request, $response);
         }
 
-        if (!$this->isValid($request)) {
+        if ($this->isPost($request) && !$this->isValid($request)) {
             return $response->withStatus(403);
         }
 
         $response = $next($request, $response);
 
-        $body = Middleware::createStream();
-        $body->write($this->insertHoneypots((string) $response->getBody()));
-
-        return $response->withBody($body);
+        return $this->insertIntoPostForms($response, '<input type="text" name="'.$this->inputName.'" class="'.$this->inputClass.'">');
     }
 
     /**
@@ -89,32 +89,8 @@ class Honeypot
      */
     protected function isValid(ServerRequestInterface $request)
     {
-        switch (strtoupper($request->getMethod())) {
-            case 'GET':
-            case 'HEAD':
-                return true;
-        }
-
         $data = $request->getParsedBody();
 
         return isset($data[$this->inputName]) && $data[$this->inputName] === '';
-    }
-
-    /**
-     * Insert the honeypot input to all POST forms.
-     * 
-     * @param string $html
-     * 
-     * @return string
-     */
-    protected function insertHoneypots($html)
-    {
-        return preg_replace_callback(
-            '/(<form\s[^>]*method="?POST"?[^>]*>)/i',
-            function ($match) {
-                return $match[0].'<input type="text" name="'.$this->inputName.'" class="'.$this->inputClass.'">';
-            },
-            $html
-        );
     }
 }
