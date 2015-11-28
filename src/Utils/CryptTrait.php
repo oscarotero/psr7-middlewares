@@ -5,7 +5,7 @@ namespace Psr7Middlewares\Utils;
 use RuntimeException;
 
 /**
- * Trait used by all middlewares with encrypt/decrypt functions
+ * Trait used by all middlewares that needs encrypt/decrypt functions
  * Most of code is from https://github.com/illuminate/encryption.
  */
 trait CryptTrait
@@ -72,7 +72,7 @@ trait CryptTrait
      * 
      * @return string
      */
-    public function decrypt($payload)
+    protected function decrypt($payload)
     {
         $payload = json_decode(base64_decode($payload), true);
 

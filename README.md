@@ -122,6 +122,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [DigestAuthentication](#digestauthentication)
 * [ErrorHandler](#errorhandler)
 * [FastRoute](#fastroute)
+* [FormTimestamp](#formtimestamp)
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
 * [Geolocate](#geolocate)
@@ -473,6 +474,26 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
+### FormatTimestamp
+
+Simple spam protection based in injecting a hidden input in all post forms with the current timestamp. On submit the form, check the time value. If it's less than (for example) 3 seconds ago, it's a bot, so returns a 403 response. You can also check the life duration of the form before become deprecated.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    //required to get the format of the request (only executed in html requests)
+    Middleware::FormatNegotiator(),
+
+    Middleware::FormTimestamp()
+        ->min(5)                     //(optional) Minimum seconds needed to set the request as valid (default: 3)
+        ->max(3600)                  //(optional) Life of the form in second. Default is 0 (no limit)
+        ->inputName('time-token'),   //(optional) Name of the input (default: hpt_time)
+        ->crypt($key, 'AES-128-CBC') //(optional) Key and cipher used to encrypt/decrypt the input value (calculated by default)
+]);
+```
+
 ### Geolocate
 
 Uses [Geocoder library](https://github.com/geocoder-php/Geocoder) to geolocate the client using the ip. This middleware deppends of **ClientIp** (to extract the ips from the headers).
@@ -511,7 +532,10 @@ Implements a honeypot span prevention. This technique is based on creating a inp
 use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
-
+    
+    //required to get the format of the request (only executed in html requests)
+    Middleware::formatNegotiator(),
+    
     Middleware::Honeypot()
         ->inputName('my_name') //(optional) The name of the input field (by default "hpt_name")
         ->inputClass('hidden') //(optional) The class of the input field (by default "hpt_input")
