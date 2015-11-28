@@ -12,39 +12,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Shutdown
 {
-    use Utils\RouterTrait;
-    use Utils\ArgumentsTrait;
-
-    /**
-     * @var callable|string|null The handler used
-     */
-    protected $handler;
-
-    /**
-     * Constructor.
-     *
-     * @param callable|string|null $handler
-     */
-    public function __construct($handler = null)
-    {
-        if ($handler !== null) {
-            $this->handler($handler);
-        }
-    }
-
-    /**
-     * Set the shudown handler.
-     *
-     * @param string|callable $handler
-     *
-     * @return self
-     */
-    public function handler($handler)
-    {
-        $this->handler = $handler;
-
-        return $this;
-    }
+    use Utils\HandlerTrait;
 
     /**
      * Execute the middleware.
@@ -57,7 +25,7 @@ class Shutdown
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $response = self::executeTarget($this->handler, $this->arguments, $request, $response);
+        $response = $this->executeHandler($request, $response);
 
         return $response->withStatus(503);
     }

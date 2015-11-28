@@ -9,8 +9,7 @@ use FastRoute\Dispatcher;
 
 class FastRoute
 {
-    use Utils\RouterTrait;
-    use Utils\ArgumentsTrait;
+    use Utils\CallableTrait;
     use Utils\ContainerTrait;
 
     /**
@@ -70,7 +69,7 @@ class FastRoute
             $request = $request->withAttribute($name, $value);
         }
 
-        $response = self::executeTarget($route[1], $this->arguments, $request, $response);
+        $response = $this->executeCallable($route[1], $request, $response);
 
         return $next($request, $response);
     }

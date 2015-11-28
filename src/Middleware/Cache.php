@@ -15,7 +15,6 @@ use Datetime;
 class Cache
 {
     use Utils\CacheTrait;
-    use Utils\StorageTrait;
     use Utils\ContainerTrait;
 
     /**

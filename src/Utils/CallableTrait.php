@@ -7,26 +7,27 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Utilities used by routers related middlewares.
+ * Utilities used by middlewares with callables.
  */
-trait RouterTrait
+trait CallableTrait
 {
+    use ArgumentsTrait;
+
     /**
-     * Execute the target.
+     * Execute the callable.
      *
      * @param mixed             $target
-     * @param array             $extraArguments
      * @param RequestInterface  $request
      * @param ResponseInterface $response
      *
      * @return ResponseInterface
      */
-    protected static function executeTarget($target, $extraArguments = [], RequestInterface $request, ResponseInterface $response)
+    protected function executeCallable($target, RequestInterface $request, ResponseInterface $response)
     {
         try {
             ob_start();
 
-            $arguments = array_merge([$request, $response], $extraArguments);
+            $arguments = array_merge([$request, $response], $this->arguments);
             $target = static::getCallable($target, $arguments);
             $return = call_user_func_array($target, $arguments);
 

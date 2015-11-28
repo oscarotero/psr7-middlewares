@@ -12,7 +12,9 @@ use InvalidArgumentException;
  */
 trait RedirectTrait
 {
-    /** @var int Redirect HTTP status code */
+    /** 
+     * @var int Redirect HTTP status code
+     */
     protected $redirectStatus;
 
     /**

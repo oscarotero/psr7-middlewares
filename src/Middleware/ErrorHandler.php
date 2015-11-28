@@ -15,13 +15,7 @@ class ErrorHandler
 {
     const KEY = 'EXCEPTION';
 
-    use Utils\RouterTrait;
-    use Utils\ArgumentsTrait;
-
-    /**
-     * @var callable|string|null Error handler
-     */
-    protected $handler;
+    use Utils\HandlerTrait;
 
     /**
      * @var Run|null To handle errors using whoops
@@ -43,32 +37,6 @@ class ErrorHandler
     public static function getException(ServerRequestInterface $request)
     {
         return Middleware::getAttribute($request, self::KEY);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param callable|string|null $handler
-     */
-    public function __construct($handler = null)
-    {
-        if ($handler !== null) {
-            $this->handler($handler);
-        }
-    }
-
-    /**
-     * Set the error handler.
-     *
-     * @param string|callable $handler
-     *
-     * @return self
-     */
-    public function handler($handler)
-    {
-        $this->handler = $handler;
-
-        return $this;
     }
 
     /**
@@ -113,7 +81,7 @@ class ErrorHandler
         if ($this->whoops) {
             $this->whoops->pushHandler(function ($exception) use ($request, $response) {
                 try {
-                    echo self::executeTarget($this->handler, $this->arguments, Middleware::setAttribute($request, self::KEY, $exception), $response)->getBody();
+                    echo $this->executeHandler(Middleware::setAttribute($request, self::KEY, $exception), $response)->getBody();
                 } catch (\Exception $exception) {
                 }
             });
@@ -136,7 +104,7 @@ class ErrorHandler
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
             try {
-                return self::executeTarget($this->handler, $this->arguments, $request, $response);
+                return $this->executeHandler($request, $response);
             } catch (\Exception $exception) {
             }
         }

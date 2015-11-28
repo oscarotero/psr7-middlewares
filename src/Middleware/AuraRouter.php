@@ -12,8 +12,7 @@ use RuntimeException;
 
 class AuraRouter
 {
-    use Utils\RouterTrait;
-    use Utils\ArgumentsTrait;
+    use Utils\CallableTrait;
     use Utils\ContainerTrait;
 
     const KEY = 'AURA_ROUTE';
@@ -102,7 +101,7 @@ class AuraRouter
             $request = $request->withAttribute($name, $value);
         }
 
-        $response = self::executeTarget($route->handler, $this->arguments, $request, $response);
+        $response = $this->executeCallable($route->handler, $request, $response);
 
         return $next($request, $response);
     }
