@@ -56,8 +56,17 @@ $dispatcher = $relay->newInstance([
     //Override the method using X-Http-Method-Override header
     Middleware::methodOverride(),
 
+    //Removes www subdomain
+    Middleware()->Www()->redirect(301),
+
     //Block search engines robots indexing
     Middleware::robots(),
+
+    //Geolocation
+    Middleware::geolocate(),
+
+    //Detect client device
+    Middleware::detectDevice(),
 
     //Parse the request payload
     Middleware::payload(),
