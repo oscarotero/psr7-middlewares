@@ -83,6 +83,7 @@ class ErrorHandler
                 try {
                     echo $this->executeHandler(Middleware::setAttribute($request, self::KEY, $exception), $response)->getBody();
                 } catch (\Exception $exception) {
+                    //ignored
                 }
             });
         }
@@ -106,6 +107,7 @@ class ErrorHandler
             try {
                 return $this->executeHandler($request, $response);
             } catch (\Exception $exception) {
+                //ignored
             }
         }
 
