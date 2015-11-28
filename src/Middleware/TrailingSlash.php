@@ -30,7 +30,7 @@ class TrailingSlash
     }
 
     /**
-     * Configure whether the path should be added or removed.
+     * Configure whether the slash should be added or removed.
      *
      * @param bool $addSlash
      *

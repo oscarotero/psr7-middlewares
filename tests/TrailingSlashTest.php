@@ -4,7 +4,7 @@ use Psr7Middlewares\Middleware;
 
 class TrailingSlashTest extends Base
 {
-    public function pathsProvider()
+    public function removeTrailingSlashProvider()
     {
         return [
             ['/foo/bar', '/foo/bar', ''],
@@ -16,17 +16,52 @@ class TrailingSlashTest extends Base
     }
 
     /**
-     * @dataProvider pathsProvider
+     * @dataProvider removeTrailingSlashProvider
      */
-    public function testTrailingSlash($url, $result, $basePath)
+    public function testRemoveTrailingSlash($url, $result, $basePath)
     {
         $response = $this->execute(
             [
                 Middleware::trailingSlash()
+                    ->addSlash(false)
                     ->basePath($basePath),
 
                 function ($request, $response, $next) {
-                    $response->getBody()->write($request->getUri()->getPath());
+                    $response->getBody()->write((string) $request->getUri());
+
+                    return $response;
+                },
+            ],
+            $url
+        );
+
+        $this->assertEquals($result, (string) $response->getBody());
+    }
+
+    public function addTrailingSlashProvider()
+    {
+        return [
+            ['/foo/bar', '/foo/bar/'],
+            ['/foo/bar/', '/foo/bar/'],
+            ['/', '/'],
+            ['', '/'],
+            ['/index.html', '/index.html'],
+            ['/index', '/index/'],
+        ];
+    }
+
+    /**
+     * @dataProvider addTrailingSlashProvider
+     */
+    public function testAddTrailingSlash($url, $result)
+    {
+        $response = $this->execute(
+            [
+                Middleware::trailingSlash()
+                    ->addSlash(true),
+
+                function ($request, $response, $next) {
+                    $response->getBody()->write((string) $request->getUri());
 
                     return $response;
                 },
