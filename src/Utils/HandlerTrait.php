@@ -2,12 +2,11 @@
 
 namespace Psr7Middlewares\Utils;
 
-use RuntimeException;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Utilities used by middlewares with handler options
+ * Utilities used by middlewares with handler options.
  */
 trait HandlerTrait
 {

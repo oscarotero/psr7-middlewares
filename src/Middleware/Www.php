@@ -7,7 +7,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to redirect to force www subdomain or remove it
+ * Middleware to redirect to force www subdomain or remove it.
  */
 class Www
 {
@@ -60,7 +60,7 @@ class Www
             if ($this->canAddWww($host)) {
                 $host = "www.{$host}";
             }
-        } else if (strpos($host, 'www.') === 0) {
+        } elseif (strpos($host, 'www.') === 0) {
             $host = substr($host, 4);
         }
 
@@ -77,11 +77,11 @@ class Www
      * Returns false if:
      * - the host is "localhost"
      * - the host is a ip
-     * - the host has already a subdomain, for example "subdomain.example.com"
+     * - the host has already a subdomain, for example "subdomain.example.com".
      * 
      * @param string $host
      *
-     * @return boolean
+     * @return bool
      */
     public function canAddWww($host)
     {
