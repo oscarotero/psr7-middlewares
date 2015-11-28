@@ -114,7 +114,8 @@ class ErrorHandler
             $this->whoops->pushHandler(function ($exception) use ($request, $response) {
                 try {
                     echo self::executeTarget($this->handler, $this->arguments, Middleware::setAttribute($request, self::KEY, $exception), $response)->getBody();
-                } catch (\Exception $exception) {}
+                } catch (\Exception $exception) {
+                }
             });
         }
 
@@ -136,7 +137,8 @@ class ErrorHandler
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
             try {
                 return self::executeTarget($this->handler, $this->arguments, $request, $response);
-            } catch (\Exception $exception) {}
+            } catch (\Exception $exception) {
+            }
         }
 
         if ($this->whoops) {

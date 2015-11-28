@@ -114,6 +114,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [FastRoute](#fastroute)
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
+* [Honeypot](#honeypot)
 * [LanguageNegotiation](#languagenegotiation)
 * [MethodOverride](#methodoverride)
 * [Minify](#minify)
@@ -426,6 +427,22 @@ $dispatcher = $relay->getInstance([
         $format = FormatNegotiator::getFormat($request);
 
         return $next($request, $response);
+    }
+]);
+```
+
+### Honeypot
+
+Implements a honeypot span prevention. This technique is based on creating a input field that should be invisible and left empty by real users but filled by most spam bots. The middleware scan the html code and insert this inputs in all forms with method `post` and check in the incoming requests whether this value exists and is empty (is a real user) or doesn't exist or has a value (is a bot) returning a 403 response.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Honeypot()
+        ->inputName('my_name') //(optional) The name of the input field (by default "hpt_name")
+        ->inputClass('hidden') //(optional) The class of the input field (by default "hpt_input")
     }
 ]);
 ```
