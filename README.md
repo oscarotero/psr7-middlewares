@@ -127,6 +127,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [TrailingSlash](#trailingslash)
 * [Uuid](#uuid)
 * [When](#when)
+* [Www](#www)
 
 ### AuraRouter
 
@@ -672,6 +673,24 @@ $dispatcher = $relay->getInstance([
             //your code
             return $next($request, $response);
         })
+]);
+```
+
+### Www
+
+Adds or removes the `www` subdomain in the host uri and, optionally, returns a redirect response. The following types of host values wont be changed:
+* The one word hosts, for example: `http://localhost`.
+* The ip based hosts, for example: `http://0.0.0.0`.
+* The multi domain hosts, for example: `http://subdomain.example.com`.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Www()
+        ->addWww(true)  //(optional) Add www instead remove it
+        ->redirect(301) //(optional) to return a 301 (seo friendly) or 302 response to the new host
 ]);
 ```
 

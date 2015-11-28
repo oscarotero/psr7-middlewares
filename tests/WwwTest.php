@@ -13,6 +13,7 @@ class WwwTest extends Base
             ['http://example.co.uk', 'http://www.example.co.uk'],
             ['http://www.example.com', 'http://www.example.com'],
             ['http://ww1.example.com', 'http://ww1.example.com'],
+            ['http://0.0.0.0', 'http://0.0.0.0'],
             ['', ''],
         ];
     }
