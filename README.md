@@ -57,7 +57,7 @@ $dispatcher = $relay->newInstance([
     Middleware::methodOverride(),
 
     //Removes www subdomain
-    Middleware()->Www()->redirect(301),
+    Middleware::www(false)->redirect(301),
 
     //Block search engines robots indexing
     Middleware::robots(),
