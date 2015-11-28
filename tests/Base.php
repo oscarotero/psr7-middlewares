@@ -8,9 +8,9 @@ use Relay\RelayBuilder;
 
 abstract class Base extends PHPUnit_Framework_TestCase
 {
-    protected function request($uri = '', array $headers = array())
+    protected function request($uri = '', array $headers = array(), array $server = array())
     {
-        return (new ServerRequest([], [], $uri, null, 'php://temp', $headers))->withUri(new Uri($uri));
+        return (new ServerRequest($server, [], $uri, null, 'php://temp', $headers))->withUri(new Uri($uri));
     }
 
     protected function response(array $headers = array())
