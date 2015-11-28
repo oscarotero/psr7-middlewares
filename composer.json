@@ -19,7 +19,8 @@
 	},
 	"require": {
 		"php": ">=5.5.0",
-		"container-interop/container-interop": "^1.1"
+		"container-interop/container-interop": "^1.1",
+		"paragonie/random_compat": "^1.1"
 	},
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",
