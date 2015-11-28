@@ -109,6 +109,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [ClientIp](#clientip)
 * [Cors](#cors)
 * [DebugBar](#debugbar)
+* [DetectDevice](#detectdevice)
 * [DigestAuthentication](#digestauthentication)
 * [ErrorHandler](#errorhandler)
 * [FastRoute](#fastroute)
@@ -304,10 +305,41 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::formatNegotiator(),
+    Middleware::FormatNegotiator(),
 
     Middleware::DebugBar()
         ->debugBar(new DebugBar\StandardDebugBar())
+]);
+```
+
+### DetectDevice
+
+Uses [Mobile-Detect](https://github.com/serbanghita/Mobile-Detect) library to detect the client device.
+
+```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\DetectDevice;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::DetectDevice(),
+
+    function ($request, $response, $next) {
+        //Get the device info
+        $device = DetectDevice::getDevice($request);
+
+        if ($device->isMobile()) {
+            //mobile stuff
+        }
+        elseif ($device->isTablet()) {
+            //tablet stuff
+        }
+        elseif ($device->is('bot')) {
+            //bot stuff
+        }
+
+        return $next($request, $response);
+    },
 ]);
 ```
 
