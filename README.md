@@ -115,6 +115,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [FastRoute](#fastroute)
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
+* [Geolocate](#geolocate)
 * [Honeypot](#honeypot)
 * [LanguageNegotiation](#languagenegotiation)
 * [MethodOverride](#methodoverride)
@@ -430,7 +431,7 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    //needed to capture the user ips before
+    //required to capture the user ips before
     Middleware::ClientIp(),
 
     //set the firewall
@@ -452,12 +453,41 @@ $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiator()
         ->defaultFormat('html') //(optional) default format if it's unable to detect. (by default is "html")
-        ->addFormat('pdf', ['application/pdf', 'application/x-download']) //(optional) add new formats and mimetypes
-    },
+        ->addFormat('pdf', ['application/pdf', 'application/x-download']), //(optional) add new formats and mimetypes
 
     function ($request, $response, $next) {
         //get the format (for example: html)
         $format = FormatNegotiator::getFormat($request);
+
+        return $next($request, $response);
+    }
+]);
+```
+
+### Geolocate
+
+Uses [Geocoder library](https://github.com/geocoder-php/Geocoder) to geolocate the client using the ip. This middleware deppends of **ClientIp** (to extract the ips from the headers).
+
+```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\Geolocate;
+
+$dispatcher = $relay->getInstance([
+    
+    //required to capture the user ips before
+    Middleware::ClientIp(),
+
+    Middleware::Geolocate()
+        ->geocoder($geocoder), //(optional) To provide a custom Geocoder instance
+
+    function ($request, $response, $next) {
+        //get the location
+        $addresses = Geolocate::getLocation($request);
+
+        //get the country
+        $country = $addresses->first()->getCountry();
+
+        $response->getBody()->write('Hello to '.$country);
 
         return $next($request, $response);
     }
@@ -739,6 +769,7 @@ $dispatcher = $relay->getInstance([
     Middleware::DebugBar()->from($container, 'debug-bar'),
     Middleware::AuraSession()->from($container, 'session-factory'),
     Middleware::FastRouter()->from($container, 'fast-router'),
+    Middleware::Geolocate()->from($container, 'geocoder'),
 ]);
 ```
 
