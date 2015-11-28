@@ -65,12 +65,12 @@ trait CallableTrait
      */
     protected static function getCallable($target, array $construct_args)
     {
-        if (is_string($target)) {
-            //is a static function
-            if (function_exists($target)) {
-                return $target;
-            }
+        //if it's callable as is
+        if (is_callable($target)) {
+            return $target;
+        }
 
+        if (is_string($target)) {
             //is a class "classname::method"
             if (strpos($target, '::') === false) {
                 $class = $target;
@@ -86,10 +86,6 @@ trait CallableTrait
             $class = new \ReflectionClass($class);
             $instance = $class->hasMethod('__construct') ? $class->newInstanceArgs($construct_args) : $class->newInstance();
             $target = [$instance, $method];
-        }
-
-        if (is_callable($target)) {
-            return $target;
         }
 
         throw new RuntimeException('The route target is not callable');
