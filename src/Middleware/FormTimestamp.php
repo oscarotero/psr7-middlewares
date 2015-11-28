@@ -7,6 +7,7 @@ use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use Exception;
 
 /**
  * Middleware to span protection using the timestamp value in forms.
@@ -125,7 +126,11 @@ class FormTimestamp
             return false;
         }
 
-        $time = $this->decrypt($data[$this->inputName]);
+        try {
+            $time = $this->decrypt($data[$this->inputName]);
+        } catch (Exception $e) {
+            return false;
+        }
 
         //value is not valid
         if (!is_int($time)) {
