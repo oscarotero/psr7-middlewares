@@ -474,7 +474,7 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
-### FormatTimestamp
+### FormTimestamp
 
 Simple spam protection based in injecting a hidden input in all post forms with the current timestamp. On submit the form, check the time value. If it's less than (for example) 3 seconds ago, assumes it's a bot, so returns a 403 response. You can also set a max number of seconds before the form expires.
 
