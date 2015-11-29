@@ -33,14 +33,6 @@ class FormTimestamp
     protected $max = 0;
 
     /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->generateCryptKey();
-    }
-
-    /**
      * Set the field name.
      * 
      * @param string $inputName
@@ -133,7 +125,7 @@ class FormTimestamp
         }
 
         //value is not valid
-        if (!is_int($time)) {
+        if (!is_numeric($time)) {
             return false;
         }
 

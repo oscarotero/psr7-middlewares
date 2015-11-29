@@ -20,7 +20,7 @@
 	"require": {
 		"php": ">=5.5.0",
 		"container-interop/container-interop": "^1.1",
-		"paragonie/random_compat": "^1.1"
+		"phpseclib/phpseclib": "^2.0"
 	},
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",

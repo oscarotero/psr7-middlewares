@@ -476,7 +476,7 @@ $dispatcher = $relay->getInstance([
 
 ### FormatTimestamp
 
-Simple spam protection based in injecting a hidden input in all post forms with the current timestamp. On submit the form, check the time value. If it's less than (for example) 3 seconds ago, it's a bot, so returns a 403 response. You can also check the life duration of the form before become deprecated.
+Simple spam protection based in injecting a hidden input in all post forms with the current timestamp. On submit the form, check the time value. If it's less than (for example) 3 seconds ago, assumes it's a bot, so returns a 403 response. You can also set a max number of seconds before the form expires.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -487,10 +487,10 @@ $dispatcher = $relay->getInstance([
     Middleware::FormatNegotiator(),
 
     Middleware::FormTimestamp()
-        ->min(5)                     //(optional) Minimum seconds needed to set the request as valid (default: 3)
-        ->max(3600)                  //(optional) Life of the form in second. Default is 0 (no limit)
-        ->inputName('time-token'),   //(optional) Name of the input (default: hpt_time)
-        ->crypt($key, 'AES-128-CBC') //(optional) Key and cipher used to encrypt/decrypt the input value (calculated by default)
+        ->min(5)                  //(optional) Minimum seconds needed to validate the request (default: 3)
+        ->max(3600)               //(optional) Life of the form in second. Default is 0 (no limit)
+        ->inputName('time-token') //(optional) Name of the input (default: hpt_time)
+        ->key('my-secret-key'),   //(optional but recomended) Key used to encrypt/decrypt the input value. If it's not defined, the value won't be encrypted
 ]);
 ```
 
