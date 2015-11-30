@@ -490,7 +490,7 @@ $dispatcher = $relay->getInstance([
         ->min(5)                  //(optional) Minimum seconds needed to validate the request (default: 3)
         ->max(3600)               //(optional) Life of the form in second. Default is 0 (no limit)
         ->inputName('time-token') //(optional) Name of the input (default: hpt_time)
-        ->key('my-secret-key'),   //(optional but recomended) Key used to encrypt/decrypt the input value. If it's not defined, the value won't be encrypted
+        ->key('my-secret-key'),   //(optional but recomended) Key used to encrypt/decrypt the input value. If it's not defined, the value wont be encrypted
 ]);
 ```
 
@@ -526,7 +526,7 @@ $dispatcher = $relay->getInstance([
 
 ### Honeypot
 
-Implements a honeypot span prevention. This technique is based on creating a input field that should be invisible and left empty by real users but filled by most spam bots. The middleware scan the html code and insert this inputs in all forms with method `post` and check in the incoming requests whether this value exists and is empty (is a real user) or doesn't exist or has a value (is a bot) returning a 403 response.
+Implements a honeypot spam prevention. This technique is based on creating a input field that should be invisible and left empty by real users but filled by most spam bots. The middleware scans the html code and inserts this inputs in all post forms and check in the incoming requests whether this value exists and is empty (is a real user) or doesn't exist or has a value (is a bot) returning a 403 response.
 
 ```php
 use Psr7Middlewares\Middleware;
