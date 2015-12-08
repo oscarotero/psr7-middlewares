@@ -2,18 +2,17 @@
 
 namespace Psr7Middlewares\Utils;
 
-use RuntimeException;
 use phpseclib\Crypt\AES;
 
 /**
- * Trait used by all middlewares that needs encrypt/decrypt functions
+ * Trait used by all middlewares that needs encrypt/decrypt functions.
  */
 trait CryptTrait
 {
     protected $cipher;
 
     /**
-     * Set the key
+     * Set the key.
      * 
      * @param string $key
      *
