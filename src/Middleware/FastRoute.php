@@ -10,7 +10,7 @@ use FastRoute\Dispatcher;
 class FastRoute
 {
     use Utils\CallableTrait;
-    use Utils\ContainerTrait;
+    use Utils\ResolverTrait;
 
     /**
      * @var Dispatcher|null FastRoute dispatcher
@@ -54,7 +54,7 @@ class FastRoute
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $router = $this->router ?: $this->getFromContainer(Dispatcher::CLASS);
+        $router = $this->router ?: $this->getFromResolver(Dispatcher::CLASS);
         $route = $router->dispatch($request->getMethod(), $request->getUri()->getPath());
 
         if ($route[0] === Dispatcher::NOT_FOUND) {

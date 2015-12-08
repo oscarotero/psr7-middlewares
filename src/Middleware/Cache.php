@@ -15,7 +15,7 @@ use Datetime;
 class Cache
 {
     use Utils\CacheTrait;
-    use Utils\ContainerTrait;
+    use Utils\ResolverTrait;
 
     /**
      * @var CacheItemPoolInterface The cache implementation used
@@ -55,7 +55,7 @@ class Cache
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $cache = $this->cache ?: $this->getFromContainer(CacheItemPoolInterface::CLASS);
+        $cache = $this->cache ?: $this->getFromResolver(CacheItemPoolInterface::CLASS);
 
         $item = $cache->getItem(static::getCacheKey($request));
 

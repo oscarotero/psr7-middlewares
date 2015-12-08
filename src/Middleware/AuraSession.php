@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class AuraSession
 {
-    use Utils\ContainerTrait;
+    use Utils\ResolverTrait;
 
     const KEY = 'AURA_SESSION';
 
@@ -88,7 +88,7 @@ class AuraSession
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $factory = $this->factory ?: $this->getFromContainer(SessionFactory::CLASS, false) ?: new SessionFactory();
+        $factory = $this->factory ?: $this->getFromResolver(SessionFactory::CLASS, false) ?: new SessionFactory();
         $session = $factory->newInstance($request->getCookieParams());
 
         if ($this->name !== null) {

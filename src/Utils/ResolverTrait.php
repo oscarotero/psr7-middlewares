@@ -2,53 +2,53 @@
 
 namespace Psr7Middlewares\Utils;
 
-use Interop\Container\ContainerInterface;
+use Psr7Middlewares\ResolverInterface;
 use InvalidArgumentException;
 use RuntimeException;
 
 /**
- * Trait to provide a container to load parameters.
+ * Trait to provide a resolver to load parameters.
  */
-trait ContainerTrait
+trait ResolverTrait
 {
     /**
-     * @var ContainerInterface|null
+     * @var ResolverInterface|null
      */
-    protected $container;
+    protected $resolver;
 
     /**
      * @var string|null
      */
-    protected $containerId;
+    protected $resolverId;
 
     /**
-     * Load the container and the key used to get the service.
+     * Load the resolver and the key used to get the object.
      *
-     * @param ContainerInterface $container
-     * @param string             $id
+     * @param ResolverInterface $resolver
+     * @param string            $id
      *
      * @return self
      */
-    public function from(ContainerInterface $container, $id)
+    public function from(ResolverInterface $resolver, $id)
     {
-        $this->container = $container;
-        $this->containerId = $id;
+        $this->resolver = $resolver;
+        $this->resolverId = $id;
 
         return $this;
     }
 
     /**
-     * Returns the service from the container.
+     * Returns the object from the resolver.
      * 
      * @param string $type
      * @param bool   $required
      *
      * @return null|mixed
      */
-    protected function getFromContainer($type = null, $required = true)
+    protected function getFromResolver($type = null, $required = true)
     {
-        if (isset($this->container)) {
-            $item = $this->container->get($this->containerId);
+        if (isset($this->resolver)) {
+            $item = $this->resolver->resolve($this->resolverId);
 
             if ($type !== null && !is_a($item, $type)) {
                 throw new InvalidArgumentException("Invalid argument, it's not of type '{$type}'");

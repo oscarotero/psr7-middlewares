@@ -10,7 +10,7 @@ PHPUnit_Framework_Error_Notice::$enabled = true;
 /**
  * Minimal Container used for testing.
  */
-class ServiceContainer implements Interop\Container\ContainerInterface
+class ServiceContainer implements Psr7Middlewares\ResolverInterface
 {
     protected $items = [];
 
@@ -19,7 +19,7 @@ class ServiceContainer implements Interop\Container\ContainerInterface
         $this->items[$id] = $value;
     }
 
-    public function get($id)
+    public function resolve($id)
     {
         return $this->items[$id];
     }

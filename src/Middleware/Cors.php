@@ -14,7 +14,7 @@ use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
  */
 class Cors
 {
-    use Utils\ContainerTrait;
+    use Utils\ResolverTrait;
 
     /**
      * @var SettingsStrategyInterface|null The settings used by the Analyzer
@@ -58,7 +58,7 @@ class Cors
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $settings = $this->settings ?: $this->getFromContainer(SettingsStrategyInterface::CLASS);
+        $settings = $this->settings ?: $this->getFromResolver(SettingsStrategyInterface::CLASS);
         $cors = Analyzer::instance($settings)->analyze($request);
 
         switch ($cors->getRequestType()) {

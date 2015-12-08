@@ -18,7 +18,7 @@ use RuntimeException;
  */
 class Geolocate
 {
-    use Utils\ContainerTrait;
+    use Utils\ResolverTrait;
 
     const KEY = 'GEOLOCATE';
 
@@ -80,7 +80,7 @@ class Geolocate
             throw new RuntimeException('Geolocate middleware needs ClientIp executed before');
         }
 
-        $geocoder = $this->geocoder ?: $this->getFromContainer(Geocoder::CLASS, false) ?: $this->getGeocoder();
+        $geocoder = $this->geocoder ?: $this->getFromResolver(Geocoder::CLASS, false) ?: $this->getGeocoder();
         $ip = ClientIp::getIp($request);
 
         if ($ip) {

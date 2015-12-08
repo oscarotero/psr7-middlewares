@@ -14,7 +14,7 @@ use RuntimeException;
  */
 class DebugBar
 {
-    use Utils\ContainerTrait;
+    use Utils\ResolverTrait;
 
     protected $debugBar;
 
@@ -58,7 +58,7 @@ class DebugBar
         $response = $next($request, $response);
 
         if ($this->isValid($request)) {
-            $debugBar = $this->debugBar ?: $this->getFromContainer(Bar::CLASS);
+            $debugBar = $this->debugBar ?: $this->getFromResolver(Bar::CLASS);
             $renderer = $debugBar->getJavascriptRenderer();
 
             ob_start();
