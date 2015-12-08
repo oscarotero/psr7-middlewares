@@ -4,34 +4,35 @@ use Psr7Middlewares\Middleware;
 
 class DebugBarTest extends Base
 {
-    public function testDebugBar()
+    public function debugBarProvider()
+    {
+        return [
+            ['', [], true],
+            ['data.json', [], false],
+            ['', ['X-Requested-With' => 'xmlhttprequest'], false],
+        ];
+    }
+
+    /**
+     * @dataProvider debugBarProvider
+     */
+    public function testDebugBar($uri, array $headers, $expected)
     {
         $debugBar = new DebugBar\StandardDebugBar();
 
-        $response = $this->execute([
+        $response = $this->dispatch([
             Middleware::FormatNegotiator(),
             Middleware::DebugBar($debugBar),
-        ]);
+        ], $this->request($uri, $headers), $this->response());
 
         $body = (string) $response->getBody();
 
-        $this->assertNotFalse(strpos($body, '<script>'));
-        $this->assertNotFalse(strpos($body, '<style>'));
-    }
-
-    public function testFormat()
-    {
-        $container = new ServiceContainer();
-        $container->set('debugbar', new DebugBar\StandardDebugBar());
-
-        $response = $this->execute([
-            Middleware::FormatNegotiator(),
-            Middleware::DebugBar()->from($container, 'debugbar'),
-        ], 'data.json');
-
-        $body = (string) $response->getBody();
-
-        $this->assertFalse(strpos($body, '<script>'));
-        $this->assertFalse(strpos($body, '<style>'));
+        if ($expected) {
+            $this->assertNotFalse(strpos($body, '<script>'));
+            $this->assertNotFalse(strpos($body, '<style>'));
+        } else {
+            $this->assertFalse(strpos($body, '<script>'));
+            $this->assertFalse(strpos($body, '<style>'));
+        }
     }
 }

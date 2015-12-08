@@ -57,11 +57,7 @@ class DebugBar
     {
         $response = $next($request, $response);
 
-        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
-            throw new RuntimeException('DebugBar middleware needs FormatNegotiator executed before');
-        }
-
-        if (FormatNegotiator::getFormat($request) === 'html') {
+        if ($this->isValid($request)) {
             $debugBar = $this->debugBar ?: $this->getFromContainer(Bar::CLASS);
             $renderer = $debugBar->getJavascriptRenderer();
 
@@ -80,5 +76,31 @@ class DebugBar
         }
 
         return $response;
+    }
+
+    /**
+     * Check whether the request is valid to insert a debugbar in the response.
+     * 
+     * @param ServerRequestInterface $request
+     * 
+     * @return bool
+     */
+    private function isValid(ServerRequestInterface $request)
+    {
+        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+            throw new RuntimeException('DebugBar middleware needs FormatNegotiator executed before');
+        }
+
+        //is not html?
+        if (FormatNegotiator::getFormat($request) !== 'html') {
+            return false;
+        }
+
+        //is ajax?
+        if (strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest') {
+            return false;
+        }
+
+        return true;
     }
 }
