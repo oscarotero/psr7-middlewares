@@ -789,24 +789,25 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
-## Combine with container interop
+## Resolve dependencies
 
-If you're using any container compatible with the [Container Interoperability Project](https://github.com/container-interop/container-interop) you can use it to provide instances to some  middlewares (routers, debugbar, psr6 cache, etc). To do that, there's the method `->from($container, $id)` available in the following middlewares:
+To provide instances to some middlewares (routers, debugbar, psr-6 cache, etc) you can use a class implementing `Psr7Middlewares\ResolverInterface`. So, instead passing the instances directly, they will be created on demand. Currently there's an adapter for [Container Interoperability Project](https://github.com/container-interop/container-interop) but you can create your own implementation easily.
 
 ```php
-$container = new MyContainerInterop();
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\ContainerResolver;
+
+$resolver = new ContainerResolver($containerInterop);
 
 $dispatcher = $relay->getInstance([
-    Middleware::Cache()->from($container, 'cache'),
-    Middleware::Cors()->from($container, 'cors-settings'),
-    Middleware::DebugBar()->from($container, 'debug-bar'),
-    Middleware::AuraSession()->from($container, 'session-factory'),
-    Middleware::FastRouter()->from($container, 'fast-router'),
-    Middleware::Geolocate()->from($container, 'geocoder'),
+    Middleware::Cache()->from($resolver, 'cache'),
+    Middleware::Cors()->from($resolver, 'cors-settings'),
+    Middleware::DebugBar()->from($resolver, 'debug-bar'),
+    Middleware::AuraSession()->from($resolver, 'session-factory'),
+    Middleware::FastRouter()->from($resolver, 'fast-router'),
+    Middleware::Geolocate()->from($resolver, 'geocoder'),
 ]);
 ```
-
-By using containers instead creating and passing the instances directly, these instances will be created (for example `$container->get('fast-router')`) only if the middleware is executed.
 
 
 ## Contribution
