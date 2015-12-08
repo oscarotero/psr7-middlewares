@@ -132,6 +132,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Minify](#minify)
 * [Payload](#payload)
 * [ReadResponse](#readresponse)
+* [Rename](#rename)
 * [ResponseTime](#responseTime)
 * [Robots](#robots)
 * [SaveResponse](#saveresponse)
@@ -632,6 +633,33 @@ $dispatcher = $relay->getInstance([
     Middleware::ReadResponse()
         ->storage('path/to/document/root') //Path where the files are stored
         ->basePath('public')               //(optional) basepath ignored from the request uri
+]);
+```
+
+### Rename
+
+Renames the request path. This is useful in some use cases:
+
+* To rename public paths with random suffixes for security reasons, for example the path `/admin` to a more unpredictible `/admin-19640983`
+* Create pretty urls without use any router. For example to access to the path `/static-pages/about-me.php` under the more friendly `/about-me`
+
+Note that the original path wont be publicly accesible. On above examples, requests to `/admin` or `/static-pages/about-me.php` returns 404 responses.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Rename()
+        ->paths([
+            '/admin' => '/admin-19640983',
+        ]),
+
+    function ($request, $response, $next) {
+        $path = $request->getUri()->getPath(); // /admin
+
+        return $next($request, $response);
+    }
 ]);
 ```
 

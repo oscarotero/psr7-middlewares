@@ -28,7 +28,7 @@ class Payload
      */
     public function associative($associative = true)
     {
-        $this->associative = (boolean) $associative;
+        $this->associative = (bool) $associative;
 
         return $this;
     }
