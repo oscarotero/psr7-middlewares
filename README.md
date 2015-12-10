@@ -144,7 +144,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 
 ### AuraRouter
 
-To use [Aura.Router](https://github.com/auraphp/Aura.Router) as a middleware. You need the 3.x version, compatible with psr-7:
+To use [Aura.Router (3.x)](https://github.com/auraphp/Aura.Router) as a middleware:
 
 ```php
 use Psr7Middlewares\Middleware;

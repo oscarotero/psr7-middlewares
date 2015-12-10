@@ -25,7 +25,7 @@
 		"zendframework/zend-diactoros": "1.*",
 		"relay/relay": "1.*",
 		"nikic/fast-route": "0.*",
-		"aura/router": "3.0.0-beta2",
+		"aura/router": "^3.0",
 		"aura/session": "2.*",
 		"phpunit/phpunit": "~4.0",
 		"willdurand/negotiation": "~2.0",
@@ -34,7 +34,7 @@
 		"matthiasmullie/scrapbook": "dev-master",
 		"ramsey/uuid": "^2.8",
 		"neomerx/cors-psr7": "^0.2.0",
-		"maximebf/debugbar": "~1.10",
+		"maximebf/debugbar": "~1.11",
 		"mobiledetect/mobiledetectlib": "^2.8",
 		"willdurand/geocoder": "^3.2"
 	},
