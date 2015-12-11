@@ -584,7 +584,7 @@ $router->get('/blog/{id:[0-9]+}', function ($request, $response, $vars) {
 $dispatcher = $relay->getInstance([
 
     Middleware::LeagueRoute()
-        ->router($router)
+        ->router($router) //The RouteCollection instance
 ]);
 ```
 
