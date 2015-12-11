@@ -36,7 +36,8 @@
 		"neomerx/cors-psr7": "^0.2.0",
 		"maximebf/debugbar": "~1.11",
 		"mobiledetect/mobiledetectlib": "^2.8",
-		"willdurand/geocoder": "^3.2"
+		"willdurand/geocoder": "^3.2",
+		"league/route": "2.0.0-RC1"
 	},
 	"suggest": {
 		"aura/router": "To use Middleware::auraRouter",
