@@ -128,6 +128,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Geolocate](#geolocate)
 * [Honeypot](#honeypot)
 * [LanguageNegotiation](#languagenegotiation)
+* [LeagueRoute](#leagueroute)
 * [MethodOverride](#methodoverride)
 * [Minify](#minify)
 * [Payload](#payload)
@@ -563,6 +564,27 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
+]);
+```
+
+### LeagueRoute
+
+To use [league/route (2.x)](https://github.com/thephpleague/route) as a middleware:
+
+```php
+use Psr7Middlewares\Middleware;
+use League\Route\RouteCollection;
+
+$router = new RouteCollection();
+
+$router->get('/blog/{id:[0-9]+}', function ($request, $response, $vars) {
+    return 'This is the post number'.$vars['id'];
+});
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::LeagueRoute()
+        ->router($router)
 ]);
 ```
 
