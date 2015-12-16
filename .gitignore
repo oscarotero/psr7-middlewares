@@ -1,32 +1,8 @@
-# MACOSX
-
-.DS_Store
-.AppleDouble
-.LSOverride
-._*
-.Spotlight-V100
-.Trashes
-
-# Icon must ends with two \r.
-Icon
-
-
-# WINDOWS
-
-Thumbs.db
-ehthumbs.db
-Desktop.ini
-$RECYCLE.BIN/
-*.cab
-*.msi
-*.msm
-*.msp
-
-
 # COMPOSER
 vendor/
 composer.lock
 composer.phar
 
-
-test.php
+# LOCAL TESTS
+.htaccess
+index.php
