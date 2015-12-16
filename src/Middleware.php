@@ -76,7 +76,7 @@ class Middleware
      */
     public static function middleware(callable $factory)
     {
-        return function(ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($factory) {
+        return function (ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($factory) {
             $middleware = $factory();
 
             if (!is_callable($middleware)) {
