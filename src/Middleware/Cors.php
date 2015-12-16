@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Neomerx\Cors\Analyzer;
@@ -14,8 +13,6 @@ use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
  */
 class Cors
 {
-    use Utils\ResolverTrait;
-
     /**
      * @var SettingsStrategyInterface|null The settings used by the Analyzer
      */
@@ -58,8 +55,7 @@ class Cors
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $settings = $this->settings ?: $this->getFromResolver(SettingsStrategyInterface::CLASS);
-        $cors = Analyzer::instance($settings)->analyze($request);
+        $cors = Analyzer::instance($this->settings)->analyze($request);
 
         switch ($cors->getRequestType()) {
             case AnalysisResultInterface::ERR_NO_HOST_HEADER:

@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
 use League\Route\RouteCollection;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -10,8 +9,6 @@ use RuntimeException;
 
 class LeagueRoute
 {
-    use Utils\ResolverTrait;
-
     /**
      * @var RouteCollection|null The router container
      */
@@ -54,12 +51,10 @@ class LeagueRoute
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $router = $this->router ?: $this->getFromResolver(RouteCollection::CLASS);
-
-        if (empty($router)) {
+        if (empty($this->router)) {
             throw new RuntimeException('No RouteCollection instance has been provided');
         }
 
-        return $next($request, $router->dispatch($request, $response));
+        return $next($request, $this->router->dispatch($request, $response));
     }
 }

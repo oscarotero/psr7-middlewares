@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
 use DebugBar\DebugBar as Bar;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,8 +13,6 @@ use RuntimeException;
  */
 class DebugBar
 {
-    use Utils\ResolverTrait;
-
     protected $debugBar;
 
     /**
@@ -58,8 +55,7 @@ class DebugBar
         $response = $next($request, $response);
 
         if ($this->isValid($request)) {
-            $debugBar = $this->debugBar ?: $this->getFromResolver(Bar::CLASS);
-            $renderer = $debugBar->getJavascriptRenderer();
+            $renderer = $this->debugBar->getJavascriptRenderer();
 
             ob_start();
             echo '<style>';

@@ -13,7 +13,6 @@ use RuntimeException;
 class AuraRouter
 {
     use Utils\CallableTrait;
-    use Utils\ResolverTrait;
 
     const KEY = 'AURA_ROUTE';
 
@@ -71,13 +70,11 @@ class AuraRouter
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $router = $this->router ?: $this->getFromResolver(RouterContainer::CLASS);
-
-        if (empty($router)) {
+        if (empty($this->router)) {
             throw new RuntimeException('No RouterContainer instance has been provided');
         }
 
-        $matcher = $router->getMatcher();
+        $matcher = $this->router->getMatcher();
         $route = $matcher->match($request);
 
         if (!$route) {

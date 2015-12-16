@@ -3,7 +3,6 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Geocoder\Geocoder;
@@ -18,8 +17,6 @@ use RuntimeException;
  */
 class Geolocate
 {
-    use Utils\ResolverTrait;
-
     const KEY = 'GEOLOCATE';
 
     /**
@@ -80,7 +77,7 @@ class Geolocate
             throw new RuntimeException('Geolocate middleware needs ClientIp executed before');
         }
 
-        $geocoder = $this->geocoder ?: $this->getFromResolver(Geocoder::CLASS, false) ?: $this->getGeocoder();
+        $geocoder = $this->geocoder ?: $this->getGeocoder();
         $ip = ClientIp::getIp($request);
 
         if ($ip) {

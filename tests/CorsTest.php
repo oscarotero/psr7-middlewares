@@ -74,12 +74,9 @@ class CorsTest extends Base
      */
     public function testCorsContainer($url, $statusCode)
     {
-        $container = new ServiceContainer();
-        $container->set('settings', $this->settings);
-
         $response = $this->execute(
             [
-                Middleware::cors()->from($container, 'settings'),
+                Middleware::cors($this->settings),
             ],
             $url
         );

@@ -42,14 +42,10 @@ class AuraRouterTest extends Base
 
     public function testAuraRouterContainer()
     {
-        $container = new ServiceContainer();
-        $container->set('router', $this->getRouter());
-
         //Test
         $response = $this->execute(
             [
-                Middleware::AuraRouter()
-                    ->from($container, 'router'),
+                Middleware::AuraRouter($this->getRouter()),
             ],
             'http://domain.com/user/oscarotero/35'
         );

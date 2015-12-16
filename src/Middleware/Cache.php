@@ -15,7 +15,6 @@ use Datetime;
 class Cache
 {
     use Utils\CacheTrait;
-    use Utils\ResolverTrait;
 
     /**
      * @var CacheItemPoolInterface The cache implementation used
@@ -55,9 +54,7 @@ class Cache
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $cache = $this->cache ?: $this->getFromResolver(CacheItemPoolInterface::CLASS);
-
-        $item = $cache->getItem(static::getCacheKey($request));
+        $item = $this->cache->getItem(static::getCacheKey($request));
 
         if ($item->isHit()) {
             list($headers, $body) = $item->get();
@@ -84,7 +81,7 @@ class Cache
                 $item->expiresAt($time);
             }
 
-            $cache->save($item);
+            $this->cache->save($item);
         }
 
         return $response;

@@ -41,12 +41,10 @@ class CacheTest extends Base
 
     public function testExpiration()
     {
-        $container = new ServiceContainer();
-        $container->set('cache', new Pool(new MemoryStore()));
         $used = 0;
 
         $middlewares = [
-            Middleware::Cache()->from($container, 'cache'),
+            Middleware::Cache(new Pool(new MemoryStore())),
 
             function ($request, $response, $next) use (&$used) {
                 $response->getBody()->write(uniqid('test', true));
