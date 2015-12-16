@@ -18,17 +18,17 @@ class Minify
     /**
      * @var bool Minify only cacheable responses
      */
-    protected $forCache = false;
+    private $forCache = false;
 
     /**
      * @var bool Minify inline css
      */
-    protected $inlineCss = true;
+    private $inlineCss = true;
 
     /**
      * @var bool Minify inline js
      */
-    protected $inlineJs = true;
+    private $inlineJs = true;
 
     /**
      * Set forCache directive.
@@ -83,7 +83,7 @@ class Minify
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->forCache && !static::isCacheable($request, $response)) {
+        if ($this->forCache && !self::isCacheable($request, $response)) {
             return $next($request, $response);
         }
 
@@ -113,7 +113,7 @@ class Minify
      *
      * @return ResponseInterface
      */
-    protected function minifyHtml(ResponseInterface $response)
+    private function minifyHtml(ResponseInterface $response)
     {
         $options = ['jsCleanComments' => true];
 
@@ -144,7 +144,7 @@ class Minify
      *
      * @return ResponseInterface
      */
-    protected function minifyCss(ResponseInterface $response)
+    private function minifyCss(ResponseInterface $response)
     {
         $stream = Middleware::createStream();
         $stream->write((new CssMinify())->run((string) $response->getBody()));
@@ -159,7 +159,7 @@ class Minify
      *
      * @return ResponseInterface
      */
-    protected function minifyJs(ResponseInterface $response)
+    private function minifyJs(ResponseInterface $response)
     {
         $stream = Middleware::createStream();
         $stream->write(JsMinify::minify((string) $response->getBody()));

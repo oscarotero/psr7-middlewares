@@ -16,7 +16,7 @@ class ClientIp
     /**
      * @var array The trusted headers
      */
-    protected $headers = [
+    private $headers = [
         'Forwarded',
         'Forwarded-For',
         'Client-Ip',
@@ -46,7 +46,7 @@ class ClientIp
      */
     public static function getIp(ServerRequestInterface $request)
     {
-        $ips = static::getIps($request);
+        $ips = self::getIps($request);
 
         return isset($ips[0]) ? $ips[0] : null;
     }
@@ -100,7 +100,7 @@ class ClientIp
      *
      * @return array
      */
-    protected function scanIps(ServerRequestInterface $request)
+    private function scanIps(ServerRequestInterface $request)
     {
         $server = $request->getServerParams();
         $ips = [];

@@ -16,7 +16,7 @@ class Cors
     /**
      * @var SettingsStrategyInterface|null The settings used by the Analyzer
      */
-    protected $settings;
+    private $settings;
 
     /**
      * Constructor. Defines the settings used.

@@ -22,7 +22,7 @@ class Geolocate
     /**
      * @var Geocoder
      */
-    protected $geocoder;
+    private $geocoder;
 
     /**
      * Returns the client location.
@@ -93,7 +93,7 @@ class Geolocate
      * 
      * @return Geocoder
      */
-    protected function getGeocoder()
+    private function getGeocoder()
     {
         $geocoder = new ProviderAggregator();
         $httpAdapter = new FopenHttpAdapter();

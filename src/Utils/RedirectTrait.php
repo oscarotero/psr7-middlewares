@@ -15,7 +15,7 @@ trait RedirectTrait
     /** 
      * @var int Redirect HTTP status code
      */
-    protected $redirectStatus;
+    private $redirectStatus;
 
     /**
      * Set HTTP redirect status code.
@@ -42,7 +42,7 @@ trait RedirectTrait
      * @param UriInterface      $uri
      * @param ResponseInterface $response
      */
-    protected static function getRedirectResponse($redirectStatus, UriInterface $uri, ResponseInterface $response)
+    private static function getRedirectResponse($redirectStatus, UriInterface $uri, ResponseInterface $response)
     {
         return $response
             ->withStatus($redirectStatus)

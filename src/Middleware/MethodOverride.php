@@ -16,12 +16,12 @@ class MethodOverride
     /**
      * @var array Allowed methods overrided in GET
      */
-    protected $get = ['HEAD', 'CONNECT', 'TRACE', 'OPTIONS'];
+    private $get = ['HEAD', 'CONNECT', 'TRACE', 'OPTIONS'];
 
     /**
      * @var array Allowed methods overrided in POST
      */
-    protected $post = ['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'];
+    private $post = ['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'];
 
     /**
      * Set allowed method for GET.
@@ -82,7 +82,7 @@ class MethodOverride
      * 
      * @return string|null
      */
-    protected function getOverrideMethod(RequestInterface $request)
+    private function getOverrideMethod(RequestInterface $request)
     {
         $method = $request->getHeaderLine(self::HEADER);
 
@@ -98,7 +98,7 @@ class MethodOverride
      * 
      * @return array
      */
-    protected function getAllowedOverrideMethods(RequestInterface $request)
+    private function getAllowedOverrideMethods(RequestInterface $request)
     {
         switch ($request->getMethod()) {
             case 'GET':

@@ -9,7 +9,7 @@ use phpseclib\Crypt\AES;
  */
 trait CryptTrait
 {
-    protected $cipher;
+    private $cipher;
 
     /**
      * Set the key.
@@ -33,7 +33,7 @@ trait CryptTrait
      * 
      * @return string
      */
-    protected function encrypt($value)
+    private function encrypt($value)
     {
         if ($this->cipher) {
             return bin2hex($this->cipher->encrypt($value));
@@ -49,7 +49,7 @@ trait CryptTrait
      * 
      * @return string
      */
-    protected function decrypt($value)
+    private function decrypt($value)
     {
         if ($this->cipher) {
             return $this->cipher->decrypt(hex2bin($value));

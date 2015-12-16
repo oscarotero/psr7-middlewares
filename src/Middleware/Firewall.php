@@ -16,12 +16,12 @@ class Firewall
     /**
      * @var array|null Trusted ips
      */
-    protected $trusted;
+    private $trusted;
 
     /**
      * @var array|null Untrusted ips
      */
-    protected $untrusted;
+    private $untrusted;
 
     /**
      * Constructor. Set the trusted ips.

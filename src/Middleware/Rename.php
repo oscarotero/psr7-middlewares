@@ -13,7 +13,7 @@ class Rename
     /**
      * @var array Renamed paths
      */
-    protected $paths = [];
+    private $paths = [];
 
     /**
      * Constructor. Set the paths.

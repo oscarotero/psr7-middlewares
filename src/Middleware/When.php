@@ -14,12 +14,12 @@ class When
     /**
      * @var callable|null The middleware to add
      */
-    protected $middleware;
+    private $middleware;
 
     /**
      * @var mixed The condition
      */
-    protected $condition;
+    private $condition;
 
     /**
      * Constructor.

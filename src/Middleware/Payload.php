@@ -15,7 +15,7 @@ class Payload
     /**
      * @var bool Whether convert the object into associative arrays
      */
-    protected $associative = false;
+    private $associative = false;
 
     /**
      * To convert the objects into associative arrays.
@@ -54,7 +54,7 @@ class Payload
      *
      * @return ServerRequestInterface
      */
-    protected function handlePayload(ServerRequestInterface $request)
+    private function handlePayload(ServerRequestInterface $request)
     {
         if ($request->getParsedBody() || !in_array($request->getMethod(), ['POST', 'PUT', 'DELETE'], true)) {
             return $request;
@@ -93,7 +93,7 @@ class Payload
      * 
      * @return array
      */
-    protected function parseJson(StreamInterface $body)
+    private function parseJson(StreamInterface $body)
     {
         return json_decode((string) $body, $this->associative);
     }
@@ -105,7 +105,7 @@ class Payload
      * 
      * @return array
      */
-    protected function parseUrlEncoded(StreamInterface $body)
+    private function parseUrlEncoded(StreamInterface $body)
     {
         parse_str((string) $body, $data);
 
@@ -119,7 +119,7 @@ class Payload
      * 
      * @return array
      */
-    protected function parseCsv(StreamInterface $body)
+    private function parseCsv(StreamInterface $body)
     {
         if ($body->isSeekable()) {
             $body->rewind();

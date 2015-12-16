@@ -17,7 +17,7 @@ class TrailingSlash
     /**
      * @var bool Add or remove the slash
      */
-    protected $addSlash;
+    private $addSlash;
 
     /**
      * Constructor. Configure whether add or remove the slash.

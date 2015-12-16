@@ -15,12 +15,12 @@ class AuraSession
     /**
      * @var SessionFactory|null
      */
-    protected $factory;
+    private $factory;
 
     /**
      * @var string|null The session name
      */
-    protected $name;
+    private $name;
 
     /**
      * Returns the session instance.

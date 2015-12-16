@@ -13,7 +13,7 @@ use RuntimeException;
  */
 class DebugBar
 {
-    protected $debugBar;
+    private $debugBar;
 
     /**
      * Constructor. Set the debug bar.

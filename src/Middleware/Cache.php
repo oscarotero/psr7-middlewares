@@ -19,7 +19,7 @@ class Cache
     /**
      * @var CacheItemPoolInterface The cache implementation used
      */
-    protected $cache;
+    private $cache;
 
     /**
      * Constructor. Set the cache pool.
@@ -54,7 +54,7 @@ class Cache
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $item = $this->cache->getItem(static::getCacheKey($request));
+        $item = $this->cache->getItem(self::getCacheKey($request));
 
         if ($item->isHit()) {
             list($headers, $body) = $item->get();
@@ -71,13 +71,13 @@ class Cache
 
         $response = $next($request, $response);
 
-        if (static::isCacheable($request, $response)) {
+        if (self::isCacheable($request, $response)) {
             $item->set([
                 $response->getHeaders(),
                 (string) $response->getBody(),
             ]);
 
-            if (($time = static::getExpiration($response)) !== null) {
+            if (($time = self::getExpiration($response)) !== null) {
                 $item->expiresAt($time);
             }
 
@@ -94,13 +94,13 @@ class Cache
      *
      * @return Datetime|null
      */
-    protected static function getExpiration(ResponseInterface $response)
+    private static function getExpiration(ResponseInterface $response)
     {
         //Cache-Control
         $cacheControl = $response->getHeaderLine('Cache-Control');
 
         if (!empty($cacheControl)) {
-            $cacheControl = static::parseCacheControl($cacheControl);
+            $cacheControl = self::parseCacheControl($cacheControl);
 
             //Max age
             if (isset($cacheControl['max-age'])) {
@@ -123,7 +123,7 @@ class Cache
      *
      * @return string
      */
-    protected function getCacheKey(RequestInterface $request)
+    private function getCacheKey(RequestInterface $request)
     {
         return $request->getMethod().md5((string) $request->getUri());
     }

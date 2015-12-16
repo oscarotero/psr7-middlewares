@@ -7,7 +7,7 @@ namespace Psr7Middlewares\Utils;
  */
 trait ArgumentsTrait
 {
-    protected $arguments = [];
+    private $arguments = [];
 
     /**
      * Extra arguments passed to the controller.

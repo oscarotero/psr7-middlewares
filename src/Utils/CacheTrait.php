@@ -18,7 +18,7 @@ trait CacheTrait
      *
      * @return bool
      */
-    protected static function isCacheable(RequestInterface $request, ResponseInterface $response)
+    private static function isCacheable(RequestInterface $request, ResponseInterface $response)
     {
         if ($request->getMethod() !== 'GET') {
             return false;
@@ -29,7 +29,7 @@ trait CacheTrait
         }
 
         //Check http headers
-        $cache = static::parseCacheControl($response->getHeaderLine('Cache-Control'));
+        $cache = self::parseCacheControl($response->getHeaderLine('Cache-Control'));
 
         if (in_array('no-cache', $cache) || in_array('no-store', $cache) || in_array('private', $cache)) {
             return false;
@@ -45,7 +45,7 @@ trait CacheTrait
      *
      * @return array
      */
-    protected static function parseCacheControl($header)
+    private static function parseCacheControl($header)
     {
         if (empty($header)) {
             return [];

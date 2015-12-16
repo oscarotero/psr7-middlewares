@@ -19,26 +19,19 @@ trait FileTrait
      *
      * @return string
      */
-    protected function getFilename(RequestInterface $request)
+    private function getFilename(RequestInterface $request)
     {
         $path = $this->getBasePath($request->getUri()->getPath());
 
         $parts = pathinfo($path);
-        $path = '/'.(isset($parts['dirname']) ? $parts['dirname'] : '');
+        $path = isset($parts['dirname']) ? $parts['dirname'] : '';
         $filename = isset($parts['basename']) ? $parts['basename'] : '';
 
         //if it's a directory, append "/index.html"
         if (empty($parts['extension'])) {
-            if ($path === '/') {
-                $path .= $filename;
-            } else {
-                $path .= "/{$filename}";
-            }
-
-            $extension = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION)) ?: 'html';
-            $filename = "index.{$extension}";
+            $filename .= "/index.html";
         }
 
-        return "{$this->storage}{$path}/{$filename}";
+        return Path::join($this->storage, $path, $filename);
     }
 }

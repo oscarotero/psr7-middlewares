@@ -17,12 +17,12 @@ class Honeypot
     /**
      * @var string The honeypot input name
      */
-    protected $inputName = 'hpt_name';
+    private $inputName = 'hpt_name';
 
     /**
      * @var string The honeypot class name
      */
-    protected $inputClass = 'hpt_input';
+    private $inputClass = 'hpt_input';
 
     /**
      * Set the field name.
@@ -87,7 +87,7 @@ class Honeypot
      * 
      * @return bool
      */
-    protected function isValid(ServerRequestInterface $request)
+    private function isValid(ServerRequestInterface $request)
     {
         $data = $request->getParsedBody();
 

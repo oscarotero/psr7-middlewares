@@ -11,7 +11,7 @@ class Middleware
 {
     const KEY = 'Psr7Middlewares\\Middleware';
 
-    protected static $streamFactory;
+    private static $streamFactory;
 
     /**
      * Set the stream factory used by some middlewares.
@@ -20,7 +20,7 @@ class Middleware
      */
     public static function setStreamFactory(callable $streamFactory)
     {
-        static::$streamFactory = $streamFactory;
+        self::$streamFactory = $streamFactory;
     }
 
     /**
@@ -30,7 +30,7 @@ class Middleware
      */
     public static function createStream($file = 'php://temp', $mode = 'r+')
     {
-        if (empty(static::$streamFactory)) {
+        if (empty(self::$streamFactory)) {
             if (class_exists('Zend\\Diactoros\\Stream')) {
                 return new \Zend\Diactoros\Stream($file, $mode);
             }
@@ -38,7 +38,7 @@ class Middleware
             throw new \RuntimeException('Unable to create a stream. No stream factory defined');
         }
 
-        return call_user_func(static::$streamFactory, $file, $mode);
+        return call_user_func(self::$streamFactory, $file, $mode);
     }
 
     /**

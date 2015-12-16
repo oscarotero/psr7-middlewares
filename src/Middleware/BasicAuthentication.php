@@ -24,7 +24,7 @@ class BasicAuthentication
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $authorization = static::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
+        $authorization = self::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
 
         if ($authorization && $this->checkUserPassword($authorization['username'], $authorization['password'])) {
             return $next($request, $response);
@@ -43,7 +43,7 @@ class BasicAuthentication
      *
      * @return bool
      */
-    protected function checkUserPassword($username, $password)
+    private function checkUserPassword($username, $password)
     {
         if (!isset($this->users[$username]) || $this->users[$username] !== $password) {
             return false;
@@ -59,7 +59,7 @@ class BasicAuthentication
      *
      * @return false|array
      */
-    protected static function parseAuthorizationHeader($header)
+    private static function parseAuthorizationHeader($header)
     {
         if (strpos($header, 'Basic') !== 0) {
             return false;

@@ -20,12 +20,12 @@ class ErrorHandler
     /**
      * @var Run|null To handle errors using whoops
      */
-    protected $whoops;
+    private $whoops;
 
     /**
      * @var bool Whether or not catch exceptions
      */
-    protected $catchExceptions = false;
+    private $catchExceptions = false;
 
     /**
      * Returns the exception throwed.

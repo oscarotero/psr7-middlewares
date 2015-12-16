@@ -28,8 +28,8 @@ class SaveResponse
     {
         $response = $next($request, $response);
 
-        if (empty($request->getUri()->getQuery()) && static::isCacheable($request, $response)) {
-            static::writeStream($response->getBody(), $this->getFilename($request));
+        if (empty($request->getUri()->getQuery()) && self::isCacheable($request, $response)) {
+            self::writeStream($response->getBody(), $this->getFilename($request));
         }
 
         return $response;
@@ -41,7 +41,7 @@ class SaveResponse
      * @param StreamInterface $stream
      * @param string          $path
      */
-    protected static function writeStream(StreamInterface $stream, $path)
+    private static function writeStream(StreamInterface $stream, $path)
     {
         $dir = dirname($path);
 

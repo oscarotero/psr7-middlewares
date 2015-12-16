@@ -16,12 +16,12 @@ class Uuid
     /**
      * @var string|false The header name to use 
      */
-    protected $header = 'X-Uuid';
+    private $header = 'X-Uuid';
 
     /**
      * @var array The version and arguments needed to generate the Uuid
      */
-    protected $version = [1];
+    private $version = [1];
 
     /**
      * Returns the Uuid instance.
@@ -107,7 +107,7 @@ class Uuid
      *
      * @return string
      */
-    protected function generateUuid()
+    private function generateUuid()
     {
         $args = $this->version;
         $fn = 'uuid'.array_shift($args);

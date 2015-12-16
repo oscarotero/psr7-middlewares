@@ -14,7 +14,7 @@ class FastRoute
     /**
      * @var Dispatcher|null FastRoute dispatcher
      */
-    protected $router;
+    private $router;
 
     /**
      * Constructor. Set Dispatcher instance.

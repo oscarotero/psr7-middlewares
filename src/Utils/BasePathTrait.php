@@ -7,7 +7,7 @@ namespace Psr7Middlewares\Utils;
  */
 trait BasePathTrait
 {
-    protected $basePath = '';
+    private $basePath = '';
 
     /**
      * Set the basepath used in the request.
@@ -30,7 +30,7 @@ trait BasePathTrait
      *
      * @return string
      */
-    protected function getBasePath($path)
+    private function getBasePath($path)
     {
         if (!empty($this->basePath) && strpos($path, $this->basePath) === 0) {
             return substr($path, strlen($this->basePath)) ?: '';

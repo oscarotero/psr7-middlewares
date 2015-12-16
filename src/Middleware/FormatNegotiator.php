@@ -17,12 +17,12 @@ class FormatNegotiator
     /**
      * @var string Default format
      */
-    protected $default = 'html';
+    private $default = 'html';
 
     /**
      * @var array Available formats with the mime types
      */
-    protected $formats = [
+    private $formats = [
         'html' => ['text/html', 'application/xhtml+xml'],
         'css' => ['text/css'],
         'gif' => ['image/gif'],
@@ -114,7 +114,7 @@ class FormatNegotiator
      *
      * @return null|string
      */
-    protected function getFromExtension(ServerRequestInterface $request)
+    private function getFromExtension(ServerRequestInterface $request)
     {
         $format = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 
@@ -126,7 +126,7 @@ class FormatNegotiator
      *
      * @return null|string
      */
-    protected function getFromHeader(ServerRequestInterface $request)
+    private function getFromHeader(ServerRequestInterface $request)
     {
         $accept = $request->getHeaderLine('Accept');
 

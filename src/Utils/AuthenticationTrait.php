@@ -7,8 +7,8 @@ namespace Psr7Middlewares\Utils;
  */
 trait AuthenticationTrait
 {
-    protected $users = [];
-    protected $realm = 'Login';
+    private $users = [];
+    private $realm = 'Login';
 
     /**
      * Constructor. Defines de users.

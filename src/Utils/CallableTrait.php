@@ -22,13 +22,13 @@ trait CallableTrait
      *
      * @return ResponseInterface
      */
-    protected function executeCallable($target, RequestInterface $request, ResponseInterface $response)
+    private function executeCallable($target, RequestInterface $request, ResponseInterface $response)
     {
         try {
             ob_start();
 
             $arguments = array_merge([$request, $response], $this->arguments);
-            $target = static::getCallable($target, $arguments);
+            $target = self::getCallable($target, $arguments);
             $return = call_user_func_array($target, $arguments);
 
             if ($return instanceof ResponseInterface) {
@@ -63,7 +63,7 @@ trait CallableTrait
      *
      * @return callable
      */
-    protected static function getCallable($target, array $construct_args)
+    private static function getCallable($target, array $construct_args)
     {
         if (is_string($target)) {
             //is a class "classname::method"

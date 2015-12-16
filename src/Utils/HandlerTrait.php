@@ -15,7 +15,7 @@ trait HandlerTrait
     /**
      * @var callable|string|null The handler used
      */
-    protected $handler;
+    private $handler;
 
     /**
      * Constructor.
@@ -51,7 +51,7 @@ trait HandlerTrait
      *
      * @return ResponseInterface
      */
-    protected function executeHandler(RequestInterface $request, ResponseInterface $response)
+    private function executeHandler(RequestInterface $request, ResponseInterface $response)
     {
         return $this->executeCallable($this->handler, $request, $response);
     }

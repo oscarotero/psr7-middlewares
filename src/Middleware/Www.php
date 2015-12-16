@@ -16,7 +16,7 @@ class Www
     /**
      * @var bool Add or remove www
      */
-    protected $addWww;
+    private $addWww;
 
     /**
      * Constructor. Configure whether add or remove www.
@@ -83,7 +83,7 @@ class Www
      *
      * @return bool
      */
-    public function canAddWww($host)
+    private function canAddWww($host)
     {
         if (empty($host) || filter_var($host, FILTER_VALIDATE_IP)) {
             return false;

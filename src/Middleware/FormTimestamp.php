@@ -20,17 +20,17 @@ class FormTimestamp
     /**
      * @var string The honeypot input name
      */
-    protected $inputName = 'hpt_time';
+    private $inputName = 'hpt_time';
 
     /**
      * @var int Minimum seconds to determine whether the request is a bot
      */
-    protected $min = 3;
+    private $min = 3;
 
     /**
      * @var int Max seconds to expire the form. Zero to do not expire
      */
-    protected $max = 0;
+    private $max = 0;
 
     /**
      * Set the field name.
@@ -109,7 +109,7 @@ class FormTimestamp
      * 
      * @return bool
      */
-    protected function isValid(ServerRequestInterface $request)
+    private function isValid(ServerRequestInterface $request)
     {
         $data = $request->getParsedBody();
 

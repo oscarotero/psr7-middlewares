@@ -17,7 +17,7 @@ class LanguageNegotiator
     /**
      * @var array Allowed languages
      */
-    protected $languages = [];
+    private $languages = [];
 
     /**
      * Returns the language.
@@ -84,7 +84,7 @@ class LanguageNegotiator
      *
      * @return null|string
      */
-    protected function getFromHeader(ServerRequestInterface $request)
+    private function getFromHeader(ServerRequestInterface $request)
     {
         $accept = $request->getHeaderLine('Accept-Language');
 

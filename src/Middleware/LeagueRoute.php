@@ -12,7 +12,7 @@ class LeagueRoute
     /**
      * @var RouteCollection|null The router container
      */
-    protected $router;
+    private $router;
 
     /**
      * Constructor. Set the RouteCollection instance.

@@ -19,7 +19,7 @@ trait FormTrait
      * 
      * @return ResponseInterface
      */
-    protected function insertIntoPostForms(ResponseInterface $response, $input)
+    private function insertIntoPostForms(ResponseInterface $response, $input)
     {
         $html = (string) $response->getBody();
 
@@ -50,7 +50,7 @@ trait FormTrait
      * 
      * @return bool
      */
-    protected function isPost(RequestInterface $request)
+    private function isPost(RequestInterface $request)
     {
         switch (strtoupper($request->getMethod())) {
             case 'GET':

@@ -19,7 +19,7 @@ class AuraRouter
     /**
      * @var RouterContainer|null The router container
      */
-    protected $router;
+    private $router;
 
     /**
      * Returns the route instance.

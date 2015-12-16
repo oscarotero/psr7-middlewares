@@ -16,7 +16,7 @@ class DigestAuthentication
     /**
      * @var string|null The nonce value
      */
-    protected $nonce;
+    private $nonce;
 
     /**
      * Set the nonce value.
@@ -59,10 +59,10 @@ class DigestAuthentication
      *
      * @return bool
      */
-    protected function login(RequestInterface $request)
+    private function login(RequestInterface $request)
     {
         //Check header
-        $authorization = static::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
+        $authorization = self::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
 
         if (!$authorization) {
             return false;
@@ -86,7 +86,7 @@ class DigestAuthentication
      *
      * @return bool
      */
-    protected function checkAuthentication(array $authorization, $method, $password)
+    private function checkAuthentication(array $authorization, $method, $password)
     {
         $A1 = md5("{$authorization['username']}:{$this->realm}:{$password}");
         $A2 = md5("{$method}:{$authorization['uri']}");
@@ -103,7 +103,7 @@ class DigestAuthentication
      *
      * @return false|array
      */
-    protected static function parseAuthorizationHeader($header)
+    private static function parseAuthorizationHeader($header)
     {
         if (strpos($header, 'Digest') !== 0) {
             return false;

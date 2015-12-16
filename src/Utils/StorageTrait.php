@@ -7,7 +7,7 @@ namespace Psr7Middlewares\Utils;
  */
 trait StorageTrait
 {
-    protected $storage;
+    private $storage;
 
     /**
      * Constructor. Set the storage option.
