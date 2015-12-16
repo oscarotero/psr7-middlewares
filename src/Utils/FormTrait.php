@@ -24,7 +24,7 @@ trait FormTrait
         $html = (string) $response->getBody();
 
         $html = preg_replace_callback(
-            '/(<form\s[^>]*method="?POST"?[^>]*>)/i',
+            '/(<form\s[^>]*method=["\']?POST["\']?[^>]*>)/i',
             function ($match) use ($input) {
                 return $match[0].$input;
             },
