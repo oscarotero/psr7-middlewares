@@ -29,9 +29,8 @@ class Path
     /**
      * Join several pieces into a path.
      * 
-     * @param string $piece1
-     * @param string $piece2
-     *                       ...
+     * @param string
+     *               ...
      * 
      * @return string
      */

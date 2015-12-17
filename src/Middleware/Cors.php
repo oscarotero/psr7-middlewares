@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Neomerx\Cors\Analyzer;
 use Neomerx\Cors\Contracts\AnalysisResultInterface;
 use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
+use RuntimeException;
 
 /**
  * Middleware to implement Cors.
@@ -55,6 +56,10 @@ class Cors
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
+        if (empty($this->settings)) {
+            throw new RuntimeException('No SettingsStrategyInterface instance has been provided');
+        }
+
         $cors = Analyzer::instance($this->settings)->analyze($request);
 
         switch ($cors->getRequestType()) {

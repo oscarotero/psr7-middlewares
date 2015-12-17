@@ -33,7 +33,7 @@ trait FormTrait
             $count
         );
 
-        if ($count) {
+        if (!empty($count)) {
             $body = Middleware::createStream();
             $body->write($html);
 

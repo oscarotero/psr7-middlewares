@@ -4,7 +4,7 @@ namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Imagecow\Image;
 use RuntimeException;
@@ -39,13 +39,13 @@ class ImageTransformer
     /**
      * Execute the middleware.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param callable          $next
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param callable               $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');

@@ -80,8 +80,7 @@ class Geolocate
         $geocoder = $this->geocoder ?: $this->getGeocoder();
         $ip = ClientIp::getIp($request);
 
-        if ($ip) {
-            $ip = '123.9.34.23';
+        if ($ip !== null) {
             $request = Middleware::setAttribute($request, self::KEY, $geocoder->geocode($ip));
         }
 
