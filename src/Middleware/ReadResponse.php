@@ -13,7 +13,6 @@ use Psr\Http\Message\ResponseInterface;
 class ReadResponse
 {
     use Utils\FileTrait;
-    use Utils\ContinueTrait;
 
     /**
      * Execute the middleware.
@@ -33,7 +32,7 @@ class ReadResponse
         $file = $this->getFilename($request);
 
         if (!is_file($file)) {
-            return $this->continue ? $next($request, $response) : $response->withStatus(404);
+            return $response->withStatus(404);
         }
 
         return $next($request, $response->withBody(Middleware::createStream($file)));

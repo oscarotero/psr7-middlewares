@@ -127,6 +127,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [FormatNegotiation](#formatnegotiation)
 * [Geolocate](#geolocate)
 * [Honeypot](#honeypot)
+* [ImageTransformer](#imagetransformer)
 * [LanguageNegotiation](#languagenegotiation)
 * [LeagueRoute](#leagueroute)
 * [MethodOverride](#methodoverride)
@@ -140,7 +141,6 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Shutdown](#shutdown)
 * [TrailingSlash](#trailingslash)
 * [Uuid](#uuid)
-* [When](#when)
 * [Www](#www)
 
 ### AuraRouter
@@ -545,6 +545,35 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
+### ImageTransformer
+
+Uses [imagecow/imagecow](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other format. You can specify a predefined sizes using [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions).
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+    
+    //required to get the format of the request
+    Middleware::formatNegotiator(),
+
+    Middleware::imageTransformer()
+        ->storage('/path/to/images') // The directory where the images are placed
+        ->basePath('/imgs')          // (optional) The base path of the images url
+        ->sizes()
+    
+    Middleware::imageTransformer()
+        ->sizes([
+            'small' => 'resizeCrop,50,50|format,jpg',
+            'medium' => 'resize,500|format,jpg',
+            'large' => 'resize,1000|format,jpg',
+        ]) //(optional) The predefined sizes of the images. This prevent create unlimited images with random values
+
+        ->inputClass('hidden') //(optional) The class of the input field (by default "hpt_input")
+    }
+]);
+```
+
 ### LanguageNegotiation
 
 Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. You must provide an array with all available languages:
@@ -796,31 +825,6 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
-### When
-
-Execute a middleware only if a condition is evaluated as true. This is useful to add middleware only under some circunstances or environments.
-
-```php
-use Psr7Middlewares\Middleware;
-
-$dispatcher = $relay->getInstance([
-
-    Middleware::When()
-        ->condition(getenv('ENV') === 'production') //The condition to be evaluated
-        ->middleware(Middleware::minify()),         //The middleware to be executed when the condition is true
-
-    //You can use also callables:
-    Middleware::when()
-        ->condition(function ($request, $response) {
-            return $request->hasHeader('X-Foo')
-        })
-        ->middleware(function ($request, $response, $next) {
-            //your code
-            return $next($request, $response);
-        })
-]);
-```
-
 ### Www
 
 Adds or removes the `www` subdomain in the host uri and, optionally, returns a redirect response. The following types of host values wont be changed:
@@ -838,6 +842,38 @@ $dispatcher = $relay->getInstance([
         ->redirect(301) //(optional) to return a 301 (seo friendly) or 302 response to the new host
 ]);
 ```
+
+
+## Lazy/conditional middleware creation
+
+You may want to create middleware in a lazy way under some circunstances:
+
+* The middleware is needed only in a specific context (for example in development mode)
+* The middleware creation is expensive and is not needed always (because a previous middleware returns a cached response)
+
+To handle with this, you can use the `Middleware::create()` method that must return a callable or false. Example:
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    //This middleware can return a cached response
+    //so the next middleware may not be executed
+    Middleware::cache($myPsr6CachePool),
+
+    //Let's say this middleware is expensive, so use a proxy for lazy creation
+    Middleware::create(function () use ($app) {
+        return Middleware::auraRouter($app->get('router'));
+    }),
+
+    //This middleware is needed only in production
+    Middleware::create(function () {
+        return (getenv('ENV') !== 'production') ? false : Middleware::minify();
+    })
+]);
+```
+
 
 ## Contribution
 

@@ -16,7 +16,6 @@ class ImageTransformer
 {
     use Utils\BasePathTrait;
     use Utils\StorageTrait;
-    use Utils\ContinueTrait;
 
     protected $sizes;
 
@@ -64,7 +63,7 @@ class ImageTransformer
             list($file, $transform) = $info;
 
             if (!is_file($file)) {
-                return $this->continue ? $next($request, $response) : $response->withStatus(404);
+                return $response->withStatus(404);
             }
 
             return $this->transform($file, $transform, $response);
