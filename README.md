@@ -561,8 +561,9 @@ $dispatcher = $relay->getInstance([
         ->storage('/path/to/images') // The directory where the images are placed
         ->basePath('/imgs')          // (optional) The base path of the images url
 ]);
+```
 
-To resize or crop images on demand, use the following syntax: `[directory]/[transform].[filename]`. For example, to resize and crop the image `avatars/users.png` to 50x50px: `avatars/resizeCrop,50,50.user.png`. This method allows to generate unlimited images using random values, so you can specify a list of named transforms:
+To resize or crop images on demand, use the following syntax: `[directory]/[transform].[filename]`. For example, to resize and crop the image `avatars/users.png` to 50x50px, the path is: `avatars/resizeCrop,50,50.user.png`. Because this method allows to generate unlimited images using random values, you can specify a list of named transform values:
 
 ```php
 use Psr7Middlewares\Middleware;
