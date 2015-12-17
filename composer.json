@@ -37,7 +37,8 @@
 		"maximebf/debugbar": "~1.11",
 		"mobiledetect/mobiledetectlib": "^2.8",
 		"willdurand/geocoder": "^3.2",
-		"league/route": "2.0.0-RC1"
+		"league/route": "2.0.0-RC1",
+		"imagecow/imagecow": "^1.5"
 	},
 	"suggest": {
 		"aura/router": "To use Middleware::auraRouter",
@@ -50,7 +51,9 @@
 		"neomerx/cors-psr7": "To use Middleware::cors()",
 		"maximebf/debugbar": "To use Middleware::debugBar()",
 		"mobiledetect/mobiledetectlib": "To use Middleware::detectDevice",
-		"willdurand/geocoder": "To use Middleware::geolocate"
+		"willdurand/geocoder": "To use Middleware::geolocate",
+		"league/route": "To use Middleware::leagueRoute",
+		"imagecow/imagecow": "To use Middleware::imageTransformer"
 	},
 	"autoload": {
 		"psr-4": {
