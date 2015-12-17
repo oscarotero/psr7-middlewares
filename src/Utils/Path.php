@@ -3,7 +3,7 @@
 namespace Psr7Middlewares\Utils;
 
 /**
- * Common functions to work with paths
+ * Common functions to work with paths.
  */
 class Path
 {
@@ -27,11 +27,11 @@ class Path
     }
 
     /**
-     * Join several pieces into a path
+     * Join several pieces into a path.
      * 
      * @param string $piece1
      * @param string $piece2
-     * ...
+     *                       ...
      * 
      * @return string
      */

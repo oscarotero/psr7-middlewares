@@ -6,12 +6,11 @@ use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\UriInterface;
 use Imagecow\Image;
 use RuntimeException;
 
 /**
- * Middleware to manipulate images on demand and generate responsiveness
+ * Middleware to manipulate images on demand.
  */
 class ImageTransformer
 {
@@ -27,7 +26,7 @@ class ImageTransformer
      *    'small'  => 'resizeCrop,50,50',
      *    'medium' => 'resize,500',
      *    'big'    => 'resize,1000',
-     * ]
+     * ].
      * 
      * @param array $sizes
      * 
@@ -75,7 +74,7 @@ class ImageTransformer
     }
 
     /**
-     * Transform the image
+     * Transform the image.
      * 
      * @param string            $file
      * @param string            $transform
@@ -97,7 +96,7 @@ class ImageTransformer
     }
 
     /**
-     * Parses the path and return the file and transform values
+     * Parses the path and return the file and transform values.
      * 
      * @param string $path
      * 

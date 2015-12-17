@@ -11,7 +11,7 @@ trait ContinueTrait
 
     /**
      * Configure whether the middleware must continue 
-     * or return a 404 response when the content is not found
+     * or return a 404 response when the content is not found.
      * 
      * @param bool $continue
      *

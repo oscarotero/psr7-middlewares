@@ -29,7 +29,7 @@ trait FileTrait
 
         //if it's a directory, append "/index.html"
         if (empty($parts['extension'])) {
-            $filename .= "/index.html";
+            $filename .= '/index.html';
         }
 
         return Path::join($this->storage, $path, $filename);
