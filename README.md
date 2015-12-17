@@ -560,19 +560,28 @@ $dispatcher = $relay->getInstance([
     Middleware::imageTransformer()
         ->storage('/path/to/images') // The directory where the images are placed
         ->basePath('/imgs')          // (optional) The base path of the images url
-        ->sizes()
-    
+]);
+
+To resize or crop images on demand, use the following syntax: `[directory]/[transform].[filename]`. For example, to resize and crop the image `avatars/users.png` to 50x50px: `avatars/resizeCrop,50,50.user.png`. This method allows to generate unlimited images using random values, so you can specify a list of named transforms:
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+    Middleware::formatNegotiator(),
+
     Middleware::imageTransformer()
+        ->storage('/path/to/images')
         ->sizes([
-            'small' => 'resizeCrop,50,50|format,jpg',
+            'small' => 'resizeCrop,50,50',
             'medium' => 'resize,500|format,jpg',
             'large' => 'resize,1000|format,jpg',
-        ]) //(optional) The predefined sizes of the images. This prevent create unlimited images with random values
-
-        ->inputClass('hidden') //(optional) The class of the input field (by default "hpt_input")
+        ]) //(optional) The predefined sizes of the images.
     }
 ]);
 ```
+
+Now, to get the 50x50 thumb, you have to use `avatars/small.user.png`. Any other value different to these predefined sizes returns a 404 response.
 
 ### LanguageNegotiation
 

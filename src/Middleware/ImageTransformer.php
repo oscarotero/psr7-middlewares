@@ -62,10 +62,6 @@ class ImageTransformer
         if ($info) {
             list($file, $transform) = $info;
 
-            if (!is_file($file)) {
-                return $response->withStatus(404);
-            }
-
             return $this->transform($file, $transform, $response);
         }
 
@@ -83,6 +79,20 @@ class ImageTransformer
      */
     private function transform($file, $transform, ResponseInterface $response)
     {
+        //Check if the file exists
+        if (!is_file($file)) {
+            return $response->withStatus(404);
+        }
+
+        //Check if the size is valid
+        if (is_array($this->sizes)) {
+            if (!isset($this->sizes[$transform])) {
+                return $response->withStatus(404);
+            }
+
+            $transform = $this->sizes[$transform];
+        }
+
         $image = Image::create($file);
         $image->transform($transform);
 
@@ -109,15 +119,6 @@ class ImageTransformer
 
         if (count($pieces) === 2) {
             list($transform, $file) = $pieces;
-
-            //list of available sizes
-            if (is_array($this->sizes)) {
-                if (!isset($this->sizes[$transform])) {
-                    return;
-                }
-
-                $transform = $this->sizes[$transform];
-            }
 
             return [Utils\Path::join($this->storage, $info['dirname'], "{$file}.".$info['extension']), $transform];
         }
