@@ -12,14 +12,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ReadResponse
 {
-    private $continue = false;
-
     use Utils\FileTrait;
-
-    public function continueIfNotFound($continue = true)
-    {
-        $this->continue = $continue;
-    }
+    use Utils\ContinueTrait;
 
     /**
      * Execute the middleware.
@@ -39,11 +33,7 @@ class ReadResponse
         $file = $this->getFilename($request);
 
         if (!is_file($file)) {
-            if ($this->continue) {
-                return $next($request, $response);
-            }
-
-            return $response->withStatus(404);
+            return $this->continue ? $next($request, $response) : $response->withStatus(404);
         }
 
         return $next($request, $response->withBody(Middleware::createStream($file)));
