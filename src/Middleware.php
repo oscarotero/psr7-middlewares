@@ -3,6 +3,7 @@
 namespace Psr7Middlewares;
 
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -70,17 +71,21 @@ class Middleware
     /**
      * Create a middleware callable that acts as a "proxy" to a real middleware that must be returned by the given callback.
      *
-     * @param callable $factory Takes no argument and MUST return a middleware callable
+     * @param callable $factory Takes no argument and MUST return a middleware callable or false
      * 
      * @return callable
      */
-    public static function middleware(callable $factory)
+    public static function create(callable $factory)
     {
-        return function (ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($factory) {
+        return function (RequestInterface $request, ResponseInterface $response, callable $next) use ($factory) {
             $middleware = $factory();
 
+            if ($middleware === false) {
+                return $next($request, $response);
+            }
+
             if (!is_callable($middleware)) {
-                throw new RuntimeException(sprintf('Factory returned "%s" instead of a callable.', gettype($middleware)));
+                throw new RuntimeException(sprintf('Factory returned "%s" instead of a callable or FALSE.', gettype($middleware)));
             }
 
             return $middleware($request, $response, $next);
