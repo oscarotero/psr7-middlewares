@@ -57,6 +57,12 @@ class TrailingSlash
         $uri = $request->getUri();
         $path = $uri->getPath();
 
+        //Test basePath
+        if (!$this->testBasePath($path)) {
+            return $next($request, $response);
+        }
+
+        //Add/remove slash
         if ($this->addSlash) {
             if (strlen($path) > 1 && substr($path, -1) !== '/' && !pathinfo($path, PATHINFO_EXTENSION)) {
                 $path .= '/';

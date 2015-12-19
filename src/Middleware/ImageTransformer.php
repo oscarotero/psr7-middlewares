@@ -51,8 +51,8 @@ class ImageTransformer
             throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');
         }
 
-        //Is not a valid image?
-        if (!in_array(FormatNegotiator::getFormat($request), ['jpg', 'jpeg', 'gif', 'png'])) {
+        //Is not an image or basePath does not match?
+        if (!$this->testBasePath($request->getUri()->getPath()) || !in_array(FormatNegotiator::getFormat($request), ['jpg', 'jpeg', 'gif', 'png'])) {
             return $next($request, $response);
         }
 
