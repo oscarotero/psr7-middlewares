@@ -6,3 +6,4 @@ composer.phar
 # LOCAL TESTS
 .htaccess
 index.php
+/storage

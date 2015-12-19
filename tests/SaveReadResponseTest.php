@@ -54,20 +54,4 @@ class SaveReadResponseTest extends Base
         unlink($storage.$file);
         rmdir(dirname($storage.$file));
     }
-
-    public function testContentRange()
-    {
-        $storage = __DIR__.'/assets';
-
-        $response = $this->execute([
-            Middleware::readResponse()
-                ->storage($storage),
-            ],
-            'image.png',
-            ['Range' => 'bytes 300-500']
-        );
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('bytes 300-500/171159', $response->getHeaderLine('Content-Range'));
-    }
 }
