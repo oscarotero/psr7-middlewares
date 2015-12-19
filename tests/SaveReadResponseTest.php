@@ -61,7 +61,7 @@ class SaveReadResponseTest extends Base
 
         $response = $this->execute([
             Middleware::readResponse()
-                ->storage($storage)
+                ->storage($storage),
             ],
             'image.png',
             ['Range' => 'bytes 300-500']

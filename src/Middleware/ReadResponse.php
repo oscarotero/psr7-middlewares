@@ -55,7 +55,7 @@ class ReadResponse
     }
 
     /**
-     * Parses a range header, for example: bytes=500-999
+     * Parses a range header, for example: bytes=500-999.
      *
      * @param string $header
      *
@@ -67,7 +67,7 @@ class ReadResponse
             return [
                 $matches['unit'],
                 (int) $matches['first'],
-                (int) $matches['last']
+                (int) $matches['last'],
             ];
         }
 
