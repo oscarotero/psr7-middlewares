@@ -42,13 +42,17 @@ class ReadResponse
             return $response->withStatus(404);
         }
 
-        $response = $response->withBody(Middleware::createStream($file));
-
         //Handle range
+        $response = $response
+            ->withBody(Middleware::createStream($file))
+            ->withHeader('Accept-Ranges', 'bytes');
+
         $range = $request->getHeaderLine('Range');
 
-        if (!empty($range) && ($range = $this->parseRangeHeader($range))) {
-            $response = $response->withHeader('Content-Range', sprintf('%s %d-%d/%s', $range[0], $range[1], $range[2], $response->getBody()->getSize() ?: '*'));
+        if (!empty($range) && ($range = self::parseRangeHeader($range))) {
+            $length = $response->getBody()->getSize();
+
+            $response = $response->withHeader('Content-Range', sprintf('%s %d-%d/%d', $range[0], $range[1], $range[2] ?: $length,  $length));
         }
 
         return $next($request, $response->withBody(Middleware::createStream($file)));
@@ -61,13 +65,13 @@ class ReadResponse
      *
      * @return false|array [unit, first, last]
      */
-    private function parseRangeHeader($header)
+    private static function parseRangeHeader($header)
     {
-        if (preg_match('/(?P<unit>[\w]+)\s+(?P<first>\d+)-(?P<last>\d+)/', $header, $matches)) {
+        if (preg_match('/(?P<unit>[\w]+)=(?P<first>\d+)-(?P<last>\d+)?/', $header, $matches)) {
             return [
                 $matches['unit'],
                 (int) $matches['first'],
-                (int) $matches['last'],
+                isset($matches['last']) ? (int) $matches['last'] : null,
             ];
         }
 
