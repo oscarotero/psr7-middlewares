@@ -78,7 +78,7 @@ class Middleware
     public static function create(callable $factory)
     {
         return function (RequestInterface $request, ResponseInterface $response, callable $next) use ($factory) {
-            $middleware = $factory();
+            $middleware = $factory($request, $response);
 
             if ($middleware === false) {
                 return $next($request, $response);
