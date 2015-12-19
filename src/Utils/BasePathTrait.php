@@ -40,7 +40,7 @@ trait BasePathTrait
     }
 
     /**
-     * Tests the basepath and returns whether the path matches
+     * Tests the basepath and returns whether the path matches.
      *
      * @param string $path
      *
