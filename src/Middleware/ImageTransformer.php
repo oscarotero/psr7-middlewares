@@ -8,6 +8,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Imagecow\Image;
 use RuntimeException;
+use Exception;
 
 /**
  * Middleware to manipulate images on demand.
@@ -16,6 +17,7 @@ class ImageTransformer
 {
     use Utils\BasePathTrait;
     use Utils\StorageTrait;
+    use Utils\CryptTrait;
 
     protected $sizes;
 
@@ -34,6 +36,8 @@ class ImageTransformer
     public function sizes(array $sizes)
     {
         $this->sizes = $sizes;
+
+        return $this;
     }
 
     /**
@@ -115,7 +119,12 @@ class ImageTransformer
     {
         $path = $this->getBasePath($path);
         $info = pathinfo($path);
-        $pieces = explode('.', $info['filename'], 2);
+
+        try {
+            $pieces = explode('.', $this->decrypt($info['filename']), 2);
+        } catch (Exception $e) {
+            return;
+        }
 
         if (count($pieces) === 2) {
             list($transform, $file) = $pieces;
