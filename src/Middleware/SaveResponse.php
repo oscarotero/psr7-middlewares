@@ -28,7 +28,7 @@ class SaveResponse
     {
         $response = $next($request, $response);
 
-        if (empty($request->getUri()->getQuery()) && self::isCacheable($request, $response)) {
+        if ($this->testBasePath($request->getUri()->getPath()) && empty($request->getUri()->getQuery()) && self::isCacheable($request, $response)) {
             self::writeStream($response->getBody(), $this->getFilename($request));
         }
 
