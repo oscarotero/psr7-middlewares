@@ -558,8 +558,11 @@ $dispatcher = $relay->getInstance([
     Middleware::formatNegotiator(),
 
     Middleware::imageTransformer()
-        ->storage('/path/to/images') // The directory where the images are placed
-        ->basePath('/imgs')          // (optional) The base path of the images url
+        ->basePath('/imgs')          // (optional) The base path of the images urls
+
+    //Used to read the image files and returns the response with them
+    Middleware::readResponse()
+        ->storage('/path/to/images'),
 ]);
 ```
 
@@ -572,13 +575,13 @@ $dispatcher = $relay->getInstance([
     Middleware::formatNegotiator(),
 
     Middleware::imageTransformer()
-        ->storage('/path/to/images')
         ->sizes([
             'small' => 'resizeCrop,50,50',
             'medium' => 'resize,500|format,jpg',
             'large' => 'resize,1000|format,jpg',
-        ]) //(optional) The predefined sizes of the images.
-    }
+        ]), //(optional) The predefined sizes of the images.
+
+    Middleware::readResponse('/path/to/images')
 ]);
 ```
 

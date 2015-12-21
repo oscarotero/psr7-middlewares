@@ -16,7 +16,6 @@ use Exception;
 class ImageTransformer
 {
     use Utils\BasePathTrait;
-    use Utils\StorageTrait;
     use Utils\CryptTrait;
 
     protected $sizes;
@@ -55,49 +54,36 @@ class ImageTransformer
             throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');
         }
 
-        //Is not an image or basePath does not match?
-        if (!$this->testBasePath($request->getUri()->getPath()) || !in_array(FormatNegotiator::getFormat($request), ['jpg', 'jpeg', 'gif', 'png'])) {
+        //If it's not an image or basePath does not match or invalid transform values, don't do anything
+        if (!in_array(FormatNegotiator::getFormat($request), ['jpg', 'jpeg', 'gif', 'png']) || !$this->testBasePath($request->getUri()->getPath()) || !($info = $this->parsePath($request->getUri()->getPath()))) {
             return $next($request, $response);
         }
 
-        //Get the file
-        $info = $this->parsePath($request->getUri()->getPath());
+        list($path, $transform) = $info;
+        $uri = $request->getUri()->withPath($path);
+        $request = $request->withUri($uri);
 
-        if ($info) {
-            list($file, $transform) = $info;
+        $response = $next($request, $response);
 
-            return $this->transform($file, $transform, $response);
+        //Check the response and transform the image
+        if ($transform && $response->getStatusCode() === 200 && $response->getBody()->getSize()) {
+            return $this->transform($response, $transform);
         }
 
-        return $next($request, $response);
+        return $response;
     }
 
     /**
      * Transform the image.
      * 
-     * @param string            $file
-     * @param string            $transform
      * @param ResponseInterface $response
+     * @param string            $transform
      * 
      * @return ResponseInterface
      */
-    private function transform($file, $transform, ResponseInterface $response)
+    private function transform(ResponseInterface $response, $transform)
     {
-        //Check if the file exists
-        if (!is_file($file)) {
-            return $response->withStatus(404);
-        }
-
-        //Check if the size is valid
-        if (is_array($this->sizes)) {
-            if (!isset($this->sizes[$transform])) {
-                return $response->withStatus(404);
-            }
-
-            $transform = $this->sizes[$transform];
-        }
-
-        $image = Image::create($file);
+        $image = Image::createFromString((string) $response->getBody());
         $image->transform($transform);
 
         $body = Middleware::createStream();
@@ -110,6 +96,8 @@ class ImageTransformer
 
     /**
      * Parses the path and return the file and transform values.
+     * For example, the path "/images/small.avatar.jpg" returns:
+     * ["/images/avatar.jpg", "resizeCrop,50,50"].
      * 
      * @param string $path
      * 
@@ -129,7 +117,16 @@ class ImageTransformer
         if (count($pieces) === 2) {
             list($transform, $file) = $pieces;
 
-            return [Utils\Path::join($this->storage, $info['dirname'], "{$file}.".$info['extension']), $transform];
+            //Check if the size is valid
+            if (is_array($this->sizes)) {
+                if (!isset($this->sizes[$transform])) {
+                    return;
+                }
+
+                $transform = $this->sizes[$transform];
+            }
+
+            return [Utils\Path::join($info['dirname'], "{$file}.".$info['extension']), $transform];
         }
     }
 }

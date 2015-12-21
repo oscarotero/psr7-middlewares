@@ -7,16 +7,19 @@ class ImageTransformerTest extends Base
     public function imagesProvider()
     {
         return [
-            ['http://domain.com/my-images/small.image.png', 50, 50],
-            ['http://domain.com/my-images/image.png', 0, 0],
-            ['http://domain.com/small.image.png', 0, 0],
+            ['http://domain.com/my-images/small.image.png', 50, 50, ['small' => 'resizeCrop,50,50']],
+            ['http://domain.com/my-images/image.png', 512, 512, ['small' => 'resizeCrop,50,50']],
+            ['http://domain.com/small.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
+            ['http://domain.com/my-images/invalid.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
+            ['http://domain.com/my-images/resizeCrop,40,40.image.png', 40, 40, null],
+            ['http://domain.com/my-images/resizeCrop,40,40.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
         ];
     }
 
     /**
      * @dataProvider imagesProvider
      */
-    public function testImageTransformer($url, $width, $height)
+    public function testImageTransformer($url, $width, $height, $sizes)
     {
         //Use the images located in imagecow tests
         $storage = __DIR__.'/assets';
@@ -25,10 +28,15 @@ class ImageTransformerTest extends Base
             [
                 Middleware::FormatNegotiator(),
 
-                Middleware::ImageTransformer()
-                    ->storage($storage)
+                Middleware::create(function () use ($sizes) {
+                    $m = Middleware::ImageTransformer();
+
+                    return $sizes ? $m->sizes($sizes) : $m;
+                }),
+
+                Middleware::readResponse()
                     ->basePath('/my-images')
-                    ->sizes(['small' => 'resizeCrop,50,50']),
+                    ->storage($storage),
             ],
             $url
         );
