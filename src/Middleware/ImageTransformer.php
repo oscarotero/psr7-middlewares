@@ -105,7 +105,6 @@ class ImageTransformer
      */
     private function parsePath($path)
     {
-        $path = $this->getBasePath($path);
         $info = pathinfo($path);
 
         try {
