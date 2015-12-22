@@ -42,20 +42,35 @@ class ReadResponse
             return $response->withStatus(404);
         }
 
+        $response = $response->withBody(Middleware::createStream($file));
+
         //Handle range
-        $response = $response
-            ->withBody(Middleware::createStream($file))
-            ->withHeader('Accept-Ranges', 'bytes');
+        $response = $this->range($request, $response);
+        
+        return $next($request, $response);
+    }
+
+    private static function range(RequestInterface $request, ResponseInterface $response)
+    {
+        $response = $response->withHeader('Accept-Ranges', 'bytes');
 
         $range = $request->getHeaderLine('Range');
 
-        if (!empty($range) && ($range = self::parseRangeHeader($range))) {
-            $length = $response->getBody()->getSize();
-
-            $response = $response->withHeader('Content-Range', sprintf('%s %d-%d/%d', $range[0], $range[1], $range[2] ?: $length,  $length));
+        if (empty($range) || !($range = self::parseRangeHeader($range))) {
+            return $response;
         }
 
-        return $next($request, $response->withBody(Middleware::createStream($file)));
+        list($unit, $first, $last) = $range;
+        $size = $response->getBody()->getSize();
+
+        if (!$last) {
+            $last = $size - 1;
+        }
+
+        return $response
+            ->withStatus(206)
+            ->withHeader('Content-Length', $last - $first + 1)
+            ->withHeader('Content-Range', sprintf('%s %d-%d/%d', $unit, $first, $last,  $size));
     }
 
     /**
