@@ -76,7 +76,6 @@ class Piwik
      *
      * @param string $name
      *                    ...
-     *
      * @return self
      */
     public function addOption($name)
@@ -117,11 +116,11 @@ class Piwik
 
         foreach ($this->options as $option) {
             $option[0] = "'".$option[0]."'";
-            $_paq .= printf("_paq.push([%s]);", implode(',', $option));
+            $_paq .= sprintf("_paq.push([%s]);", implode(',', $option));
         }
 
         return <<<PWK
-<script type="text/javascript">
+<script>
     var _paq = _paq || [];
     {$_paq}
     (function() {
@@ -132,7 +131,7 @@ class Piwik
         g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
     })();
 </script>
-<noscript><p><img src="//oscarotero.com/piwik/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+<noscript><p><img src="{$this->piwikUrl}piwik.php?idsite={$this->siteId}" style="border:0;" alt="" /></p></noscript>
 PWK;
     }
 }

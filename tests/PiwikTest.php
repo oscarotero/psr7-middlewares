@@ -2,9 +2,9 @@
 
 use Psr7Middlewares\Middleware;
 
-class GoogleAnalyticsTest extends Base
+class PiwikTest extends Base
 {
-    public function GoogleAnalyticsProvider()
+    public function PiwikProvider()
     {
         return [
             ['', [], true],
@@ -14,23 +14,23 @@ class GoogleAnalyticsTest extends Base
     }
 
     /**
-     * @dataProvider GoogleAnalyticsProvider
+     * @dataProvider PiwikProvider
      */
-    public function testGoogleAnalytics($uri, array $headers, $expected)
+    public function testPiwik($uri, array $headers, $expected)
     {
         $response = $this->dispatch([
             Middleware::FormatNegotiator(),
-            Middleware::GoogleAnalytics('UA-XXXXX-X'),
+            Middleware::Piwik('http://example.com/piwik'),
         ], $this->request($uri, $headers), $this->response());
 
         $body = (string) $response->getBody();
 
         if ($expected) {
             $this->assertNotFalse(strpos($body, '<script>'));
-            $this->assertNotFalse(strpos($body, 'UA-XXXXX-X'));
+            $this->assertNotFalse(strpos($body, 'var u="http://example.com/piwik/";'));
         } else {
             $this->assertFalse(strpos($body, '<script>'));
-            $this->assertFalse(strpos($body, 'UA-XXXXX-X'));
+            $this->assertFalse(strpos($body, 'var u="http://example.com/piwik/";'));
         }
     }
 }
