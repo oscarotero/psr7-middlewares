@@ -62,6 +62,9 @@ $dispatcher = $relay->newInstance([
     //Block search engines robots indexing
     Middleware::robots(),
 
+    //Add Google Analytics
+    Middleware::googleAnalytics('UA-XXXXX-X'),
+
     //Geolocation
     Middleware::geolocate(),
 
@@ -126,6 +129,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Firewall](#firewall)
 * [FormatNegotiation](#formatnegotiation)
 * [Geolocate](#geolocate)
+* [GoogleAnalytics](#googleanalytics)
 * [Honeypot](#honeypot)
 * [ImageTransformer](#imagetransformer)
 * [LanguageNegotiation](#languagenegotiation)
@@ -526,6 +530,23 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
+### GoogleAnalytics
+
+Inject the Google Analytics code in all html pages.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+    
+    //required to get the format of the request
+    Middleware::formatNegotiator(),
+    
+    Middleware::GoogleAnalytics()
+        ->id('UA-XXXXX-X') // The site id
+]);
+```
+
 ### Honeypot
 
 Implements a honeypot spam prevention. This technique is based on creating a input field that should be invisible and left empty by real users but filled by most spam bots. The middleware scans the html code and inserts this inputs in all post forms and check in the incoming requests whether this value exists and is empty (is a real user) or doesn't exist or has a value (is a bot) returning a 403 response.
@@ -541,7 +562,6 @@ $dispatcher = $relay->getInstance([
     Middleware::Honeypot()
         ->inputName('my_name') //(optional) The name of the input field (by default "hpt_name")
         ->inputClass('hidden') //(optional) The class of the input field (by default "hpt_input")
-    }
 ]);
 ```
 

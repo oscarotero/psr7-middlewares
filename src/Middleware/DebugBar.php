@@ -4,6 +4,7 @@ namespace Psr7Middlewares\Middleware;
 
 use DebugBar\DebugBar as Bar;
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -13,6 +14,8 @@ use RuntimeException;
  */
 class DebugBar
 {
+    use Utils\HtmlInjectorTrait;
+
     private $debugBar;
 
     /**
@@ -54,7 +57,7 @@ class DebugBar
     {
         $response = $next($request, $response);
 
-        if ($this->isValid($request)) {
+        if ($this->isInjectable($request)) {
             $renderer = $this->debugBar->getJavascriptRenderer();
 
             ob_start();
@@ -68,35 +71,9 @@ class DebugBar
 
             echo $renderer->render();
 
-            $response->getBody()->write(ob_get_clean());
+            return $this->inject($response, ob_get_clean());
         }
 
         return $response;
-    }
-
-    /**
-     * Check whether the request is valid to insert a debugbar in the response.
-     * 
-     * @param ServerRequestInterface $request
-     * 
-     * @return bool
-     */
-    private function isValid(ServerRequestInterface $request)
-    {
-        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
-            throw new RuntimeException('DebugBar middleware needs FormatNegotiator executed before');
-        }
-
-        //is not html?
-        if (FormatNegotiator::getFormat($request) !== 'html') {
-            return false;
-        }
-
-        //is ajax?
-        if (strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest') {
-            return false;
-        }
-
-        return true;
     }
 }
