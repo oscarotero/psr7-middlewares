@@ -14,30 +14,30 @@ class GoogleAnalytics
     /**
      * @var string|null The site's ID
      */
-    private $id;
+    private $siteId;
 
     /**
      * Constructor.Set the site's ID.
      *
      * @param string $id
      */
-    public function __construct($id = null)
+    public function __construct($siteId = null)
     {
-        if ($id !== null) {
-            $this->id($id);
+        if ($siteId !== null) {
+            $this->siteId($siteId);
         }
     }
 
     /**
      * Set the site's id
      *
-     * @param string $id
+     * @param string $siteId
      *
      * @return self
      */
-    public function id($id)
+    public function siteId($siteId)
     {
-        $this->id = (string) $id;
+        $this->siteId = (string) $siteId;
 
         return $this;
     }
@@ -55,8 +55,8 @@ class GoogleAnalytics
     {
         $response = $next($request, $response);
 
-        if ($this->id && $this->isInjectable($request)) {
-            return $this->inject($response, self::getCode($this->id));
+        if ($this->isInjectable($request)) {
+            return $this->inject($response, $this->getCode());
         }
 
         return $response;
@@ -66,11 +66,9 @@ class GoogleAnalytics
      * Returns the google code.
      * https://github.com/h5bp/html5-boilerplate/blob/master/src/index.html
      * 
-     * @param string $id
-     * 
      * @return string
      */
-    private static function getCode($id)
+    private function getCode()
     {
         return <<<GA
 <script>
@@ -79,7 +77,7 @@ class GoogleAnalytics
     e=o.createElement(i);r=o.getElementsByTagName(i)[0];
     e.src='https://www.google-analytics.com/analytics.js';
     r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-    ga('create','{$id}','auto');ga('send','pageview');
+    ga('create','{$this->siteId}','auto');ga('send','pageview');
 </script>
 GA;
     }
