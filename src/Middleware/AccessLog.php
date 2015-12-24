@@ -18,7 +18,7 @@ class AccessLog
     /**
      * @var bool
      */
-    private $combined = true;
+    private $combined = false;
 
     /**
      * Constructor.Set the LoggerInterface instance.
@@ -47,8 +47,7 @@ class AccessLog
     }
 
     /**
-     * Whether use the combined log format instead the common log format
-     * The combined is the same than common but with the addition of two more fields: Referer and User-Agent headers.
+     * Whether use the combined log format instead the common log format.
      *
      * @param bool $combined
      *

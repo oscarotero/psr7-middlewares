@@ -113,6 +113,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 
 ## Available middlewares
 
+* [AccessLog](#accesslog)
 * [AuraRouter](#aurarouter)
 * [AuraSession](#aurasession)
 * [BasePath](#basepath)
@@ -137,6 +138,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [MethodOverride](#methodoverride)
 * [Minify](#minify)
 * [Payload](#payload)
+* [Piwik](#piwik)
 * [ReadResponse](#readresponse)
 * [Rename](#rename)
 * [ResponseTime](#responseTime)
@@ -145,6 +147,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Shutdown](#shutdown)
 * [TrailingSlash](#trailingslash)
 * [Uuid](#uuid)
+* [Whoops](#whoops)
 * [Www](#www)
 
 ### AuraRouter
@@ -188,6 +191,31 @@ $dispatcher = $relay->getInstance([
     Middleware::AuraRouter()
         ->router($routerContainer)   //Instance of Aura\Router\RouterContainer
         ->arguments($myApp)          //(optional) append more arguments to the controller
+]);
+```
+
+### AccessLog
+
+To generate access logs for each request using the [Apache's access log format](https://httpd.apache.org/docs/2.4/logs.html#accesslog). This middleware requires a [Psr log implementation](https://packagist.org/providers/psr/log-implementation), for example [monolog](https://github.com/Seldaek/monolog):
+
+```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\AuraRouter;
+use Monolog\Logger;
+use Monolog\Handler\ErrorLogHandler;
+
+//Create the logger
+$logger = new Logger('access');
+$logger->pushHandler(new ErrorLogHandler());
+
+//Add to the dispatcher
+$dispatcher = $relay->getInstance([
+
+    Middleware::ClientIp(), //Required to get the Ip
+
+    Middleware::AccessLog()
+        ->logger($logger) //Instance of Psr\Log\LoggerInterface
+        ->combined(true)  //(optional) To use the Combined Log Format instead the Common Log Format
 ]);
 ```
 
@@ -381,7 +409,7 @@ $dispatcher = $relay->getInstance([
 
 ### ErrorHandler
 
-Executes a handler if the response returned by the next middlewares has any error (status code 400-599). You can catch also the exceptions throwed or even use [whoops](https://github.com/filp/whoops) as error handler.
+Executes a handler if the response returned by the next middlewares has any error (status code 400-599). You can catch also the exceptions throwed.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -403,14 +431,11 @@ function errorHandler($request, $response, $myApp) {
     }
 }
 
-$whoops = new Whoops\Run();
-
 $dispatcher = $relay->getInstance([
 
     Middleware::ErrorHandler()
         ->handler('errorHandler') //The error handler
         ->arguments($myApp)       //(optional) extra arguments to the handler
-        ->whoops($whoops)         //(optional) provide a whoops instance to capture errors and exceptions
         ->catchExceptions()       //(optional) to catch exceptions if you don't use an external library for that
 ]);
 ```
@@ -705,6 +730,25 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
+### Piwik
+
+To use the [Piwik](https://piwik.org/) analytics platform. Injects the javascript code just before the `</body>` closing tag.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+    
+    //required to get the format of the request
+    Middleware::formatNegotiator(),
+    
+    Middleware::Piwik()
+        ->piwikUrl('//example.com/piwik')    // The url of the installed piwik
+        ->siteId(1)                          // (optional) The site id (1 by default)
+        ->addOption('setDoNotTrack', 'true') // (optional) Add more options to piwik API
+]
+```
+
 ### ReadResponse
 
 Read the response content from a file. It's the opposite of [SaveResponse](#saveresponse)
@@ -855,6 +899,23 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
+]);
+```
+
+### Whoops
+
+To use [whoops](https://github.com/filp/whoops) as error handler.
+
+```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\Whoops;
+use Whoops\Run;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Whoops()
+        ->whoops(new Run())  //(optional) provide a whoops instance
+        ->catchErrors(false) //(optional) to catch not only exceptions but also php errors (true by default)
 ]);
 ```
 

@@ -60,21 +60,7 @@ class Whoops
      */
     public function catchErrors($catchErrors = true)
     {
-        $this->catchErrors = $catchErrors;
-
-        return $this;
-    }
-
-    /**
-     * Configure the catchExceptions.
-     *
-     * @param bool $catch
-     *
-     * @return self
-     */
-    public function catchExceptions($catch = true)
-    {
-        $this->catchExceptions = (boolean) $catch;
+        $this->catchErrors = (bool) $catchErrors;
 
         return $this;
     }
