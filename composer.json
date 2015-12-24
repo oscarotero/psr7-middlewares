@@ -61,8 +61,8 @@
 		}
 	},
 	"extra": {
-        "branch-alias": {
-            "develop": "3.x-dev"
-        }
-    }
+		"branch-alias": {
+			"develop": "3.x-dev"
+		}
+	}
 }
