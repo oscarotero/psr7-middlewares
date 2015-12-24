@@ -150,6 +150,32 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Whoops](#whoops)
 * [Www](#www)
 
+
+### AccessLog
+
+To generate access logs for each request using the [Apache's access log format](https://httpd.apache.org/docs/2.4/logs.html#accesslog). This middleware requires a [Psr log implementation](https://packagist.org/providers/psr/log-implementation), for example [monolog](https://github.com/Seldaek/monolog):
+
+```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\AuraRouter;
+use Monolog\Logger;
+use Monolog\Handler\ErrorLogHandler;
+
+//Create the logger
+$logger = new Logger('access');
+$logger->pushHandler(new ErrorLogHandler());
+
+//Add to the dispatcher
+$dispatcher = $relay->getInstance([
+
+    Middleware::ClientIp(), //Required to get the Ip
+
+    Middleware::AccessLog()
+        ->logger($logger) //Instance of Psr\Log\LoggerInterface
+        ->combined(true)  //(optional) To use the Combined Log Format instead the Common Log Format
+]);
+```
+
 ### AuraRouter
 
 To use [Aura.Router (3.x)](https://github.com/auraphp/Aura.Router) as a middleware:
@@ -191,31 +217,6 @@ $dispatcher = $relay->getInstance([
     Middleware::AuraRouter()
         ->router($routerContainer)   //Instance of Aura\Router\RouterContainer
         ->arguments($myApp)          //(optional) append more arguments to the controller
-]);
-```
-
-### AccessLog
-
-To generate access logs for each request using the [Apache's access log format](https://httpd.apache.org/docs/2.4/logs.html#accesslog). This middleware requires a [Psr log implementation](https://packagist.org/providers/psr/log-implementation), for example [monolog](https://github.com/Seldaek/monolog):
-
-```php
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Middleware\AuraRouter;
-use Monolog\Logger;
-use Monolog\Handler\ErrorLogHandler;
-
-//Create the logger
-$logger = new Logger('access');
-$logger->pushHandler(new ErrorLogHandler());
-
-//Add to the dispatcher
-$dispatcher = $relay->getInstance([
-
-    Middleware::ClientIp(), //Required to get the Ip
-
-    Middleware::AccessLog()
-        ->logger($logger) //Instance of Psr\Log\LoggerInterface
-        ->combined(true)  //(optional) To use the Combined Log Format instead the Common Log Format
 ]);
 ```
 
