@@ -38,7 +38,8 @@
 		"mobiledetect/mobiledetectlib": "^2.8",
 		"willdurand/geocoder": "^3.2",
 		"league/route": "2.0.0-RC1",
-		"imagecow/imagecow": "^1.5"
+		"imagecow/imagecow": "^1.5",
+		"filp/whoops": "^1.1"
 	},
 	"suggest": {
 		"aura/router": "To use Middleware::auraRouter",
@@ -53,7 +54,8 @@
 		"mobiledetect/mobiledetectlib": "To use Middleware::detectDevice",
 		"willdurand/geocoder": "To use Middleware::geolocate",
 		"league/route": "To use Middleware::leagueRoute",
-		"imagecow/imagecow": "To use Middleware::imageTransformer"
+		"imagecow/imagecow": "To use Middleware::imageTransformer",
+		"filp/whoops": "To use Middleware::whoops"
 	},
 	"autoload": {
 		"psr-4": {
