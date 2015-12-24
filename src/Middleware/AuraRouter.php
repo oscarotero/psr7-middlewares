@@ -46,7 +46,7 @@ class AuraRouter
     }
 
     /**
-     * Extra arguments passed to the controller.
+     * Set the RouterContainer instance.
      *
      * @param RouterContainer $router
      *

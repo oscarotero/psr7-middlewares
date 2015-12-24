@@ -39,23 +39,26 @@
 		"willdurand/geocoder": "^3.2",
 		"league/route": "2.0.0-RC1",
 		"imagecow/imagecow": "^1.5",
-		"filp/whoops": "^1.1"
+		"filp/whoops": "^1.1",
+		"monolog/monolog": "^1.17"
 	},
 	"suggest": {
-		"aura/router": "To use Middleware::auraRouter",
-		"aura/session": "To use Middleware::auraSession",
-		"nikic/fast-route": "To use Middleware::fastRoute",
-		"willdurand/negotiation": "To use Middleware::formatNegotiator() and Middleware::languageNegotiator()",
-		"m6web/firewall": "To use Middleware::firewall()",
-		"mrclay/minify": "To use Middleware::minify()",
-		"ramsey/uuid": "To use Middleware::uuid()",
-		"neomerx/cors-psr7": "To use Middleware::cors()",
-		"maximebf/debugbar": "To use Middleware::debugBar()",
-		"mobiledetect/mobiledetectlib": "To use Middleware::detectDevice",
-		"willdurand/geocoder": "To use Middleware::geolocate",
-		"league/route": "To use Middleware::leagueRoute",
-		"imagecow/imagecow": "To use Middleware::imageTransformer",
-		"filp/whoops": "To use Middleware::whoops"
+		"aura/router": "To use AuraRouter",
+		"aura/session": "To use AuraSession",
+		"nikic/fast-route": "To use FastRoute",
+		"willdurand/negotiation": "To use FormatNegotiator and LanguageNegotiator",
+		"m6web/firewall": "To use Firewall",
+		"mrclay/minify": "To use Minify",
+		"ramsey/uuid": "To use Uuid",
+		"neomerx/cors-psr7": "To use Cors",
+		"maximebf/debugbar": "To use DebugBar",
+		"mobiledetect/mobiledetectlib": "To use DetectDevice",
+		"willdurand/geocoder": "To use Geolocate",
+		"league/route": "To use LeagueRoute",
+		"imagecow/imagecow": "To use ImageTransformer",
+		"filp/whoops": "To use Whoops",
+		"psr/log-implementation": "To use AccessLog",
+		"psr/cache-implementation": "To use Cache"
 	},
 	"autoload": {
 		"psr-4": {
