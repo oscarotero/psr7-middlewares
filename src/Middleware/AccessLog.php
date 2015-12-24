@@ -2,10 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
-use Aura\Router\RouterContainer;
-use Aura\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -51,7 +48,7 @@ class AccessLog
 
     /**
      * Whether use the combined log format instead the common log format
-     * The combined is the same than common but with the addition of two more fields: Referer and User-Agent headers
+     * The combined is the same than common but with the addition of two more fields: Referer and User-Agent headers.
      *
      * @param bool $combined
      *
@@ -98,7 +95,7 @@ class AccessLog
 
     /**
      * Generates a message using the Apache's Common Log format
-     * https://httpd.apache.org/docs/2.4/logs.html#accesslog
+     * https://httpd.apache.org/docs/2.4/logs.html#accesslog.
      * 
      * Note: The user identifier (identd) is ommited intentionally
      * 
@@ -124,7 +121,7 @@ class AccessLog
 
     /**
      * Generates a message using the Apache's Combined Log format
-     * This is exactly the same than Common Log, with the addition of two more fields: Referer and User-Agent headers
+     * This is exactly the same than Common Log, with the addition of two more fields: Referer and User-Agent headers.
      * 
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
