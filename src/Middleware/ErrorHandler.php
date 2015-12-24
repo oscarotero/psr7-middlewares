@@ -6,7 +6,6 @@ use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Whoops\Run;
 
 /**
  * Middleware to handle php errors and exceptions.
@@ -16,11 +15,6 @@ class ErrorHandler
     const KEY = 'EXCEPTION';
 
     use Utils\HandlerTrait;
-
-    /**
-     * @var Run|null To handle errors using whoops
-     */
-    private $whoops;
 
     /**
      * @var bool Whether or not catch exceptions
@@ -37,20 +31,6 @@ class ErrorHandler
     public static function getException(ServerRequestInterface $request)
     {
         return Middleware::getAttribute($request, self::KEY);
-    }
-
-    /**
-     * Set an instance of Whoops.
-     *
-     * @param Run $whoops
-     *
-     * @return self
-     */
-    public function whoops(Run $whoops)
-    {
-        $this->whoops = $whoops;
-
-        return $this;
     }
 
     /**
@@ -78,16 +58,6 @@ class ErrorHandler
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->whoops) {
-            $this->whoops->pushHandler(function ($exception) use ($request, $response) {
-                try {
-                    echo $this->executeHandler(Middleware::setAttribute($request, self::KEY, $exception), $response)->getBody();
-                } catch (\Exception $exception) {
-                    //ignored
-                }
-            });
-        }
-
         ob_start();
 
         try {
@@ -104,15 +74,7 @@ class ErrorHandler
         ob_end_clean();
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
-            try {
-                return $this->executeHandler($request, $response);
-            } catch (\Exception $exception) {
-                //ignored
-            }
-        }
-
-        if ($this->whoops) {
-            $this->whoops->popHandler();
+            return $this->executeHandler($request, $response);
         }
 
         return $response;
