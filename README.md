@@ -249,7 +249,9 @@ Strip off the prefix from the uri path of the request. This is useful to combine
 use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
-    Middleware::BasePath('/web/public'),
+    Middleware::BasePath()
+        ->basePath('/web/public') // The path to remove
+        ->autodetect(true)        // (optional) or autodetect the base path
 ]);
 ```
 
