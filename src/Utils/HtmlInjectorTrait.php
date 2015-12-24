@@ -8,12 +8,12 @@ use Psr7Middlewares\Middleware\FormatNegotiator;
 use Psr7Middlewares\Middleware;
 
 /**
- * Utilities used by middlewares that inject html code in the responses
+ * Utilities used by middlewares that inject html code in the responses.
  */
 trait HtmlInjectorTrait
 {
     /**
-     * Inject some code just before any tag
+     * Inject some code just before any tag.
      * 
      * @param ResponseInterface $response
      * @param string            $code

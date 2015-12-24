@@ -29,7 +29,7 @@ class GoogleAnalytics
     }
 
     /**
-     * Set the site's id
+     * Set the site's id.
      *
      * @param string $siteId
      *
@@ -64,7 +64,7 @@ class GoogleAnalytics
 
     /**
      * Returns the google code.
-     * https://github.com/h5bp/html5-boilerplate/blob/master/src/index.html
+     * https://github.com/h5bp/html5-boilerplate/blob/master/src/index.html.
      * 
      * @return string
      */

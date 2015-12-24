@@ -11,7 +11,7 @@ use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\JsonResponseHandler;
 
 /**
- * Middleware to use whoops as error handler
+ * Middleware to use whoops as error handler.
  */
 class Whoops
 {
@@ -26,7 +26,7 @@ class Whoops
     private $catchErrors = true;
 
     /**
-     * Constructor.Set the whoops instance
+     * Constructor.Set the whoops instance.
      *
      * @param Run $whoops
      */
@@ -117,7 +117,7 @@ class Whoops
     }
 
     /**
-     * Returns the whoops instance or create one
+     * Returns the whoops instance or create one.
      * 
      * @param ServerRequestInterface $request
      *
@@ -133,7 +133,7 @@ class Whoops
 
         $whoops->pushHandler(new PrettyPageHandler());
         $whoops->pushHandler(new PlainTextHandler());
-        
+
         $jsonHandler = new JsonResponseHandler();
         $jsonHandler->onlyForAjaxRequests(true);
         $whoops->pushHandler($jsonHandler);

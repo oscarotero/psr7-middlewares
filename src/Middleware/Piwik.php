@@ -39,7 +39,7 @@ class Piwik
     }
 
     /**
-     * Set the site's id
+     * Set the site's id.
      *
      * @param int $siteId
      *
@@ -53,7 +53,7 @@ class Piwik
     }
 
     /**
-     * Set the piwik url
+     * Set the piwik url.
      *
      * @param string $url
      *
@@ -72,10 +72,11 @@ class Piwik
     }
 
     /**
-     * Add an option
+     * Add an option.
      *
      * @param string $name
-     *                    ...
+     *                     ...
+     *
      * @return self
      */
     public function addOption($name)
@@ -116,7 +117,7 @@ class Piwik
 
         foreach ($this->options as $option) {
             $option[0] = "'".$option[0]."'";
-            $_paq .= sprintf("_paq.push([%s]);", implode(',', $option));
+            $_paq .= sprintf('_paq.push([%s]);', implode(',', $option));
         }
 
         return <<<PWK
