@@ -56,6 +56,17 @@ class DebugBar
     {
         $response = $next($request, $response);
 
+        //Is ajax?
+        if (strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest') {
+            $headers = $this->debugBar->getDataAsHeaders();
+
+            foreach ($headers as $name => $value) {
+                $response = $response->withHeader($name, $value);
+            }
+
+            return $response;
+        }
+
         if ($this->isInjectable($request)) {
             $renderer = $this->debugBar->getJavascriptRenderer();
 
