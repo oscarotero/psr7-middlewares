@@ -64,23 +64,17 @@ class Payload
 
         //json
         if (stripos($contentType, 'application/json') === 0) {
-            return $request
-                ->withParsedBody($this->parseJson($request->getBody()))
-                ->withBody(Middleware::createStream());
+            return $request->withParsedBody($this->parseJson($request->getBody()));
         }
 
         //urlencoded
         if (stripos($contentType, 'application/x-www-form-urlencoded') === 0) {
-            return $request
-                ->withParsedBody($this->parseUrlEncoded($request->getBody()))
-                ->withBody(Middleware::createStream());
+            return $request->withParsedBody($this->parseUrlEncoded($request->getBody()));
         }
 
         //csv
         if (stripos($contentType, 'text/csv') === 0) {
-            return $request
-                ->withParsedBody($this->parseCsv($request->getBody()))
-                ->withBody(Middleware::createStream());
+            return $request->withParsedBody($this->parseCsv($request->getBody()));
         }
 
         return $request;
