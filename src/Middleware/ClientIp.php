@@ -14,6 +14,11 @@ class ClientIp
     const KEY = 'CLIENT_IPS';
 
     /**
+     * @var bool
+     */
+    private $remote = false;
+
+    /**
      * @var array The trusted headers
      */
     private $headers = [
@@ -78,6 +83,21 @@ class ClientIp
     }
 
     /**
+     * To get the ip from a remote service.
+     * Useful for testing purposes on localhost.
+     *
+     * @param bool $remote
+     *
+     * @return self
+     */
+    public function remote($remote = true)
+    {
+        $this->remote = $remote;
+
+        return $this;
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -104,6 +124,10 @@ class ClientIp
     {
         $server = $request->getServerParams();
         $ips = [];
+
+        if ($this->remote) {
+            $ips[] = file_get_contents('http://ipecho.net/plain');
+        }
 
         if (!empty($server['REMOTE_ADDR']) && filter_var($server['REMOTE_ADDR'], FILTER_VALIDATE_IP)) {
             $ips[] = $server['REMOTE_ADDR'];
