@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
+use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -11,12 +12,26 @@ use Psr\Http\Message\ResponseInterface;
  */
 class BasePath
 {
+    const KEY = 'BASE_PATH';
+
     use Utils\BasePathTrait;
 
     /**
      * @var bool
      */
     private $autodetect = false;
+
+    /**
+     * Returns the basePath
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return string|null
+     */
+    public static function getBasePath(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Constructor. Set the path prefix.
@@ -60,8 +75,10 @@ class BasePath
         }
 
         $uri = $request->getUri();
-        $path = $this->getBasePath($uri->getPath());
+        $path = $this->getPath($uri->getPath());
         $request = $request->withUri($uri->withPath($path));
+
+        $request = Middleware::setAttribute($request, self::KEY, $this->basePath);
 
         return $next($request, $response);
     }

@@ -30,7 +30,7 @@ trait BasePathTrait
      *
      * @return string
      */
-    private function getBasePath($path)
+    private function getPath($path)
     {
         if ($this->testBasePath($path)) {
             return substr($path, strlen($this->basePath)) ?: '';

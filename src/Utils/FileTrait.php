@@ -21,7 +21,7 @@ trait FileTrait
      */
     private function getFilename(RequestInterface $request)
     {
-        $path = $this->getBasePath($request->getUri()->getPath());
+        $path = $this->getPath($request->getUri()->getPath());
 
         $parts = pathinfo($path);
         $path = isset($parts['dirname']) ? $parts['dirname'] : '';
