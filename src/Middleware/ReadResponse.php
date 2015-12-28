@@ -48,6 +48,54 @@ class ReadResponse
             $response = $response->withHeader('Content-Encoding', 'gzip');
         }
 
-        return $next($request, $response->withBody(Middleware::createStream($file)));
+        $response = $response->withBody(Middleware::createStream($file));
+
+        //Handle range
+        $response = $this->range($request, $response);
+        
+        return $next($request, $response);
+    }
+
+    private static function range(RequestInterface $request, ResponseInterface $response)
+    {
+        $response = $response->withHeader('Accept-Ranges', 'bytes');
+
+        $range = $request->getHeaderLine('Range');
+
+        if (empty($range) || !($range = self::parseRangeHeader($range))) {
+            return $response;
+        }
+
+        list($unit, $first, $last) = $range;
+        $size = $response->getBody()->getSize();
+
+        if (!$last) {
+            $last = $size - 1;
+        }
+
+        return $response
+            ->withStatus(206)
+            ->withHeader('Content-Length', $last - $first + 1)
+            ->withHeader('Content-Range', sprintf('%s %d-%d/%d', $unit, $first, $last,  $size));
+    }
+
+    /**
+     * Parses a range header, for example: bytes=500-999.
+     *
+     * @param string $header
+     *
+     * @return false|array [unit, first, last]
+     */
+    private static function parseRangeHeader($header)
+    {
+        if (preg_match('/(?P<unit>[\w]+)=(?P<first>\d+)-(?P<last>\d+)?/', $header, $matches)) {
+            return [
+                $matches['unit'],
+                (int) $matches['first'],
+                isset($matches['last']) ? (int) $matches['last'] : null,
+            ];
+        }
+
+        return false;
     }
 }
