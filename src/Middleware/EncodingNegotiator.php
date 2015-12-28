@@ -19,6 +19,7 @@ class EncodingNegotiator
      */
     private $encodings = [
         'gzip',
+        'deflate',
     ];
 
     /**

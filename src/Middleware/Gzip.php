@@ -3,7 +3,9 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\RequestInterface;
+use Psr7Middlewares\Utils;
+use Psr7Middlewares\Transformers;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -11,27 +13,28 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Gzip
 {
+    use Utils\ResolverTrait;
+
     /**
      * Execute the middleware.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param callable          $next
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param callable               $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if (!Middleware::hasAttribute($request, EncodingNegotiator::KEY)) {
             throw new RuntimeException('Gzip middleware needs EncodingNegotiator executed before');
         }
 
-        if (EncodingNegotiator::getEncoding($request) === 'gzip') {
-            $compressed = Middleware::createStream();
-            $compressed->write(gzencode((string) $response->getBody()));
-            $response = $response
-                ->withHeader('Content-Encoding', 'gzip')
-                ->withBody($compressed);
+        $resolver = $this->resolver ?: new Transformers\Gzip();
+        $transformer = $resolver->resolve(EncodingNegotiator::getEncoding($request));
+
+        if ($transformer) {
+            $response = $transformer($response);
         }
 
         return $next($request, $response);

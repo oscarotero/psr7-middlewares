@@ -6,29 +6,18 @@ use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Minify_HTML as HtmlMinify;
-use CSSmin as CssMinify;
-use JSMinPlus as JsMinify;
+use Psr7Middlewares\Transformers;
 use RuntimeException;
 
 class Minify
 {
     use Utils\CacheTrait;
+    use Utils\ResolverTrait;
 
     /**
      * @var bool Minify only cacheable responses
      */
     private $forCache = false;
-
-    /**
-     * @var bool Minify inline css
-     */
-    private $inlineCss = true;
-
-    /**
-     * @var bool Minify inline js
-     */
-    private $inlineJs = true;
 
     /**
      * Set forCache directive.
@@ -40,34 +29,6 @@ class Minify
     public function forCache($forCache = true)
     {
         $this->forCache = $forCache;
-
-        return $this;
-    }
-
-    /**
-     * Set inlineCss directive.
-     *
-     * @param bool $inlineCss
-     *
-     * @return self
-     */
-    public function inlineCss($inlineCss = true)
-    {
-        $this->inlineCss = $inlineCss;
-
-        return $this;
-    }
-
-    /**
-     * Set inlineJs directive.
-     *
-     * @param bool $inlineJs
-     *
-     * @return self
-     */
-    public function inlineJs($inlineJs = true)
-    {
-        $this->inlineJs = $inlineJs;
 
         return $this;
     }
@@ -91,79 +52,13 @@ class Minify
             throw new RuntimeException('Minify middleware needs FormatNegotiator executed before');
         }
 
-        switch (FormatNegotiator::getFormat($request)) {
-            case 'css':
-                return $next($request, $this->minifyCss($response));
+        $resolver = $this->resolver ?: new Transformers\Minifier();
+        $transformer = $resolver->resolve(FormatNegotiator::getFormat($request));
 
-            case 'js':
-                return $next($request, $this->minifyJs($response));
-
-            case 'html':
-                return $next($request, $this->minifyHtml($response));
-
-            default:
-                return $next($request, $response);
-        }
-    }
-
-    /**
-     * Minify html code.
-     *
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
-     */
-    private function minifyHtml(ResponseInterface $response)
-    {
-        $options = ['jsCleanComments' => true];
-
-        if ($this->inlineCss) {
-            $cssMinify = new CssMinify();
-
-            $options['cssMinifier'] = function ($css) use ($cssMinify) {
-                return $cssMinify->run($css);
-            };
+        if ($transformer) {
+            $response = $transformer($response);
         }
 
-        if ($this->inlineJs) {
-            $options['jsMinifier'] = function ($js) {
-                return JsMinify::minify($js);
-            };
-        }
-
-        $stream = Middleware::createStream();
-        $stream->write(HtmlMinify::minify((string) $response->getBody(), $options));
-
-        return $response->withBody($stream);
-    }
-
-    /**
-     * Minify css code.
-     *
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
-     */
-    private function minifyCss(ResponseInterface $response)
-    {
-        $stream = Middleware::createStream();
-        $stream->write((new CssMinify())->run((string) $response->getBody()));
-
-        return $response->withBody($stream);
-    }
-
-    /**
-     * Minify js code.
-     *
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
-     */
-    private function minifyJs(ResponseInterface $response)
-    {
-        $stream = Middleware::createStream();
-        $stream->write(JsMinify::minify((string) $response->getBody()));
-
-        return $response->withBody($stream);
+        return $next($request, $response);
     }
 }
