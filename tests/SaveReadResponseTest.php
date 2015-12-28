@@ -64,10 +64,10 @@ class SaveReadResponseTest extends Base
                 ->storage($storage),
             ],
             'image.png',
-            ['Range' => 'bytes 300-']
+            ['Range' => 'bytes=300-']
         );
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals('bytes 300-171159/171159', $response->getHeaderLine('Content-Range'));
+        $this->assertEquals(206, $response->getStatusCode());
+        $this->assertEquals('bytes 300-171158/171159', $response->getHeaderLine('Content-Range'));
     }
 }

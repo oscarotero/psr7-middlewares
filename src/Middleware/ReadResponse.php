@@ -75,7 +75,7 @@ class ReadResponse
 
         return $response
             ->withStatus(206)
-            ->withHeader('Content-Length', $last - $first + 1)
+            ->withHeader('Content-Length', (string) ($last - $first + 1))
             ->withHeader('Content-Range', sprintf('bytes %d-%d/%d', $first, $last,  $size));
     }
 
