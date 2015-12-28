@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Middleware to gzip encode the response body
+ * Middleware to gzip encode the response body.
  */
 class Gzip
 {

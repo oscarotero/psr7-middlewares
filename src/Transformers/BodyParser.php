@@ -3,10 +3,9 @@
 namespace Psr7Middlewares\Transformers;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Psr7Middlewares\Middleware;
 
 /**
- * Generic resolver to parse the body content
+ * Generic resolver to parse the body content.
  */
 class BodyParser implements ResolverInterface
 {

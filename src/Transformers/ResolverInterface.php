@@ -3,7 +3,7 @@
 namespace Psr7Middlewares\Transformers;
 
 /**
- * Interface used by all resolvers
+ * Interface used by all resolvers.
  */
 interface ResolverInterface
 {

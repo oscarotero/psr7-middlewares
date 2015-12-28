@@ -9,7 +9,7 @@ use Dflydev\FigCookies\Cookies;
 use RuntimeException;
 
 /**
- * Middleware to use php session
+ * Middleware to use php session.
  */
 class PhpSession
 {
@@ -91,7 +91,7 @@ class PhpSession
 
         if (empty($id)) {
             $cookie = Cookies::fromRequest($request)->get($name);
-            
+
             if ($cookie) {
                 $id = $cookie->getValue();
             }

@@ -3,8 +3,6 @@
 namespace Psr7Middlewares\Utils;
 
 use Psr7Middlewares\Transformers\ResolverInterface;
-use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * Trait to provide a resolver to load transformers.
@@ -17,7 +15,7 @@ trait ResolverTrait
     protected $resolver;
 
     /**
-     * Load the resolver
+     * Load the resolver.
      *
      * @param ResolverInterface $resolver
      *

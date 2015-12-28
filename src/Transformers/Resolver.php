@@ -3,12 +3,12 @@
 namespace Psr7Middlewares\Transformers;
 
 /**
- * Generic resolver to get transformers
+ * Generic resolver to get transformers.
  */
 abstract class Resolver implements ResolverInterface
 {
     /**
-     * Resolves the id and returns a transformer or null
+     * Resolves the id and returns a transformer or null.
      * 
      * @param string $id
      * 

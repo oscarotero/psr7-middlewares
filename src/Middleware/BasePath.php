@@ -22,7 +22,7 @@ class BasePath
     private $autodetect = false;
 
     /**
-     * Returns the basePath
+     * Returns the basePath.
      *
      * @param ServerRequestInterface $request
      *

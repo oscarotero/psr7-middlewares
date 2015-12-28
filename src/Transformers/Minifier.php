@@ -9,12 +9,12 @@ use CSSmin;
 use Minify_HTML;
 
 /**
- * Generic resolver to minify responses
+ * Generic resolver to minify responses.
  */
 class Minifier extends Resolver
 {
     /**
-     * Javascript minifier
+     * Javascript minifier.
      * 
      * @param ResponseInterface $response
      * 
@@ -29,7 +29,7 @@ class Minifier extends Resolver
     }
 
     /**
-     * CSS minifier
+     * CSS minifier.
      * 
      * @param ResponseInterface $response
      * 
@@ -44,7 +44,7 @@ class Minifier extends Resolver
     }
 
     /**
-     * HTML minifier
+     * HTML minifier.
      * 
      * @param ResponseInterface $response
      * 

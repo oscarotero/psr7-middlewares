@@ -6,13 +6,12 @@ use Psr\Http\Message\ResponseInterface;
 use Psr7Middlewares\Middleware;
 
 /**
- * Generic resolver to gzip compression
+ * Generic resolver to gzip compression.
  */
 class Gzip extends Resolver
 {
-    
     /**
-     * Gzip minifier using gzencode()
+     * Gzip minifier using gzencode().
      * 
      * @param ResponseInterface $response
      * 
@@ -29,7 +28,7 @@ class Gzip extends Resolver
     }
 
     /**
-     * Gzip minifier using gzdeflate()
+     * Gzip minifier using gzdeflate().
      * 
      * @param ResponseInterface $response
      * 
