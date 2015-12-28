@@ -50,9 +50,9 @@ class ReadResponse
 
         $response = $response->withBody(Middleware::createStream($file));
 
-        //Handle range
+        //Handle range header
         $response = $this->range($request, $response);
-        
+
         return $next($request, $response);
     }
 
@@ -66,17 +66,17 @@ class ReadResponse
             return $response;
         }
 
-        list($unit, $first, $last) = $range;
+        list($first, $last) = $range;
         $size = $response->getBody()->getSize();
 
-        if (!$last) {
+        if ($last ===  null) {
             $last = $size - 1;
         }
 
         return $response
             ->withStatus(206)
             ->withHeader('Content-Length', $last - $first + 1)
-            ->withHeader('Content-Range', sprintf('%s %d-%d/%d', $unit, $first, $last,  $size));
+            ->withHeader('Content-Range', sprintf('bytes %d-%d/%d', $first, $last,  $size));
     }
 
     /**
@@ -84,13 +84,12 @@ class ReadResponse
      *
      * @param string $header
      *
-     * @return false|array [unit, first, last]
+     * @return false|array [first, last]
      */
     private static function parseRangeHeader($header)
     {
-        if (preg_match('/(?P<unit>[\w]+)=(?P<first>\d+)-(?P<last>\d+)?/', $header, $matches)) {
+        if (preg_match('/bytes=(?P<first>\d+)-(?P<last>\d+)?/', $header, $matches)) {
             return [
-                $matches['unit'],
                 (int) $matches['first'],
                 isset($matches['last']) ? (int) $matches['last'] : null,
             ];
