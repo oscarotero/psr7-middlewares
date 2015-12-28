@@ -19,7 +19,8 @@
 	},
 	"require": {
 		"php": ">=5.5.0",
-		"phpseclib/phpseclib": "^2.0"
+		"phpseclib/phpseclib": "^2.0",
+		"dflydev/fig-cookies": "^1.0"
 	},
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",
