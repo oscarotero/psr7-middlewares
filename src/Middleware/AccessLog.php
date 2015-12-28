@@ -79,8 +79,6 @@ class AccessLog
             throw new RuntimeException('AccessLog middleware needs ClientIp executed before');
         }
 
-        $response = $next($request, $response);
-
         $message = $this->combined ? self::combinedFormat($request, $response) : self::commonFormat($request, $response);
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
@@ -89,7 +87,7 @@ class AccessLog
             $this->logger->addInfo($message);
         }
 
-        return $response;
+        return $next($request, $response);
     }
 
     /**
