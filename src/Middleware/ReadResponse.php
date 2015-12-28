@@ -37,9 +37,15 @@ class ReadResponse
 
         $file = $this->getFilename($request);
 
-        //If the file does not exists
+        //If the file does not exists, check if is gzipped
         if (!is_file($file)) {
-            return $response->withStatus(404);
+            $file .= '.gz';
+
+            if (EncodingNegotiator::getEncoding($request) !== 'gzip' || !is_file($file)) {
+                return $response->withStatus(404);
+            }
+
+            $response = $response->withHeader('Content-Encoding', 'gzip');
         }
 
         return $next($request, $response->withBody(Middleware::createStream($file)));

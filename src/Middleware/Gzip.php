@@ -3,16 +3,15 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
+use Psr7Middlewares\Transformers;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
-use Psr7Middlewares\Transformers;
-use Psr7Middlewares\Utils;
 
 /**
- * Middleware to parse the body.
+ * Middleware to gzip encode the response body
  */
-class Payload
+class Gzip
 {
     use Utils\ResolverTrait;
 
@@ -27,13 +26,15 @@ class Payload
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$request->getParsedBody() && in_array($request->getMethod(), ['POST', 'PUT', 'DELETE'], true)) {
-            $resolver = $this->resolver ?: new Transformers\BodyParser();
-            $transformer = $resolver->resolve(trim($request->getHeaderLine('Content-Type')));
+        if (!Middleware::hasAttribute($request, EncodingNegotiator::KEY)) {
+            throw new RuntimeException('Gzip middleware needs EncodingNegotiator executed before');
+        }
 
-            if ($transformer) {
-                $request = $transformer($request);
-            }
+        $resolver = $this->resolver ?: new Transformers\Gzip();
+        $transformer = $resolver->resolve(EncodingNegotiator::getEncoding($request));
+
+        if ($transformer) {
+            $response = $transformer($response);
         }
 
         return $next($request, $response);
