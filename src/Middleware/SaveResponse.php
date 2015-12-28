@@ -28,8 +28,19 @@ class SaveResponse
     {
         $response = $next($request, $response);
 
-        if ($this->testBasePath($request->getUri()->getPath()) && empty($request->getUri()->getQuery()) && self::isCacheable($request, $response)) {
-            self::writeStream($response->getBody(), $this->getFilename($request));
+        if (
+            $this->testBasePath($request->getUri()->getPath())
+         && empty($request->getUri()->getQuery())
+         && self::isCacheable($request, $response)
+        ) {
+            $path = $this->getFilename($request);
+
+            //if it's gz compressed, append .gz
+            if (strtolower($response->getHeaderLine('Content-Encoding')) === 'gzip') {
+                $path .= '.gz';
+            }
+
+            self::writeStream($response->getBody(), $path);
         }
 
         return $response;
