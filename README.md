@@ -6,13 +6,11 @@
 
 Collection of [PSR-7](http://www.php-fig.org/psr/psr-7/) middlewares.
 
-It is installable and autoloadable via Composer as oscarotero/psr7-middlewares.
-
 ## Requirements
 
 * PHP >= 5.5
-* A PSR-7 HTTP Message implementation, for example [zend-diactoros](https://github.com/zendframework/zend-diactoros)
-* A PSR-7 middleware dispatcher. For example [Relay](https://github.com/relayphp/Relay.Relay) or any other compatible with the following signature:
+* A [PSR-7 HTTP Message implementation](https://packagist.org/providers/psr/http-message-implementation), for example [zend-diactoros](https://github.com/zendframework/zend-diactoros)
+* A PSR-7 middleware dispatcher compatible with the following signature:
 
 ```php
 use Psr\Http\Message\RequestInterface;
@@ -21,6 +19,21 @@ use Psr\Http\Message\ResponseInterface;
 function (RequestInterface $request, ResponseInterface $response, callable $next) {
     // ...
 }
+```
+
+This means you can use this package with:
+
+* [Relay](https://github.com/relayphp/Relay.Relay)
+* [Expressive](http://framework.zend.com/expressive)
+* [Slim 3](http://www.slimframework.com/)
+* etc...
+
+## Instalation
+
+This package is installable and autoloadable via Composer as [oscarotero/psr7-middlewares](https://packagist.org/packages/oscarotero/psr7-middlewares).
+
+```
+$ composer require oscarotero/psr7-middlewares
 ```
 
 ## Usage example:
@@ -1012,7 +1025,6 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
-
 ## Lazy/conditional middleware creation
 
 You may want to create middleware in a lazy way under some circunstances:
@@ -1042,6 +1054,41 @@ $dispatcher = $relay->getInstance([
     })
 ]);
 ```
+
+## Extending middlewares
+
+Some middlewares use different functions to change the http messages, depending of some circunstances. For example, [Payload](#payload) parses the raw body content, and the method used depends of the type of the content: it can be json, urlencoded, csv, etc. Other example is the [Minify](#minify) middleware that needs a different minifier for each format (html, css, js, etc), or the [Gzip](#gzip) that depending of the `Accept-Encoding` header, use a different method to compress the response body.
+
+The interface `Psr7Middlewares\Transformers\ResolverInterface` provides a way to resolve and returns the apropiate "transformer" in each case. The transformer is just a callable that accepts a http message (request or response) and returns the transformed message again. You can create custom resolvers or extend the included in this package to add your owns. Let's see an example:
+
+```php
+use Psr7Middlewares\Transformers\BodyParser;
+use Psr\Http\Message\ServerRequestInterface;
+
+class MyBodyParser extends BodyParser
+{
+    /**
+     * New parser used in request with the format "php"
+     */
+    public function php(ServerRequestInterface $request)
+    {
+        $data = unserialize((string) $request->getBody());
+
+        return $request->withParsedBody($data);
+    }
+}
+
+//Use the resolver
+$dispatcher = $relay->getInstance([
+    Middleware::Payload()->resolver(new MyBodyParser())
+]);
+```
+
+The following middlewares are using resolvers that you can customize:
+
+* [Payload](#payload) To parse the body according with the format (json, urlencoded, csv, ...)
+* [Gzip](#gzip) To encode the body with the encoding method supported by the browser (gzip, deflate)
+* [Minify](#minify) To use different minifiers for each format (html, css, js, ...)
 
 
 ## Contribution
