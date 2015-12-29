@@ -53,13 +53,15 @@ class GoogleAnalytics
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $response = $next($request, $response);
-
-        if ($this->isInjectable($request)) {
-            return $this->inject($response, $this->getCode());
+        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+            throw new RuntimeException('The GoogleAnalytics middleware needs FormatNegotiator executed before');
         }
 
-        return $response;
+        if (FormatNegotiator::getFormat($request) === 'html' && !Utils\Helpers::isAjax($request)) {
+            $response = $this->inject($response, $this->getCode());
+        }
+
+        return $next($request, $response);
     }
 
     /**

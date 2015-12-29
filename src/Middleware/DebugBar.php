@@ -54,20 +54,13 @@ class DebugBar
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $response = $next($request, $response);
-
-        //Is ajax?
-        if (strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest') {
-            $headers = $this->debugBar->getDataAsHeaders();
-
-            foreach ($headers as $name => $value) {
-                $response = $response->withHeader($name, $value);
-            }
-
-            return $response;
+        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+            throw new RuntimeException('This middleware needs FormatNegotiator executed before');
         }
 
-        if ($this->isInjectable($request)) {
+        $ajax = Utils\Helpers::isAjax($request);
+
+        if (FormatNegotiator::getFormat($request) === 'html') {
             $renderer = $this->debugBar->getJavascriptRenderer();
 
             ob_start();
@@ -79,11 +72,17 @@ class DebugBar
             $renderer->dumpJsAssets();
             echo '</script>';
 
-            echo $renderer->render();
+            echo $renderer->render(!$ajax);
 
-            return $this->inject($response, ob_get_clean());
+            $response = $this->inject($response, ob_get_clean());
+        } elseif ($ajax) {
+            $headers = $this->debugBar->getDataAsHeaders();
+
+            foreach ($headers as $name => $value) {
+                $response = $response->withHeader($name, $value);
+            }
         }
 
-        return $response;
+        return $next($request, $response);
     }
 }

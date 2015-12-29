@@ -32,6 +32,6 @@ trait FileTrait
             $filename .= '/index.html';
         }
 
-        return Path::join($this->storage, $path, $filename);
+        return Helpers::joinPath($this->storage, $path, $filename);
     }
 }

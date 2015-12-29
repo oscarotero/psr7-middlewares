@@ -48,7 +48,16 @@ class ReadResponse
             $response = $response->withHeader('Content-Encoding', 'gzip');
         }
 
-        $response = $response->withBody(Middleware::createStream($file));
+        $body = Middleware::createStream();
+
+        $stream = fopen($file, 'r');
+
+        while (!feof($stream)) {
+            $body->write(fread($stream, 1024 * 8));
+        }
+        fclose($stream);
+
+        $response = $response->withBody($body);
 
         //Handle range header
         $response = $this->range($request, $response);

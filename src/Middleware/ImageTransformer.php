@@ -125,7 +125,7 @@ class ImageTransformer
                 $transform = $this->sizes[$transform];
             }
 
-            return [Utils\Path::join($info['dirname'], "{$file}.".$info['extension']), $transform];
+            return [Utils\Helpers::joinPath($info['dirname'], "{$file}.".$info['extension']), $transform];
         }
     }
 }

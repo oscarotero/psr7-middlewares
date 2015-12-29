@@ -2,10 +2,12 @@
 
 namespace Psr7Middlewares\Utils;
 
+use Psr\Http\Message\RequestInterface;
+
 /**
- * Common functions to work with paths.
+ * Helper functions.
  */
-class Path
+class Helpers
 {
     /**
      * helper function to fix paths '//' or '/./' or '/foo/../' in a path.
@@ -14,7 +16,7 @@ class Path
      *
      * @return string
      */
-    public static function fix($path)
+    public static function fixPath($path)
     {
         $path = str_replace('\\', '/', $path); //windows paths
         $replace = ['#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#'];
@@ -34,8 +36,20 @@ class Path
      * 
      * @return string
      */
-    public static function join()
+    public static function joinPath()
     {
-        return self::fix(implode('/', func_get_args()));
+        return self::fixPath(implode('/', func_get_args()));
+    }
+
+    /**
+     * Check whether a request is or not ajax.
+     * 
+     * @param RequestInterface $request
+     * 
+     * @return bool
+     */
+    public static function isAjax(RequestInterface $request)
+    {
+        return strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';
     }
 }
