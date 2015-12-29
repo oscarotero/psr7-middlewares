@@ -47,7 +47,7 @@
 		"aura/router": "To use AuraRouter",
 		"aura/session": "To use AuraSession",
 		"nikic/fast-route": "To use FastRoute",
-		"willdurand/negotiation": "To use FormatNegotiator and LanguageNegotiator",
+		"willdurand/negotiation": "To use FormatNegotiator, LanguageNegotiator and EncodingNegotiator",
 		"m6web/firewall": "To use Firewall",
 		"mrclay/minify": "To use Minify",
 		"ramsey/uuid": "To use Uuid",
