@@ -19,11 +19,9 @@ class DebugBarTest extends Base
      */
     public function testDebugBar($uri, array $headers, $expectedBody, $expectedHeader)
     {
-        $debugBar = new DebugBar\StandardDebugBar();
-
         $response = $this->dispatch([
             Middleware::FormatNegotiator(),
-            Middleware::DebugBar($debugBar),
+            Middleware::DebugBar(),
         ], $this->request($uri, $headers), $this->response());
 
         $body = (string) $response->getBody();

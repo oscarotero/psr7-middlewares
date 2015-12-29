@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use DebugBar\DebugBar as Bar;
+use DebugBar\StandardDebugBar;
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
@@ -59,9 +60,17 @@ class DebugBar
         }
 
         $ajax = Utils\Helpers::isAjax($request);
+        $debugBar = $this->debugBar ?: new StandardDebugBar();
 
-        if (FormatNegotiator::getFormat($request) === 'html') {
-            $renderer = $this->debugBar->getJavascriptRenderer();
+        //Redirection response
+        if (Utils\Helpers::isRedirect($response)) {
+            if (session_status() === PHP_SESSION_ACTIVE) {
+                $debugBar->stackData();
+            }
+        
+        //Html response
+        } elseif (FormatNegotiator::getFormat($request) === 'html') {
+            $renderer = $debugBar->getJavascriptRenderer();
 
             ob_start();
             echo '<style>';
@@ -75,8 +84,10 @@ class DebugBar
             echo $renderer->render(!$ajax);
 
             $response = $this->inject($response, ob_get_clean());
+        
+        //Ajax response
         } elseif ($ajax) {
-            $headers = $this->debugBar->getDataAsHeaders();
+            $headers = $debugBar->getDataAsHeaders();
 
             foreach ($headers as $name => $value) {
                 $response = $response->withHeader($name, $value);

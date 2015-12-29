@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Utils;
 
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * Helper functions.
@@ -51,5 +52,17 @@ class Helpers
     public static function isAjax(RequestInterface $request)
     {
         return strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';
+    }
+
+    /**
+     * Check whether a response is a redirection
+     * 
+     * @param ResponseInterface $response
+     * 
+     * @return bool
+     */
+    public static function isRedirect(ResponseInterface $response)
+    {
+        return in_array($response->getStatusCode(), [302, 301]);
     }
 }
