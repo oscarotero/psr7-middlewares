@@ -133,7 +133,7 @@ class FormatNegotiator
     {
         $format = $this->negotiateHeader($request->getHeaderLine('Accept'), new Negotiator(), call_user_func_array('array_merge', array_values($this->formats)));
 
-        if ($format) {
+        if ($format !== null) {
             foreach ($this->formats as $extension => $headers) {
                 if (in_array($format, $headers)) {
                     return $extension;

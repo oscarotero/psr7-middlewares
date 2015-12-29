@@ -6,9 +6,9 @@ use Psr\Http\Message\ResponseInterface;
 use Psr7Middlewares\Middleware;
 
 /**
- * Generic resolver to gzip compression.
+ * Generic resolver to encode responses.
  */
-class Gzip extends Resolver
+class Encoder extends Resolver
 {
     /**
      * Gzip minifier using gzencode().

@@ -30,7 +30,7 @@ class Gzip
             throw new RuntimeException('Gzip middleware needs EncodingNegotiator executed before');
         }
 
-        $resolver = $this->resolver ?: new Transformers\Gzip();
+        $resolver = $this->resolver ?: new Transformers\Encoder();
         $transformer = $resolver->resolve(EncodingNegotiator::getEncoding($request));
 
         if ($transformer) {

@@ -96,7 +96,7 @@ class BasePath
      *
      * @return string
      */
-    protected static function detectBasePath(ServerRequestInterface $request)
+    private static function detectBasePath(ServerRequestInterface $request)
     {
         $server = $request->getServerParams();
 
