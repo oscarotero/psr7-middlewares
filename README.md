@@ -75,9 +75,6 @@ $dispatcher = $relay->newInstance([
     //Block search engines robots indexing
     Middleware::robots(),
 
-    //Add Google Analytics
-    Middleware::googleAnalytics('UA-XXXXX-X'),
-
     //Geolocation
     Middleware::geolocate(),
 
@@ -108,17 +105,17 @@ $dispatcher = $relay->newInstance([
     //Detects the format
     Middleware::formatNegotiator(),
 
-    //Adds the php debug bar
-    Middleware::debugBar(),
-
     //Execute fast route
     Middleware::fastRoute($app->get('dispatcher')),
 
-    //Minify the result
-    Middleware::minify()
+    //Adds the php debug bar
+    Middleware::debugBar(),
 
-    //Saves the response in a file
-    Middleware::saveResponse('app/public')
+    //Add Google Analytics
+    Middleware::googleAnalytics('UA-XXXXX-X'),
+
+    //Minify the result
+    Middleware::minify(),
 ]);
 
 $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
