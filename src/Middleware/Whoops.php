@@ -117,13 +117,16 @@ class Whoops
 
         $whoops = new Run();
 
-        $whoops->pushHandler(new PrettyPageHandler());
+        //Is ajax?
+        if (strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest') {
+            $whoops->pushHandler(new JsonResponseHandler());
+        } else {
+            $whoops->pushHandler(new PrettyPageHandler());
+        }
+
+        //Command line
         $whoops->pushHandler(new PlainTextHandler());
-
-        $jsonHandler = new JsonResponseHandler();
-        $jsonHandler->onlyForAjaxRequests(true);
-        $whoops->pushHandler($jsonHandler);
-
-        return $this->whoops = $whoops;
+        
+        return $whoops;
     }
 }
