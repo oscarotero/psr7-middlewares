@@ -30,7 +30,7 @@ class PhpSessionTest extends Base
                     $_SESSION['name'] = $value;
 
                     return $next($request, $response);
-                }
+                },
             ]
         );
 

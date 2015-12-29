@@ -10,12 +10,12 @@ class WhoopsTest extends Base
             [
                 Middleware::Whoops(),
                 function ($request, $response, $next) {
-                    throw new \Exception("Error Processing Request");
+                    throw new \Exception('Error Processing Request');
                 },
             ]
         );
 
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertNotFalse(strpos($response->getBody(), "Error Processing Request"));
+        $this->assertNotFalse(strpos($response->getBody(), 'Error Processing Request'));
     }
 }

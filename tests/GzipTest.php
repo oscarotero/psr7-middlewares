@@ -11,6 +11,7 @@ class GzipTest extends Base
                 Middleware::EncodingNegotiator(),
                 function ($request, $response, $next) {
                     $response->getBody()->write('Hello world');
+
                     return $next($request, $response);
                 },
                 Middleware::Gzip(),

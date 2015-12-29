@@ -1,7 +1,6 @@
 <?php
 
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Middleware\AuraRouter;
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 

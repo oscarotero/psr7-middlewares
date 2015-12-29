@@ -126,7 +126,7 @@ class Whoops
 
         //Command line
         $whoops->pushHandler(new PlainTextHandler());
-        
+
         return $whoops;
     }
 }
