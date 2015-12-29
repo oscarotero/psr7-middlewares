@@ -109,7 +109,7 @@ $dispatcher = $relay->newInstance([
     Middleware::formatNegotiator(),
 
     //Adds the php debug bar
-    Middleware::debugBar($app->get('debugbar')),
+    Middleware::debugBar(),
 
     //Execute fast route
     Middleware::fastRoute($app->get('dispatcher')),
@@ -383,7 +383,7 @@ $dispatcher = $relay->getInstance([
     Middleware::FormatNegotiator(),
 
     Middleware::DebugBar()
-        ->debugBar(new DebugBar\StandardDebugBar())
+        ->debugBar(new DebugBar\StandardDebugBar()) //(optional) To pass your own instance.
 ]);
 ```
 
