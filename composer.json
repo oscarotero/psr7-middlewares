@@ -65,10 +65,5 @@
 		"psr-4": {
 			"Psr7Middlewares\\": "src/"
 		}
-	},
-	"extra": {
-		"branch-alias": {
-			"develop": "3.x-dev"
-		}
 	}
 }
