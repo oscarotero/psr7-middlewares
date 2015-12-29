@@ -124,11 +124,12 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [DebugBar](#debugbar)
 * [DetectDevice](#detectdevice)
 * [DigestAuthentication](#digestauthentication)
+* [EncodingNegotiator](#encodingnegotiator)
 * [ErrorHandler](#errorhandler)
 * [FastRoute](#fastroute)
 * [FormTimestamp](#formtimestamp)
 * [Firewall](#firewall)
-* [FormatNegotiation](#formatnegotiation)
+* [FormatNegotiator](#formatnegotiator)
 * [Geolocate](#geolocate)
 * [GoogleAnalytics](#googleanalytics)
 * [Honeypot](#honeypot)
@@ -138,6 +139,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [MethodOverride](#methodoverride)
 * [Minify](#minify)
 * [Payload](#payload)
+* [PhpSession](#phpsession)
 * [Piwik](#piwik)
 * [ReadResponse](#readresponse)
 * [Rename](#rename)
@@ -168,7 +170,8 @@ $logger->pushHandler(new ErrorLogHandler());
 //Add to the dispatcher
 $dispatcher = $relay->getInstance([
 
-    Middleware::ClientIp(), //Required to get the Ip
+    //Required to get the Ip
+    Middleware::ClientIp(),
 
     Middleware::AccessLog()
         ->logger($logger) //Instance of Psr\Log\LoggerInterface
@@ -234,9 +237,11 @@ $dispatcher = $relay->getInstance([
         ->factory($sessionFactory) //(optional) Intance of Aura\Session\SessionFactory
         ->name('my-session-name'), //(optional) custom session name
 
-    function ($request, $reponse, $next) {
+    function ($request, $response, $next) {
         //Get the session instance
         $session = AuraSession::getSession($request);
+
+        return $response;
     }
 ]);
 ```
@@ -247,11 +252,19 @@ Strip off the prefix from the uri path of the request. This is useful to combine
 
 ```php
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\BasePath;
 
 $dispatcher = $relay->getInstance([
     Middleware::BasePath()
         ->basePath('/web/public') // The path to remove
-        ->autodetect(true)        // (optional) or autodetect the base path
+        ->autodetect(true),       // (optional) or autodetect the base path
+
+    function ($request, $response, $next) {
+        //Get the stripped off prefix
+        $basePath = BasePath::getBasePath($request);
+
+        return $response;
+    }
 ]);
 ```
 
@@ -303,11 +316,12 @@ use Psr7Middlewares\Middleware\ClientIp;
 $dispatcher = $relay->getInstance([
 
     Middleware::ClientIp()
-        ->headers([
+        ->remote()  // (optional) Hack to get the ip from localhost environment
+        ->headers([ // (optional) to change the trusted headers
             'Client-Ip',
             'X-Forwarded-For',
             'X-Forwarded'
-        ]), //(optional) to change the trusted headers
+        ]),
 
     function ($request, $response, $next) {
         //Get the user ip
@@ -410,6 +424,28 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
+### EncodingNegotiator
+
+Uses [willdurand/Negotiation (2.x)](https://github.com/willdurand/Negotiation) to detect and negotiate the encoding type of the document.
+
+```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\EncodingNegotiator;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::EncodingNegotiator()
+        ->encodings(['gzip', 'deflate']), //(optional) configure the supported encoding types
+
+    function ($request, $response, $next) {
+        //get the encoding (for example: gzip)
+        $encoding = EncodingNegotiator::getEncoding($request);
+
+        return $next($request, $response);
+    }
+]);
+```
+
 ### ErrorHandler
 
 Executes a handler if the response returned by the next middlewares has any error (status code 400-599). You can catch also the exceptions throwed.
@@ -485,7 +521,7 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
-### FormatNegotiation
+### FormatNegotiator
 
 Uses [willdurand/Negotiation (2.x)](https://github.com/willdurand/Negotiation) to detect and negotiate the format of the document using the url extension and/or the `Accept` http header. It also adds the `Content-Type` header to the response if it's missing.
 
@@ -572,6 +608,22 @@ $dispatcher = $relay->getInstance([
     
     Middleware::GoogleAnalytics()
         ->id('UA-XXXXX-X') // The site id
+]);
+```
+
+### Gzip
+
+Use gzip functions to compress the response body, inserting also the `Content-Encoding` header.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    //required to get the preferred encoding type
+    Middleware::EncodingNegotiator(),
+
+    Middleware::Gzip()
 ]);
 ```
 
@@ -702,13 +754,11 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
     
-    //needed to get the format of the response
+    //required to get the format of the response
     Middleware::formatNegotiator(),
 
     Middleware::Minify()
-        ->forCache(true)   //(optional) only minify cacheable responses
-        ->inlineCss(false) //(optional) enable/disable inline css minification
-        ->inlineJs(false)  //(optional) enable/disable inline js minification
+        ->forCache(true) //(optional) only minify cacheable responses
 ]);
 ```
 
@@ -721,12 +771,34 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
     
-    Middleware::Payload()
-        ->associative(true) //(optional) To generate associative arrays with json objects
+    Middleware::Payload(),
 
     function ($request, $response, $next) {
         //Get the parsed body
         $content = $request->getParsedBody();
+
+        return $next($request, $response);
+    }
+]);
+```
+
+### PhpSession
+
+Initializes a [php session](http://php.net/manual/en/book.session.php) using the request data.
+
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+    
+    Middleware::PhpSession()
+        ->name('SessionId') //(optional) Name of the session
+        ->id('ABC123')      //(optional) Id of the session
+
+    function ($request, $response, $next) {
+        //Use the global $_SESSION variable to get/set data
+        $_SESSION['name'] = 'John';
 
         return $next($request, $response);
     }
