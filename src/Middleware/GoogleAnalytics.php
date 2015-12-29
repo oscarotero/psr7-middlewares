@@ -17,9 +17,9 @@ class GoogleAnalytics
     private $siteId;
 
     /**
-     * Constructor.Set the site's ID.
+     * Constructor. Set the site's ID.
      *
-     * @param string $id
+     * @param string $siteId
      */
     public function __construct($siteId = null)
     {

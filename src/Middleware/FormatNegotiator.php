@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Negotiation\Negotiator;
@@ -12,6 +13,8 @@ use Negotiation\Negotiator;
  */
 class FormatNegotiator
 {
+    use Utils\NegotiateTrait;
+
     const KEY = 'FORMAT';
 
     /**
@@ -128,25 +131,11 @@ class FormatNegotiator
      */
     private function getFromHeader(ServerRequestInterface $request)
     {
-        $accept = $request->getHeaderLine('Accept');
+        $format = $this->negotiateHeader($request->getHeaderLine('Accept'), new Negotiator(), call_user_func_array('array_merge', array_values($this->formats)));
 
-        if (empty($accept)) {
-            return;
-        }
-
-        $priorities = call_user_func_array('array_merge', array_values($this->formats));
-
-        try {
-            $accept = (new Negotiator())->getBest($accept, $priorities);
-        } catch (\Exception $exception) {
-            return;
-        }
-
-        if ($accept) {
-            $accept = $accept->getValue();
-
+        if ($format) {
             foreach ($this->formats as $extension => $headers) {
-                if (in_array($accept, $headers)) {
+                if (in_array($format, $headers)) {
                     return $extension;
                 }
             }

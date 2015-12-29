@@ -40,7 +40,7 @@ class BodyParser implements ResolverInterface
     /**
      * JSON parser.
      * 
-     * @param ServerRequestInterface $response
+     * @param ServerRequestInterface $request
      * 
      * @return ServerRequestInterface
      */
@@ -54,7 +54,7 @@ class BodyParser implements ResolverInterface
     /**
      * Parses url-encoded strings.
      * 
-     * @param ServerRequestInterface $response
+     * @param ServerRequestInterface $request
      * 
      * @return ServerRequestInterface
      */
@@ -68,7 +68,7 @@ class BodyParser implements ResolverInterface
     /**
      * Parses csv strings.
      * 
-     * @param ServerRequestInterface $response
+     * @param ServerRequestInterface $request
      * 
      * @return ServerRequestInterface
      */

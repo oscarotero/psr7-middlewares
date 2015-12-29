@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Negotiation\EncodingNegotiator as Negotiator;
@@ -12,6 +13,8 @@ use Negotiation\EncodingNegotiator as Negotiator;
  */
 class EncodingNegotiator
 {
+    use Utils\NegotiateTrait;
+
     const KEY = 'ENCODING';
 
     /**
@@ -71,28 +74,10 @@ class EncodingNegotiator
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $request = Middleware::setAttribute($request, self::KEY, $this->getFromHeader($request));
+        $encoding = $this->negotiateHeader($request->getHeaderLine('Accept-Encoding'), new Negotiator(), $this->encodings);
+
+        $request = Middleware::setAttribute($request, self::KEY, $encoding);
 
         return $next($request, $response);
-    }
-
-    /**
-     * Returns the encoding format using the Accept-Encoding header.
-     *
-     * @return null|string
-     */
-    private function getFromHeader(ServerRequestInterface $request)
-    {
-        $accept = $request->getHeaderLine('Accept-Encoding');
-
-        if (empty($accept)) {
-            return;
-        }
-
-        $encoding = (new Negotiator())->getBest($accept, $this->encodings);
-
-        if ($encoding) {
-            return $encoding->getValue();
-        }
     }
 }

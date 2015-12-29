@@ -82,9 +82,9 @@ class AccessLog
         $message = $this->combined ? self::combinedFormat($request, $response) : self::commonFormat($request, $response);
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
-            $this->logger->addError($message);
+            $this->logger->error($message);
         } else {
-            $this->logger->addInfo($message);
+            $this->logger->info($message);
         }
 
         return $next($request, $response);

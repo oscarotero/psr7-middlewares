@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Negotiation\LanguageNegotiator as Negotiator;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -12,6 +13,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class LanguageNegotiator
 {
+    use Utils\NegotiateTrait;
+
     const KEY = 'LANGUAGE';
 
     /**
@@ -68,7 +71,7 @@ class LanguageNegotiator
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $language = $this->getFromHeader($request);
+        $language = $this->negotiateHeader($request->getHeaderLine('Accept-Language'), new Negotiator(), $this->languages);
 
         if (empty($language)) {
             $language = isset($this->languages[0]) ? $this->languages[0] : null;
@@ -77,25 +80,5 @@ class LanguageNegotiator
         $request = Middleware::setAttribute($request, self::KEY, $language);
 
         return $next($request, $response);
-    }
-
-    /**
-     * Returns the language using the Accept-Language header.
-     *
-     * @return null|string
-     */
-    private function getFromHeader(ServerRequestInterface $request)
-    {
-        $accept = $request->getHeaderLine('Accept-Language');
-
-        if (empty($accept) || empty($this->languages)) {
-            return;
-        }
-
-        $language = (new Negotiator())->getBest($accept, $this->languages);
-
-        if ($language) {
-            return $language->getValue();
-        }
     }
 }
