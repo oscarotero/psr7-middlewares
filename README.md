@@ -21,7 +21,7 @@ function (RequestInterface $request, ResponseInterface $response, callable $next
 }
 ```
 
-This means you can use this package with:
+So, you can use these midlewares with:
 
 * [Relay](https://github.com/relayphp/Relay.Relay)
 * [Expressive](http://framework.zend.com/expressive)
