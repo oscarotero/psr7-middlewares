@@ -374,13 +374,15 @@ Inserts the [PHP debug bar](http://phpdebugbar.com/) in the html body. This midd
 
 ```php
 use Psr7Middlewares\Middleware;
+use DebugBar\StandardDebugBar;
 
 $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiator(),
 
     Middleware::DebugBar()
-        ->debugBar(new DebugBar\StandardDebugBar()) //(optional) To pass your own instance.
+        ->captureAjax(false)               //(optional) Disable data send in headers in ajax to prevent errors
+        ->debugBar(new StandardDebugBar()) //(optional) To pass your own instance.
 ]);
 ```
 
