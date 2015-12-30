@@ -17,6 +17,7 @@ class DebugBar
     use Utils\HtmlInjectorTrait;
 
     private $debugBar;
+    private $captureAjax = true;
 
     /**
      * Constructor. Set the debug bar.
@@ -45,6 +46,20 @@ class DebugBar
     }
 
     /**
+     * Configure whether capture ajax requests to send the data with headers
+     *
+     * @param bool $captureAjax
+     * 
+     * @return self
+     */
+    public function captureAjax($captureAjax = true)
+    {
+        $this->captureAjax = $captureAjax;
+
+        return $this;
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -64,10 +79,10 @@ class DebugBar
 
         //Redirection response
         if (Utils\Helpers::isRedirect($response)) {
-            if (session_status() === PHP_SESSION_ACTIVE) {
+            if ($debugBar->isDataPersisted() || session_status() === PHP_SESSION_ACTIVE) {
                 $debugBar->stackData();
             }
-        
+
         //Html response
         } elseif (FormatNegotiator::getFormat($request) === 'html') {
             $renderer = $debugBar->getJavascriptRenderer();
@@ -86,7 +101,7 @@ class DebugBar
             $response = $this->inject($response, ob_get_clean());
         
         //Ajax response
-        } elseif ($ajax) {
+        } elseif ($ajax && $this->captureAjax) {
             $headers = $debugBar->getDataAsHeaders();
 
             foreach ($headers as $name => $value) {
