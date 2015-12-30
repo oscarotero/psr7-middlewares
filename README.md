@@ -381,7 +381,7 @@ $dispatcher = $relay->getInstance([
     Middleware::FormatNegotiator(),
 
     Middleware::DebugBar()
-        ->captureAjax(false)               //(optional) Disable data send in headers in ajax to prevent errors
+        ->captureAjax(true)                //(optional) To send data in headers in ajax
         ->debugBar(new StandardDebugBar()) //(optional) To pass your own instance.
 ]);
 ```
