@@ -17,7 +17,7 @@ class DebugBar
     use Utils\HtmlInjectorTrait;
 
     private $debugBar;
-    private $captureAjax = true;
+    private $captureAjax = false;
 
     /**
      * Constructor. Set the debug bar.
