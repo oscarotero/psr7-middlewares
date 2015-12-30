@@ -21,7 +21,7 @@ class DebugBarTest extends Base
     {
         $response = $this->dispatch([
             Middleware::FormatNegotiator(),
-            Middleware::DebugBar(),
+            Middleware::DebugBar()->captureAjax(),
         ], $this->request($uri, $headers), $this->response());
 
         $body = (string) $response->getBody();
