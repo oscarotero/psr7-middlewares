@@ -558,7 +558,7 @@ $dispatcher = $relay->getInstance([
 
 ### FormTimestamp
 
-Simple spam protection based in injecting a hidden input in all post forms with the current timestamp. On submit the form, check the time value. If it's less than (for example) 3 seconds ago, assumes it's a bot, so returns a 403 response. You can also set a max number of seconds before the form expires.
+Simple spam protection based on injecting a hidden input in all post forms with the current timestamp. On submit the form, check the time value. If it's less than (for example) 3 seconds ago, assumes it's a bot, so returns a 403 response. You can also set a max number of seconds before the form expires.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -619,7 +619,7 @@ $dispatcher = $relay->getInstance([
     Middleware::formatNegotiator(),
     
     Middleware::GoogleAnalytics()
-        ->id('UA-XXXXX-X') // The site id
+        ->siteId('UA-XXXXX-X') // The site id
 ]);
 ```
 
@@ -833,7 +833,7 @@ $dispatcher = $relay->getInstance([
         ->piwikUrl('//example.com/piwik')    // The url of the installed piwik
         ->siteId(1)                          // (optional) The site id (1 by default)
         ->addOption('setDoNotTrack', 'true') // (optional) Add more options to piwik API
-]
+]);
 ```
 
 ### ReadResponse
@@ -1028,7 +1028,7 @@ $dispatcher = $relay->getInstance([
 
 You may want to create middleware in a lazy way under some circunstances:
 
-* The middleware is needed only in a specific context (for example in development mode)
+* The middleware is needed only in a specific context (for example in development environments)
 * The middleware creation is expensive and is not needed always (because a previous middleware returns a cached response)
 
 To handle with this, you can use the `Middleware::create()` method that must return a callable or false. Example:

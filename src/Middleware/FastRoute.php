@@ -17,7 +17,7 @@ class FastRoute
     private $router;
 
     /**
-     * Constructor. Set Dispatcher instance.
+     * Constructor. Set the Dispatcher instance.
      *
      * @param Dispatcher|null $router
      */
@@ -29,7 +29,7 @@ class FastRoute
     }
 
     /**
-     * Extra arguments passed to the controller.
+     * Set the Dispatcher instance.
      *
      * @param Dispatcher $router
      *
