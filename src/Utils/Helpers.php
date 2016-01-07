@@ -65,4 +65,22 @@ class Helpers
     {
         return in_array($response->getStatusCode(), [302, 301]);
     }
+
+    /**
+     * Return the output buffer
+     * 
+     * @param int $level
+     * 
+     * @return string
+     */
+    public static function getOutput($level)
+    {
+        $output = '';
+
+        while (ob_get_level() >= $level) {
+            $output .= ob_get_clean();
+        }
+
+        return $output;
+    }
 }

@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Utils;
 
 use RuntimeException;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -26,7 +27,7 @@ trait CallableTrait
     {
         try {
             ob_start();
-
+            $level = ob_get_level();
             $arguments = array_merge([$request, $response], $this->arguments);
             $target = self::getCallable($target, $arguments);
             $return = call_user_func_array($target, $arguments);
@@ -36,7 +37,7 @@ trait CallableTrait
                 $return = '';
             }
 
-            $return = ob_get_contents().$return;
+            $return = Utils\Helpers::getOutput($level).$return;
             $body = $response->getBody();
 
             if ($return !== '' && $body->isWritable()) {
@@ -45,11 +46,8 @@ trait CallableTrait
 
             return $response;
         } catch (\Exception $exception) {
+            Utils\Helpers::getOutput($level);
             throw $exception;
-        } finally {
-            if (ob_get_level() > 0) {
-                ob_end_clean();
-            }
         }
     }
 
