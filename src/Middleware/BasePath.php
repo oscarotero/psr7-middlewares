@@ -71,7 +71,7 @@ class BasePath
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($this->autodetect) {
-            $this->basePath(self::detectBasePath($request));
+            $this->basePath(Utils\Helpers::joinPath(self::detectBasePath($request), $this->basePath));
         }
 
         $uri = $request->getUri();

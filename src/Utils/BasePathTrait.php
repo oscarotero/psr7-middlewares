@@ -18,7 +18,11 @@ trait BasePathTrait
      */
     public function basePath($basePath)
     {
-        $this->basePath = $basePath;
+        if (strlen($basePath) > 1 && substr($basePath, -1) === '/') {
+            $this->basePath = substr($basePath, 0, -1);
+        } else {
+            $this->basePath = $basePath;
+        }
 
         return $this;
     }
