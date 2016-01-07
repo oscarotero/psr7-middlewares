@@ -6,6 +6,7 @@ use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Middleware to read the response.
@@ -35,27 +36,29 @@ class ReadResponse
             return $response->withStatus(405);
         }
 
-        $file = $this->getFilename($request);
-
-        //If the file does not exists, check if is gzipped
-        if (!is_file($file)) {
-            $file .= '.gz';
-
-            if (EncodingNegotiator::getEncoding($request) !== 'gzip' || !is_file($file)) {
-                return $response->withStatus(404);
-            }
-
-            $response = $response->withHeader('Content-Encoding', 'gzip');
-        }
-
         $body = Middleware::createStream();
 
-        $stream = fopen($file, 'r');
+        //Check if file is php
+        $file = $this->getFilename($request, 'php');
 
-        while (!feof($stream)) {
-            $body->write(fread($stream, 1024 * 8));
+        if (is_file($file) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
+            self::includeFile($file, $body);
+        } else {
+            $file = $this->getFilename($request);
+            
+            //If the file does not exists, check if is gzipped
+            if (!is_file($file)) {
+                $file .= '.gz';
+
+                if (EncodingNegotiator::getEncoding($request) !== 'gzip' || !is_file($file)) {
+                    return $response->withStatus(404);
+                }
+
+                $response = $response->withHeader('Content-Encoding', 'gzip');
+            }
+
+            self::readFile($file, $body);
         }
-        fclose($stream);
 
         $response = $response->withBody($body);
 
@@ -65,6 +68,67 @@ class ReadResponse
         return $next($request, $response);
     }
 
+    /**
+     * Reads a file and write in the body
+     * 
+     * @param string $file
+     * @param StreamInterface $body
+     */
+    private static function readFile($file, StreamInterface $body)
+    {
+        if (filesize($file) <= 4096) {
+            $body->write(file_get_contents($file));
+            return;
+        }
+
+        $stream = fopen($file, 'r');
+
+        while (!feof($stream)) {
+            $body->write(fread($stream, 4096));
+        }
+
+        fclose($stream);
+    }
+
+    /**
+     * Includes a file
+     * 
+     * @param string $file
+     * @param StreamInterface $body
+     */
+    private static function includeFile($file, StreamInterface $body)
+    {
+        try {
+            ob_start();
+            $level = ob_get_level();
+            self::_includeFile($file);
+        } catch (\Exception $exception) {
+            Utils\Helpers::getOutput($level);
+            throw $exception;
+        }
+
+        $body->write(Utils\Helpers::getOutput($level));
+    }
+
+    /**
+     * Includes a file
+     * 
+     * @param string $file
+     * @param StreamInterface $body
+     */
+    private static function _includeFile($file)
+    {
+        include $file;
+    }
+
+    /**
+     * Handle range requests
+     * 
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * 
+     * @return ResponseInterface
+     */
     private static function range(ServerRequestInterface $request, ResponseInterface $response)
     {
         $response = $response->withHeader('Accept-Ranges', 'bytes');
