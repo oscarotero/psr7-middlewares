@@ -43,7 +43,7 @@ class Geolocate
      */
     public function __construct(Geocoder $geocoder = null)
     {
-        if ($geocoder !== null) {
+        if ($geocoder === null) {
             $geocoder = new ProviderAggregator();
             $geocoder->registerProvider(new FreeGeoIp(new FopenHttpAdapter()));
         }

@@ -34,9 +34,8 @@ class ImageTransformerTest extends Base
                     return $sizes ? $m->sizes($sizes) : $m;
                 }),
 
-                Middleware::readResponse()
-                    ->basePath('/my-images')
-                    ->storage($storage),
+                Middleware::readResponse($storage)
+                    ->basePath('/my-images'),
             ],
             $url
         );

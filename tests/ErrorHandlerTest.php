@@ -28,8 +28,7 @@ class ErrorHandlerTest extends Base
 
         $response = $this->execute(
             [
-                Middleware::ErrorHandler()
-                    ->handler(function ($request, $response) {
+                Middleware::ErrorHandler(function ($request, $response) {
                         $exception = ErrorHandler::getException($request);
 
                         $response->getBody()->write((string) $exception);

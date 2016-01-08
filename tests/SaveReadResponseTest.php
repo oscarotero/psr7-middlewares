@@ -60,8 +60,7 @@ class SaveReadResponseTest extends Base
         $storage = __DIR__.'/assets';
 
         $response = $this->execute([
-            Middleware::readResponse()
-                ->storage($storage),
+            Middleware::readResponse($storage),
             ],
             'image.png',
             ['Range' => 'bytes=300-']

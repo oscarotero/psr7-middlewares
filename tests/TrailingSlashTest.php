@@ -22,8 +22,7 @@ class TrailingSlashTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::trailingSlash()
-                    ->addSlash(false)
+                Middleware::trailingSlash(false)
                     ->basePath($basePath),
 
                 function ($request, $response, $next) {
@@ -57,8 +56,7 @@ class TrailingSlashTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::trailingSlash()
-                    ->addSlash(true),
+                Middleware::trailingSlash(true),
 
                 function ($request, $response, $next) {
                     $response->getBody()->write((string) $request->getUri());

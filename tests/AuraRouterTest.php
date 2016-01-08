@@ -31,20 +31,6 @@ class AuraRouterTest extends Base
         //Test
         $response = $this->execute(
             [
-                Middleware::AuraRouter()
-                    ->router($this->getRouter()),
-            ],
-            'http://domain.com/user/oscarotero/35'
-        );
-
-        $this->assertEquals('Ok', (string) $response->getBody());
-    }
-
-    public function testAuraRouterContainer()
-    {
-        //Test
-        $response = $this->execute(
-            [
                 Middleware::AuraRouter($this->getRouter()),
             ],
             'http://domain.com/user/oscarotero/35'

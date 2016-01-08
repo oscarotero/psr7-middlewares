@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Shutdown
 {
-    use Utils\HandlerTrait;
+    use Utils\CallableTrait;
 
     /**
      * @var callable|string The handler used
@@ -26,7 +26,7 @@ class Shutdown
      */
     public function __construct($handler = null)
     {
-        $this->handler($handler ?: self::CLASS.'::defaultHandler');
+        $this->handler = $handler ?: self::CLASS.'::defaultHandler';
     }
 
     /**

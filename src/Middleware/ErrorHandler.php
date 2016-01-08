@@ -45,7 +45,7 @@ class ErrorHandler
      */
     public function __construct($handler = null)
     {
-        $this->handler($handler ?: self::CLASS.'::defaultHandler');
+        $this->handler = $handler ?: self::CLASS.'::defaultHandler';
     }
 
     /**

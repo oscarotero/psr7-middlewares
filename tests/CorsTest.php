@@ -61,21 +61,6 @@ class CorsTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::cors()->settings($this->settings),
-            ],
-            $url
-        );
-
-        $this->assertEquals($statusCode, $response->getStatusCode());
-    }
-
-    /**
-     * @dataProvider corsProvider
-     */
-    public function testCorsContainer($url, $statusCode)
-    {
-        $response = $this->execute(
-            [
                 Middleware::cors($this->settings),
             ],
             $url
