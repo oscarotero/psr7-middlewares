@@ -485,7 +485,7 @@ function errorHandler($request, $response, $myApp) {
 $dispatcher = $relay->getInstance([
 
     Middleware::ErrorHandler()
-        ->handler('errorHandler') //The error handler
+        ->handler('errorHandler') //(optional) The error handler
         ->arguments($myApp)       //(optional) extra arguments to the handler
         ->catchExceptions()       //(optional) to catch exceptions if you don't use an external library for that
 ]);

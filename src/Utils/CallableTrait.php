@@ -63,6 +63,10 @@ trait CallableTrait
      */
     private static function getCallable($target, array $construct_args)
     {
+        if (empty($target)) {
+            throw new RuntimeException('No callable provided');
+        }
+
         if (is_string($target)) {
             //is a class "classname::method"
             if (strpos($target, '::') === false) {
@@ -90,6 +94,6 @@ trait CallableTrait
             return $target;
         }
 
-        throw new RuntimeException('The route target is not callable');
+        throw new RuntimeException('Invalid callable provided');
     }
 }

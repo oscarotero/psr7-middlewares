@@ -34,6 +34,16 @@ class ErrorHandler
     }
 
     /**
+     * Constructor.
+     *
+     * @param callable|string|null $handler
+     */
+    public function __construct($handler = null)
+    {
+        $this->handler($handler ?: self::CLASS.'::defaultHandler');
+    }
+
+    /**
      * Configure the catchExceptions.
      *
      * @param bool $catch
@@ -78,5 +88,27 @@ class ErrorHandler
         }
 
         return $response;
+    }
+
+    public static function defaultHandler(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $exception = self::getException($request);
+
+        $message = $exception ? $exception->getMessage() : '';
+
+        echo <<<EOT
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Error</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>Error</h1>
+    <p>{$message}</p>
+</body>
+</html>
+EOT;
     }
 }
