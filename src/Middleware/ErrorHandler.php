@@ -58,9 +58,9 @@ class ErrorHandler
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        ob_start();
-
         try {
+            ob_start();
+            $level = ob_get_level();
             $response = $next($request, $response);
         } catch (\Exception $exception) {
             if (!$this->catchExceptions) {
@@ -69,9 +69,9 @@ class ErrorHandler
 
             $request = Middleware::setAttribute($request, self::KEY, $exception);
             $response = $response->withStatus(500);
+        } finally {
+            Utils\Helpers::getOutput($level);
         }
-
-        ob_end_clean();
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
             return $this->executeHandler($request, $response);
