@@ -16,7 +16,14 @@ class DebugBar
 {
     use Utils\HtmlInjectorTrait;
 
+    /**
+     * @var Bar|null The debugbar
+     */
     private $debugBar;
+
+    /**
+     * @var bool Whether send data using headers in ajax requests
+     */
     private $captureAjax = false;
 
     /**
@@ -26,23 +33,7 @@ class DebugBar
      */
     public function __construct(Bar $debugBar = null)
     {
-        if ($debugBar !== null) {
-            $this->debugBar($debugBar);
-        }
-    }
-
-    /**
-     * Set the debug bar.
-     *
-     * @param Bar $debugBar
-     * 
-     * @return self
-     */
-    public function debugBar(Bar $debugBar)
-    {
-        $this->debugBar = $debugBar;
-
-        return $this;
+        $this->debugBar = $debugBar ?: new StandardDebugBar();
     }
 
     /**
@@ -75,17 +66,16 @@ class DebugBar
         }
 
         $ajax = Utils\Helpers::isAjax($request);
-        $debugBar = $this->debugBar ?: new StandardDebugBar();
 
         //Redirection response
         if (Utils\Helpers::isRedirect($response)) {
-            if ($debugBar->isDataPersisted() || session_status() === PHP_SESSION_ACTIVE) {
-                $debugBar->stackData();
+            if ($this->debugBar->isDataPersisted() || session_status() === PHP_SESSION_ACTIVE) {
+                $this->debugBar->stackData();
             }
 
         //Html response
         } elseif (FormatNegotiator::getFormat($request) === 'html') {
-            $renderer = $debugBar->getJavascriptRenderer();
+            $renderer = $this->debugBar->getJavascriptRenderer();
 
             ob_start();
             echo '<style>';
@@ -102,7 +92,7 @@ class DebugBar
         
         //Ajax response
         } elseif ($ajax && $this->captureAjax) {
-            $headers = $debugBar->getDataAsHeaders();
+            $headers = $this->debugBar->getDataAsHeaders();
 
             foreach ($headers as $name => $value) {
                 $response = $response->withHeader($name, $value);

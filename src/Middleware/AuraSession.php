@@ -13,7 +13,7 @@ class AuraSession
     const KEY = 'AURA_SESSION';
 
     /**
-     * @var SessionFactory|null
+     * @var SessionFactory
      */
     private $factory;
 
@@ -35,15 +35,13 @@ class AuraSession
     }
 
     /**
-     * Constructor.
+     * Set the session factory.
      *
      * @param SessionFactory|null $factory
      */
     public function __construct(SessionFactory $factory = null)
     {
-        if ($factory !== null) {
-            $this->factory($factory);
-        }
+        $this->factory = $factory ?: new SessionFactory();
     }
 
     /**
@@ -61,20 +59,6 @@ class AuraSession
     }
 
     /**
-     * Set the session factory.
-     *
-     * @param SessionFactory $factory
-     *
-     * @return self
-     */
-    public function factory(SessionFactory $factory)
-    {
-        $this->factory = $factory;
-
-        return $this;
-    }
-
-    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -85,8 +69,7 @@ class AuraSession
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $factory = $this->factory ?: new SessionFactory();
-        $session = $factory->newInstance($request->getCookieParams());
+        $session = $this->factory->newInstance($request->getCookieParams());
 
         if ($this->name !== null) {
             $session->setName($this->name);

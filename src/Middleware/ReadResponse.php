@@ -38,27 +38,20 @@ class ReadResponse
 
         $body = Middleware::createStream();
 
-        //Check if file is php
-        $file = $this->getFilename($request, 'php');
+        $file = $this->getFilename($request);
+        
+        //If the file does not exists, check if is gzipped
+        if (!is_file($file)) {
+            $file .= '.gz';
 
-        if (is_file($file) && pathinfo($file, PATHINFO_EXTENSION) === 'php') {
-            self::includeFile($file, $body);
-        } else {
-            $file = $this->getFilename($request);
-            
-            //If the file does not exists, check if is gzipped
-            if (!is_file($file)) {
-                $file .= '.gz';
-
-                if (EncodingNegotiator::getEncoding($request) !== 'gzip' || !is_file($file)) {
-                    return $response->withStatus(404);
-                }
-
-                $response = $response->withHeader('Content-Encoding', 'gzip');
+            if (EncodingNegotiator::getEncoding($request) !== 'gzip' || !is_file($file)) {
+                return $response->withStatus(404);
             }
 
-            self::readFile($file, $body);
+            $response = $response->withHeader('Content-Encoding', 'gzip');
         }
+
+        self::readFile($file, $body);
 
         $response = $response->withBody($body);
 
@@ -88,37 +81,6 @@ class ReadResponse
         }
 
         fclose($stream);
-    }
-
-    /**
-     * Includes a file
-     * 
-     * @param string $file
-     * @param StreamInterface $body
-     */
-    private static function includeFile($file, StreamInterface $body)
-    {
-        try {
-            ob_start();
-            $level = ob_get_level();
-            self::_includeFile($file);
-        } catch (\Exception $exception) {
-            Utils\Helpers::getOutput($level);
-            throw $exception;
-        }
-
-        $body->write(Utils\Helpers::getOutput($level));
-    }
-
-    /**
-     * Includes a file
-     * 
-     * @param string $file
-     * @param StreamInterface $body
-     */
-    private static function _includeFile($file)
-    {
-        include $file;
     }
 
     /**

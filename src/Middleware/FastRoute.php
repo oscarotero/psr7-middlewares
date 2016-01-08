@@ -12,34 +12,18 @@ class FastRoute
     use Utils\CallableTrait;
 
     /**
-     * @var Dispatcher|null FastRoute dispatcher
+     * @var Dispatcher FastRoute dispatcher
      */
     private $router;
 
     /**
-     * Constructor. Set the Dispatcher instance.
+     * Set the Dispatcher instance.
      *
      * @param Dispatcher|null $router
      */
-    public function __construct(Dispatcher $router = null)
-    {
-        if ($router !== null) {
-            $this->router($router);
-        }
-    }
-
-    /**
-     * Set the Dispatcher instance.
-     *
-     * @param Dispatcher $router
-     *
-     * @return self
-     */
-    public function router(Dispatcher $router)
+    public function __construct(Dispatcher $router)
     {
         $this->router = $router;
-
-        return $this;
     }
 
     /**

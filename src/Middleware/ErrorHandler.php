@@ -14,7 +14,12 @@ class ErrorHandler
 {
     const KEY = 'EXCEPTION';
 
-    use Utils\HandlerTrait;
+    use Utils\CallableTrait;
+
+    /**
+     * @var callable|string The handler used
+     */
+    private $handler;
 
     /**
      * @var bool Whether or not catch exceptions
@@ -84,7 +89,7 @@ class ErrorHandler
         }
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
-            return $this->executeHandler($request, $response);
+            return $this->executeCallable($this->handler, $request, $response);
         }
 
         return $response;
@@ -94,18 +99,19 @@ class ErrorHandler
     {
         $exception = self::getException($request);
 
-        $message = $exception ? $exception->getMessage() : '';
+        $message = $exception ? $exception->getMessage() : $response->getReasonPhrase();
+        $statusCode = $response->getStatusCode();
 
-        echo <<<EOT
+        return <<<EOT
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Error</title>
+    <title>Error {statusCode}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-    <h1>Error</h1>
+    <h1>Error {statusCode}</h1>
     <p>{$message}</p>
 </body>
 </html>

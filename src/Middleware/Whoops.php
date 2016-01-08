@@ -26,29 +26,13 @@ class Whoops
     private $catchErrors = true;
 
     /**
-     * Constructor.Set the whoops instance.
+     * Set the whoops instance.
      *
-     * @param Run $whoops
+     * @param Run|null $whoops
      */
     public function __construct(Run $whoops = null)
     {
-        if ($whoops !== null) {
-            $this->whoops($whoops);
-        }
-    }
-
-    /**
-     * Set an instance of Whoops.
-     *
-     * @param Run $whoops
-     *
-     * @return self
-     */
-    public function whoops(Run $whoops)
-    {
         $this->whoops = $whoops;
-
-        return $this;
     }
 
     /**

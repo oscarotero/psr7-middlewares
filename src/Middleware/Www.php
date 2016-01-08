@@ -19,27 +19,13 @@ class Www
     private $addWww;
 
     /**
-     * Constructor. Configure whether add or remove www.
+     * Configure whether the www subdomain should be added or removed.
      *
      * @param bool $addWww
      */
     public function __construct($addWww = false)
     {
-        $this->addWww($addWww);
-    }
-
-    /**
-     * Configure whether the www subdomain should be added or removed.
-     *
-     * @param bool $addWww
-     *
-     * @return self
-     */
-    public function addWww($addWww)
-    {
         $this->addWww = (boolean) $addWww;
-
-        return $this;
     }
 
     /**

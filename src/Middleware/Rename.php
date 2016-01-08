@@ -13,32 +13,16 @@ class Rename
     /**
      * @var array Renamed paths
      */
-    private $paths = [];
+    private $paths;
 
     /**
      * Constructor. Set the paths.
      *
-     * @param array|null $paths
+     * @param array $paths ['real-name' => 'new-name']
      */
-    public function __construct(array $paths = null)
-    {
-        if ($paths !== null) {
-            $this->paths($paths);
-        }
-    }
-
-    /**
-     * Map with the names.
-     *
-     * @param array $paths ['private-name' => 'public-name']
-     *
-     * @return self
-     */
-    public function paths(array $paths)
+    public function __construct(array $paths)
     {
         $this->paths = $paths;
-
-        return $this;
     }
 
     /**

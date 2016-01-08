@@ -17,7 +17,7 @@ class AuraRouter
     const KEY = 'AURA_ROUTE';
 
     /**
-     * @var RouterContainer|null The router container
+     * @var RouterContainer The router container
      */
     private $router;
 
@@ -34,29 +34,13 @@ class AuraRouter
     }
 
     /**
-     * Constructor.Set the RouterContainer instance.
-     *
-     * @param RouterContainer $router
-     */
-    public function __construct(RouterContainer $router = null)
-    {
-        if ($router !== null) {
-            $this->router($router);
-        }
-    }
-
-    /**
      * Set the RouterContainer instance.
      *
      * @param RouterContainer $router
-     *
-     * @return self
      */
-    public function router(RouterContainer $router)
+    public function __construct(RouterContainer $router)
     {
         $this->router = $router;
-
-        return $this;
     }
 
     /**
@@ -70,10 +54,6 @@ class AuraRouter
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (empty($this->router)) {
-            throw new RuntimeException('No RouterContainer instance has been provided');
-        }
-
         $matcher = $this->router->getMatcher();
         $route = $matcher->match($request);
 

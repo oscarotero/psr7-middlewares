@@ -10,7 +10,21 @@ use Psr\Http\Message\RequestInterface;
 trait FileTrait
 {
     use BasePathTrait;
-    use StorageTrait;
+
+    /**
+     * @var string $directory
+     */
+    private $directory;
+
+    /**
+     * Set the storage directory of the file
+     *
+     * @param string $directory
+     */
+    public function __construct($directory)
+    {
+        $this->directory = $directory;
+    }
 
     /**
      * Returns the filename of the response file.
@@ -33,6 +47,6 @@ trait FileTrait
             $filename .= "/index.{$indexExt}";
         }
 
-        return Helpers::joinPath($this->storage, $path, $filename);
+        return Helpers::joinPath($this->directory, $path, $filename);
     }
 }

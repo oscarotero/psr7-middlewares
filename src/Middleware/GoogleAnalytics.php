@@ -12,7 +12,7 @@ class GoogleAnalytics
     use Utils\HtmlInjectorTrait;
 
     /**
-     * @var string|null The site's ID
+     * @var string The site's ID
      */
     private $siteId;
 
@@ -21,25 +21,9 @@ class GoogleAnalytics
      *
      * @param string $siteId
      */
-    public function __construct($siteId = null)
-    {
-        if ($siteId !== null) {
-            $this->siteId($siteId);
-        }
-    }
-
-    /**
-     * Set the site's id.
-     *
-     * @param string $siteId
-     *
-     * @return self
-     */
-    public function siteId($siteId)
+    public function __construct($siteId)
     {
         $this->siteId = (string) $siteId;
-
-        return $this;
     }
 
     /**

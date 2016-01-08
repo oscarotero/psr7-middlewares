@@ -15,6 +15,21 @@ class Shutdown
     use Utils\HandlerTrait;
 
     /**
+     * @var callable|string The handler used
+     */
+    private $handler;
+
+    /**
+     * Constructor.
+     *
+     * @param callable|string|null $handler
+     */
+    public function __construct($handler = null)
+    {
+        $this->handler($handler ?: self::CLASS.'::defaultHandler');
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param RequestInterface  $request
@@ -25,8 +40,25 @@ class Shutdown
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $response = $this->executeHandler($request, $response);
+        $response = $this->executeCallable($this->handler, $request, $response);
 
         return $response->withStatus(503);
+    }
+
+    public static function defaultHandler()
+    {
+        return <<<EOT
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>503. Site under maintenance</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h1>Site under maintenance</h1>
+</body>
+</html>
+EOT;
     }
 }

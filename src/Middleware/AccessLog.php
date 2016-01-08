@@ -11,7 +11,7 @@ use RuntimeException;
 class AccessLog
 {
     /**
-     * @var LoggerInterface|null The router container
+     * @var LoggerInterface The router container
      */
     private $logger;
 
@@ -21,29 +21,13 @@ class AccessLog
     private $combined = false;
 
     /**
-     * Constructor.Set the LoggerInterface instance.
-     *
-     * @param LoggerInterface $logger
-     */
-    public function __construct(LoggerInterface $logger = null)
-    {
-        if ($logger !== null) {
-            $this->logger($logger);
-        }
-    }
-
-    /**
      * Set the LoggerInterface instance.
      *
      * @param LoggerInterface $logger
-     *
-     * @return self
      */
-    public function logger(LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger)
     {
         $this->logger = $logger;
-
-        return $this;
     }
 
     /**
@@ -71,10 +55,6 @@ class AccessLog
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (empty($this->logger)) {
-            throw new RuntimeException('No PSR-4 logger instance has been provided');
-        }
-
         if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('AccessLog middleware needs ClientIp executed before');
         }

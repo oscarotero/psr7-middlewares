@@ -44,22 +44,11 @@ class Geolocate
     public function __construct(Geocoder $geocoder = null)
     {
         if ($geocoder !== null) {
-            $this->geocoder($geocoder);
+            $geocoder = new ProviderAggregator();
+            $geocoder->registerProvider(new FreeGeoIp(new FopenHttpAdapter()));
         }
-    }
 
-    /**
-     * Set a geocoder instance.
-     * 
-     * @param Geocoder $geocoder
-     * 
-     * @return self
-     */
-    public function geocoder(Geocoder $geocoder)
-    {
         $this->geocoder = $geocoder;
-
-        return $this;
     }
 
     /**
@@ -77,27 +66,12 @@ class Geolocate
             throw new RuntimeException('Geolocate middleware needs ClientIp executed before');
         }
 
-        $geocoder = $this->geocoder ?: $this->getGeocoder();
         $ip = ClientIp::getIp($request);
 
         if ($ip !== null) {
-            $request = Middleware::setAttribute($request, self::KEY, $geocoder->geocode($ip));
+            $request = Middleware::setAttribute($request, self::KEY, $this->geocoder->geocode($ip));
         }
 
         return $next($request, $response);
-    }
-
-    /**
-     * Create a default geocoder instance.
-     * 
-     * @return Geocoder
-     */
-    private function getGeocoder()
-    {
-        $geocoder = new ProviderAggregator();
-        $httpAdapter = new FopenHttpAdapter();
-        $geocoder->registerProvider(new FreeGeoIp($httpAdapter));
-
-        return $geocoder;
     }
 }

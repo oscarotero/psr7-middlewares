@@ -10,34 +10,18 @@ use RuntimeException;
 class LeagueRoute
 {
     /**
-     * @var RouteCollection|null The router container
+     * @var RouteCollection The router container
      */
     private $router;
 
     /**
-     * Constructor. Set the RouteCollection instance.
+     * Set the RouteCollection instance.
      *
      * @param RouteCollection $router
      */
-    public function __construct(RouteCollection $router = null)
-    {
-        if ($router !== null) {
-            $this->router($router);
-        }
-    }
-
-    /**
-     * Extra arguments passed to the controller.
-     *
-     * @param RouteCollection $router
-     *
-     * @return self
-     */
-    public function router(RouteCollection $router)
+    public function __construct(RouteCollection $router)
     {
         $this->router = $router;
-
-        return $this;
     }
 
     /**
@@ -51,10 +35,6 @@ class LeagueRoute
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (empty($this->router)) {
-            throw new RuntimeException('No RouteCollection instance has been provided');
-        }
-
         return $next($request, $this->router->dispatch($request, $response));
     }
 }

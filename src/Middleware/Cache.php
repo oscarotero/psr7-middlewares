@@ -22,23 +22,11 @@ class Cache
     private $cache;
 
     /**
-     * Constructor. Set the cache pool.
+     * Set the psr-6 cache pool
      *
      * @param CacheItemPoolInterface|null $cache
      */
-    public function __construct(CacheItemPoolInterface $cache = null)
-    {
-        if ($cache !== null) {
-            $this->cache($cache);
-        }
-    }
-
-    /**
-     * Set the psr-6 cache pool used.
-     *
-     * @param CacheItemPoolInterface $cache
-     */
-    public function cache(CacheItemPoolInterface $cache)
+    public function __construct(CacheItemPoolInterface $cache)
     {
         $this->cache = $cache;
     }

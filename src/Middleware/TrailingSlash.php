@@ -20,27 +20,13 @@ class TrailingSlash
     private $addSlash;
 
     /**
-     * Constructor. Configure whether add or remove the slash.
+     * Configure whether add or remove the slash.
      *
      * @param bool $addSlash
      */
     public function __construct($addSlash = false)
     {
-        $this->addSlash($addSlash);
-    }
-
-    /**
-     * Configure whether the slash should be added or removed.
-     *
-     * @param bool $addSlash
-     *
-     * @return self
-     */
-    public function addSlash($addSlash)
-    {
         $this->addSlash = (boolean) $addSlash;
-
-        return $this;
     }
 
     /**

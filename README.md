@@ -183,9 +183,8 @@ $dispatcher = $relay->getInstance([
     //Required to get the Ip
     Middleware::ClientIp(),
 
-    Middleware::AccessLog()
-        ->logger($logger) //Instance of Psr\Log\LoggerInterface
-        ->combined(true)  //(optional) To use the Combined Log Format instead the Common Log Format
+    Middleware::AccessLog($logger) //Instance of Psr\Log\LoggerInterface
+        ->combined(true)           //(optional) To use the Combined Log Format instead the Common Log Format
 ]);
 ```
 
@@ -199,7 +198,7 @@ use Psr7Middlewares\Middleware\AuraRouter;
 use Aura\Router\RouterContainer;
 
 //Create the router
-$routerContainer = new RouterContainer();
+$router = new RouterContainer();
 
 $map = $routerContainer->getMap();
 
@@ -227,9 +226,8 @@ $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
 //Add to the dispatcher
 $dispatcher = $relay->getInstance([
 
-    Middleware::AuraRouter()
-        ->router($routerContainer)   //Instance of Aura\Router\RouterContainer
-        ->arguments($myApp)          //(optional) append more arguments to the controller
+    Middleware::AuraRouter($router) //Instance of Aura\Router\RouterContainer
+        ->arguments($myApp)         //(optional) append more arguments to the controller
 ]);
 ```
 
@@ -305,8 +303,7 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Cache()
-        ->cache(new Psr6CachePool()) //the psr-6 cache implementation
+    Middleware::Cache(new Psr6CachePool()), //the PSR-6 cache implementation
 
     function($request, $response, $next) {
         //Cache the response 1 hour
@@ -363,8 +360,7 @@ $settings = (new Settings())
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Cors()
-        ->settings($settings)
+    Middleware::Cors($settings)
 ]);
 ```
 
@@ -376,13 +372,14 @@ Inserts the [PHP debug bar](http://phpdebugbar.com/) in the html body. This midd
 use Psr7Middlewares\Middleware;
 use DebugBar\StandardDebugBar;
 
+$debugBar = new StandardDebugBar();
+
 $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiator(),
 
-    Middleware::DebugBar()
-        ->captureAjax(true)                //(optional) To send data in headers in ajax
-        ->debugBar(new StandardDebugBar()) //(optional) To pass your own instance.
+    Middleware::DebugBar($debugBar) //(optional) Own instance of debugbar
+        ->captureAjax(true)         //(optional) To send data in headers in ajax
 ]);
 ```
 
@@ -466,7 +463,7 @@ Executes a handler if the response returned by the next middlewares has any erro
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\ErrorHandler;
 
-function errorHandler($request, $response, $myApp) {
+function handler($request, $response, $myApp) {
     switch ($response->getStatusCode()) {
         case 404:
             return 'Page not found';
@@ -484,10 +481,9 @@ function errorHandler($request, $response, $myApp) {
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::ErrorHandler()
-        ->handler('errorHandler') //(optional) The error handler
-        ->arguments($myApp)       //(optional) extra arguments to the handler
-        ->catchExceptions()       //(optional) to catch exceptions if you don't use an external library for that
+    Middleware::ErrorHandler('handler') //(optional) The error handler
+        ->arguments($myApp)             //(optional) extra arguments to the handler
+        ->catchExceptions()             //(optional) to catch exceptions
 ]);
 ```
 
@@ -506,9 +502,8 @@ $router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::FastRoute()
-        ->router($router)  //Instance of FastRoute\Dispatcher
-        ->argument($myApp) //(optional) arguments appended to the controller
+    Middleware::FastRoute($router) //Instance of FastRoute\Dispatcher
+        ->argument($myApp)         //(optional) arguments appended to the controller
 ]);
 ```
 
@@ -589,8 +584,7 @@ $dispatcher = $relay->getInstance([
     //required to capture the user ips before
     Middleware::ClientIp(),
 
-    Middleware::Geolocate()
-        ->geocoder($geocoder), //(optional) To provide a custom Geocoder instance
+    Middleware::Geolocate($geocoder), //(optional) To provide a custom Geocoder instance
 
     function ($request, $response, $next) {
         //get the location
@@ -618,8 +612,7 @@ $dispatcher = $relay->getInstance([
     //required to get the format of the request
     Middleware::formatNegotiator(),
     
-    Middleware::GoogleAnalytics()
-        ->siteId('UA-XXXXX-X') // The site id
+    Middleware::GoogleAnalytics('UA-XXXXX-X') //The site id
 ]);
 ```
 
@@ -709,8 +702,7 @@ use Psr7Middlewares\Middleware\LanguageNegotiator;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::LanguageNegotiator()
-        ->languages(['gl', 'en', 'es']), //Available languages
+    Middleware::LanguageNegotiator(['gl', 'en', 'es']), //Available languages
 
     function ($request, $response, $next) {
         //Get the preferred language
@@ -737,8 +729,7 @@ $router->get('/blog/{id:[0-9]+}', function ($request, $response, $vars) {
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::LeagueRoute()
-        ->router($router) //The RouteCollection instance
+    Middleware::LeagueRoute($router) //The RouteCollection instance
 ]);
 ```
 
@@ -845,9 +836,8 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::ReadResponse()
-        ->storage('path/to/document/root') //Path where the files are stored
-        ->basePath('public')               //(optional) basepath ignored from the request uri
+    Middleware::ReadResponse('path/to/files') // Path where the files are stored
+        ->basePath('public')                  // (optional) basepath ignored from the request uri
 ]);
 ```
 
@@ -865,10 +855,9 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Rename()
-        ->paths([
-            '/admin' => '/admin-19640983',
-        ]),
+    Middleware::Rename([
+        '/admin' => '/admin-19640983',
+    ]),
 
     function ($request, $response, $next) {
         $path = $request->getUri()->getPath(); // /admin
@@ -920,9 +909,8 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::SaveResponse()
-        ->storage('path/to/document/root') //Path directory where save the responses
-        ->basePath('public')               //(optional) basepath ignored from the request uri
+    Middleware::SaveResponse('path/to/files') //Path directory where save the responses
+        ->basePath('public')                  //(optional) basepath ignored from the request uri
 ]);
 ```
 
@@ -939,9 +927,8 @@ function shutdownHandler ($request, $response, $app) {
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Shutdown()
-        ->handler('shutdownHandler') //Callable that generate the response
-        ->arguments($app)            //(optional) to add extra arguments to the handler
+    Middleware::Shutdown('shutdownHandler') //(optional) Callable that generate the response
+        ->arguments($app)                   //(optional) to add extra arguments to the handler
 ]);
 ```
 
@@ -954,10 +941,9 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::TrailingSlash()
-        ->addSlash(true)     //(optional) to add the trailing slash instead remove
-        ->redirect(301)      //(optional) to return a 301 (seo friendly) or 302 response to the new path
-        ->basePath('public') //(optional) basepath
+    Middleware::TrailingSlash(true) //(optional) set true to add the trailing slash instead remove
+        ->redirect(301)             //(optional) to return a 301 (seo friendly) or 302 response to the new path
+        ->basePath('public')        //(optional) basepath
 ]);
 ```
 
@@ -998,11 +984,12 @@ use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\Whoops;
 use Whoops\Run;
 
+$whoops = new Run();
+
 $dispatcher = $relay->getInstance([
 
-    Middleware::Whoops()
-        ->whoops(new Run())  //(optional) provide a whoops instance
-        ->catchErrors(false) //(optional) to catch not only exceptions but also php errors (true by default)
+    Middleware::Whoops($whoops) //(optional) provide a whoops instance
+        ->catchErrors(false)    //(optional) to catch not only exceptions but also php errors (true by default)
 ]);
 ```
 
@@ -1018,9 +1005,8 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Www()
-        ->addWww(true)  //(optional) Add www instead remove it
-        ->redirect(301) //(optional) to return a 301 (seo friendly) or 302 response to the new host
+    Middleware::Www(true) //(optional) Add www instead remove it
+        ->redirect(301)   //(optional) to return a 301 (seo friendly) or 302 response to the new host
 ]);
 ```
 

@@ -15,34 +15,18 @@ use RuntimeException;
 class Cors
 {
     /**
-     * @var SettingsStrategyInterface|null The settings used by the Analyzer
+     * @var SettingsStrategyInterface The settings used by the Analyzer
      */
     private $settings;
 
     /**
-     * Constructor. Defines the settings used.
-     *
-     * @param null|SettingsStrategyInterface $settings
-     */
-    public function __construct(SettingsStrategyInterface $settings = null)
-    {
-        if ($settings !== null) {
-            $this->settings($settings);
-        }
-    }
-
-    /**
-     * Set the settings.
+     * Defines the settings used.
      *
      * @param SettingsStrategyInterface $settings
-     *
-     * @return self
      */
-    public function settings(SettingsStrategyInterface $settings)
+    public function __construct(SettingsStrategyInterface $settings)
     {
         $this->settings = $settings;
-
-        return $this;
     }
 
     /**
@@ -56,10 +40,6 @@ class Cors
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (empty($this->settings)) {
-            throw new RuntimeException('No SettingsStrategyInterface instance has been provided');
-        }
-
         $cors = Analyzer::instance($this->settings)->analyze($request);
 
         switch ($cors->getRequestType()) {
