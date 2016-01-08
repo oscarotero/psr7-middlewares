@@ -131,6 +131,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Cache](#cache)
 * [ClientIp](#clientip)
 * [Cors](#cors)
+* [Csp](#csp)
 * [DebugBar](#debugbar)
 * [DetectDevice](#detectdevice)
 * [DigestAuthentication](#digestauthentication)
@@ -349,8 +350,6 @@ To use the [neomerx/cors-psr7](https://github.com/neomerx/cors-psr7) library:
 ```php
 use Neomerx\Cors\Strategies\Settings
 
-$relay = new RelayBuilder();
-
 $settings = (new Settings())
     ->setServerOrigin([
         'scheme' => 'http',
@@ -361,6 +360,21 @@ $settings = (new Settings())
 $dispatcher = $relay->getInstance([
 
     Middleware::Cors($settings)
+]);
+```
+
+### Csp
+
+To use the [paragonie/csp-builder](https://github.com/paragonie/csp-builder) library to add the Content-Security-Policy header to the response.
+
+```php
+use ParagonIE\CSPBuilder\CSPBuilder;
+
+$csp = CSPBuilder::fromFile('/path/to/source.json');
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::csp($csp)
 ]);
 ```
 

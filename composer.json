@@ -41,7 +41,8 @@
 		"league/route": "2.0.0-RC1",
 		"imagecow/imagecow": "^1.5",
 		"filp/whoops": "^1.1",
-		"monolog/monolog": "^1.17"
+		"monolog/monolog": "^1.17",
+		"paragonie/csp-builder": "^1.2"
 	},
 	"suggest": {
 		"aura/router": "To use AuraRouter",
