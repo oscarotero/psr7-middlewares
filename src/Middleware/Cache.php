@@ -22,7 +22,7 @@ class Cache
     private $cache;
 
     /**
-     * Set the psr-6 cache pool
+     * Set the psr-6 cache pool.
      *
      * @param CacheItemPoolInterface|null $cache
      */

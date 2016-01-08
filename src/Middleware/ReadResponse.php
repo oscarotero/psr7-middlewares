@@ -39,7 +39,7 @@ class ReadResponse
         $body = Middleware::createStream();
 
         $file = $this->getFilename($request);
-        
+
         //If the file does not exists, check if is gzipped
         if (!is_file($file)) {
             $file .= '.gz';
@@ -62,15 +62,16 @@ class ReadResponse
     }
 
     /**
-     * Reads a file and write in the body
+     * Reads a file and write in the body.
      * 
-     * @param string $file
+     * @param string          $file
      * @param StreamInterface $body
      */
     private static function readFile($file, StreamInterface $body)
     {
         if (filesize($file) <= 4096) {
             $body->write(file_get_contents($file));
+
             return;
         }
 
@@ -84,7 +85,7 @@ class ReadResponse
     }
 
     /**
-     * Handle range requests
+     * Handle range requests.
      * 
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response

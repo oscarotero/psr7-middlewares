@@ -7,7 +7,6 @@ use Psr\Http\Message\ResponseInterface;
 use Neomerx\Cors\Analyzer;
 use Neomerx\Cors\Contracts\AnalysisResultInterface;
 use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
-use RuntimeException;
 
 /**
  * Middleware to implement Cors.

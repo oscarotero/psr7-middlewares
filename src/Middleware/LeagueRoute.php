@@ -5,7 +5,6 @@ namespace Psr7Middlewares\Middleware;
 use League\Route\RouteCollection;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 
 class LeagueRoute
 {

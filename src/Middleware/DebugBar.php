@@ -37,7 +37,7 @@ class DebugBar
     }
 
     /**
-     * Configure whether capture ajax requests to send the data with headers
+     * Configure whether capture ajax requests to send the data with headers.
      *
      * @param bool $captureAjax
      * 
@@ -89,7 +89,7 @@ class DebugBar
             echo $renderer->render(!$ajax);
 
             $response = $this->inject($response, ob_get_clean());
-        
+
         //Ajax response
         } elseif ($ajax && $this->captureAjax) {
             $headers = $this->debugBar->getDataAsHeaders();

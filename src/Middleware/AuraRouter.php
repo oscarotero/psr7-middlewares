@@ -8,7 +8,6 @@ use Aura\Router\RouterContainer;
 use Aura\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 
 class AuraRouter
 {

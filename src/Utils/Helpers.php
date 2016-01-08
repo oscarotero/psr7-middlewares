@@ -55,7 +55,7 @@ class Helpers
     }
 
     /**
-     * Check whether a response is a redirection
+     * Check whether a response is a redirection.
      * 
      * @param ResponseInterface $response
      * 
@@ -67,7 +67,7 @@ class Helpers
     }
 
     /**
-     * Return the output buffer
+     * Return the output buffer.
      * 
      * @param int $level
      * 

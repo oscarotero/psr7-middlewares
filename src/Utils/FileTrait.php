@@ -12,12 +12,12 @@ trait FileTrait
     use BasePathTrait;
 
     /**
-     * @var string $directory
+     * @var string
      */
     private $directory;
 
     /**
-     * Set the storage directory of the file
+     * Set the storage directory of the file.
      *
      * @param string $directory
      */
