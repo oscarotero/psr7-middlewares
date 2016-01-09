@@ -5,7 +5,6 @@ namespace Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Dflydev\FigCookies\Cookies;
 use RuntimeException;
 
 /**
@@ -90,10 +89,10 @@ class PhpSession
         $id = $this->id;
 
         if (empty($id)) {
-            $cookie = Cookies::fromRequest($request)->get($name);
+            $cookies = $request->getCookieParams();
 
-            if ($cookie) {
-                $id = $cookie->getValue();
+            if (!empty($cookies[$name])) {
+                $id = $cookies[$name];
             }
         }
 
