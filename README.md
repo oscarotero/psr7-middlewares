@@ -368,13 +368,13 @@ $dispatcher = $relay->getInstance([
 To use the [paragonie/csp-builder](https://github.com/paragonie/csp-builder) library to add the Content-Security-Policy header to the response.
 
 ```php
-use ParagonIE\CSPBuilder\CSPBuilder;
-
-$csp = CSPBuilder::fromFile('/path/to/source.json');
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::csp($csp)
+    Middleware::csp($directives)                          //(optional) the array with the directives.
+        ->addSource('img-src', 'https://ytimg.com')       //(optional) to add extra sources to whitelist
+        ->addDirective('upgrade-insecure-requests', true) //(optional) to add new directives (if it doesn't already exist)
+        ->supportOldBrowsers(false)                       //(optional) support old browsers (e.g. safari). True by default
 ]);
 ```
 
