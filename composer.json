@@ -60,7 +60,8 @@
 		"imagecow/imagecow": "To use ImageTransformer",
 		"filp/whoops": "To use Whoops",
 		"psr/log-implementation": "To use AccessLog",
-		"psr/cache-implementation": "To use Cache"
+		"psr/cache-implementation": "To use Cache",
+		"paragonie/csp-builder": "To use Csp"
 	},
 	"autoload": {
 		"psr-4": {
