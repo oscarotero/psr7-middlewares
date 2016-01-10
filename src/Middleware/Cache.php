@@ -8,6 +8,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Datetime;
+use Micheh\Cache\CacheUtil;
 
 /**
  * Middleware to cache the response using Cache-Control and other directives.
@@ -22,6 +23,11 @@ class Cache
     private $cache;
 
     /**
+     * @var CacheUtil
+     */
+    private $cacheUtil;
+
+    /**
      * Set the psr-6 cache pool.
      *
      * @param CacheItemPoolInterface|null $cache
@@ -29,6 +35,7 @@ class Cache
     public function __construct(CacheItemPoolInterface $cache)
     {
         $this->cache = $cache;
+        $this->cacheUtil = new CacheUtil();
     }
 
     /**
@@ -65,7 +72,7 @@ class Cache
                 (string) $response->getBody(),
             ]);
 
-            if (($time = self::getExpiration($response)) !== null) {
+            if (($time = $this->getExpiration($response)) !== null) {
                 $item->expiresAt($time);
             }
 
@@ -82,25 +89,12 @@ class Cache
      *
      * @return Datetime|null
      */
-    private static function getExpiration(ResponseInterface $response)
+    private function getExpiration(ResponseInterface $response)
     {
-        //Cache-Control
-        $cacheControl = $response->getHeaderLine('Cache-Control');
+        $lifetime = $this->cacheUtil->getLifetime($response);
 
-        if (!empty($cacheControl)) {
-            $cacheControl = self::parseCacheControl($cacheControl);
-
-            //Max age
-            if (isset($cacheControl['max-age'])) {
-                return new Datetime('@'.(time() + (int) $cacheControl['max-age']));
-            }
-        }
-
-        //Expires
-        $expires = $response->getHeaderLine('Expires');
-
-        if (!empty($expires)) {
-            return new Datetime($expires);
+        if ($lifetime) {
+            return new Datetime('@'.(time() + $lifetime));
         }
     }
 
