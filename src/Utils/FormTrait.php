@@ -33,25 +33,4 @@ trait FormTrait
 
         return $response;
     }
-
-    /**
-     * Check whether the request is post (or any similar method).
-     * 
-     * @param RequestInterface $request
-     * 
-     * @return bool
-     */
-    private function isPost(RequestInterface $request)
-    {
-        switch (strtoupper($request->getMethod())) {
-            case 'GET':
-            case 'HEAD':
-            case 'CONNECT':
-            case 'TRACE':
-            case 'OPTIONS':
-                return false;
-        }
-
-        return true;
-    }
 }

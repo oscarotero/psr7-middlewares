@@ -93,7 +93,7 @@ class FormTimestamp
             return $next($request, $response);
         }
 
-        if ($this->isPost($request) && !$this->isValid($request)) {
+        if (Utils\Helpers::isPost($request) && !$this->isValid($request)) {
             return $response->withStatus(403);
         }
 

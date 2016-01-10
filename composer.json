@@ -42,7 +42,8 @@
 		"filp/whoops": "^1.1",
 		"monolog/monolog": "^1.17",
 		"paragonie/csp-builder": "^1.2",
-		"paragonie/anti-csrf": "^0.9.2"
+		"paragonie/anti-csrf": "^0.9.2",
+		"google/recaptcha": "^1.1"
 	},
 	"suggest": {
 		"aura/router": "To use AuraRouter",

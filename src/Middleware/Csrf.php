@@ -38,7 +38,7 @@ class Csrf
 
         $csrf = $this->getCSRF($request);
 
-        if ($this->isPost($request) && (session_status() !== PHP_SESSION_ACTIVE || !$csrf->validateRequest())) {
+        if (Utils\Helpers::isPost($request) && (session_status() !== PHP_SESSION_ACTIVE || !$csrf->validateRequest())) {
             return $response->withStatus(403);
         }
 

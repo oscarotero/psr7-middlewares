@@ -55,6 +55,27 @@ class Helpers
     }
 
     /**
+     * Check if a request is post or any similar method
+     * 
+     * @param RequestInterface $request
+     * 
+     * @return bool
+     */
+    public static function isPost(RequestInterface $request)
+    {
+        switch (strtoupper($request->getMethod())) {
+            case 'GET':
+            case 'HEAD':
+            case 'CONNECT':
+            case 'TRACE':
+            case 'OPTIONS':
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Check whether a response is a redirection.
      * 
      * @param ResponseInterface $response

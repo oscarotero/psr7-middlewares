@@ -154,6 +154,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [PhpSession](#phpsession)
 * [Piwik](#piwik)
 * [ReadResponse](#readresponse)
+* [Recaptcha](#recaptcha)
 * [Rename](#rename)
 * [ResponseTime](#responseTime)
 * [Robots](#robots)
@@ -890,6 +891,22 @@ $dispatcher = $relay->getInstance([
 
     Middleware::ReadResponse('path/to/files') // Path where the files are stored
         ->basePath('public')                  // (optional) basepath ignored from the request uri
+]);
+```
+
+### Recaptcha
+
+To use the [google recaptcha](https://github.com/google/recaptcha) library for spam prevention.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+    
+    //required to get the user IP
+    Middleware::ClientIp(),
+    
+    Middleware::Recapcha('secret') //The secret key
 ]);
 ```
 
