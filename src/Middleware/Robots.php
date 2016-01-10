@@ -13,6 +13,22 @@ class Robots
 {
     const HEADER = 'X-Robots-Tag';
 
+    private $allowIndex = false;
+
+    /**
+     * Allow index
+     * 
+     * @param bool $allowIndex
+     * 
+     * @return self
+     */
+    public function allowIndex($allowIndex = true)
+    {
+        $this->allowIndex = $allowIndex;
+
+        return $this;
+    }
+
     /**
      * Execute the middleware.
      *
@@ -26,13 +42,20 @@ class Robots
     {
         if ($request->getUri()->getPath() === '/robots.txt') {
             $body = Middleware::createStream();
-            $body->write("User-Agent: *\nDisallow: /");
 
-            return $response->withBody($body);
+            if ($this->allowIndex) {
+                $body->write("User-Agent: *\nAllow: /");
+            } else {
+                $body->write("User-Agent: *\nDisallow: /");
+            }
+
+            return $next($request, $response->withBody($body));
         }
 
-        $response = $next($request, $response);
-
-        return $response->withHeader(self::HEADER, 'noindex, nofollow, noarchive');
+        if ($this->allowIndex) {
+            return $next($request, $response->withHeader(self::HEADER, 'index, follow'));
+        }
+        
+        return $next($request, $response->withHeader(self::HEADER, 'noindex, nofollow, noarchive'));
     }
 }
