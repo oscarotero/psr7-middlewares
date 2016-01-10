@@ -63,7 +63,8 @@
 		"psr/log-implementation": "To use AccessLog",
 		"psr/cache-implementation": "To use Cache",
 		"paragonie/csp-builder": "To use Csp",
-		"paragonie/anti-csrf": "To use Csrf"
+		"paragonie/anti-csrf": "To use Csrf",
+		"google/recaptcha": "To use Recaptcha"
 	},
 	"autoload": {
 		"psr-4": {
