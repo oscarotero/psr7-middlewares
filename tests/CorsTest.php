@@ -6,11 +6,20 @@ use Neomerx\Cors\Contracts\Constants\CorsResponseHeaders;
 
 class CorsTest extends Base
 {
-    private $settings;
-
-    public function setUp()
+    public function corsProvider()
     {
-        $this->settings = (new Settings())
+        return [
+            ['http://not-valid.com:321', 403],
+            ['http://example.com:123', 200],
+        ];
+    }
+
+    /**
+     * @dataProvider corsProvider
+     */
+    public function testCors($url, $statusCode)
+    {
+        $settings = (new Settings())
             ->setServerOrigin([
                 'scheme' => 'http',
                 'host' => 'example.com',
@@ -40,28 +49,60 @@ class CorsTest extends Base
                 'X-Disabled-Header' => null,
             ])
             ->setRequestCredentialsSupported(false)
-                ->setPreFlightCacheMaxAge(0)
-                ->setForceAddAllowedMethodsToPreFlightResponse(true)
-                ->setForceAddAllowedHeadersToPreFlightResponse(true)
-                ->setCheckHost(true);
-    }
+            ->setPreFlightCacheMaxAge(0)
+            ->setForceAddAllowedMethodsToPreFlightResponse(true)
+            ->setForceAddAllowedHeadersToPreFlightResponse(true)
+            ->setCheckHost(true);
 
-    public function corsProvider()
-    {
-        return [
-            ['http://not-valid.com:321', 403],
-            ['http://example.com:123', 200],
-        ];
+        $response = $this->execute(
+            [
+                Middleware::cors($settings),
+            ],
+            $url
+        );
+
+        $this->assertEquals($statusCode, $response->getStatusCode());
     }
 
     /**
      * @dataProvider corsProvider
      */
-    public function testCors($url, $statusCode)
+    public function testCors2($url, $statusCode)
     {
         $response = $this->execute(
             [
-                Middleware::cors($this->settings),
+                Middleware::cors()
+                    ->origin([
+                        'scheme' => 'http',
+                        'host' => 'example.com',
+                        'port' => '123',
+                    ])
+                    ->allowedOrigins([
+                        'http://good.example.com:321' => true,
+                        'http://evil.example.com:123' => null,
+                        '*' => null,
+                        'null' => null,
+                    ])
+                    ->allowedMethods([
+                        'GET' => true,
+                        'PATCH' => null,
+                        'POST' => true,
+                        'PUT' => null,
+                        'DELETE' => true,
+                    ], true)
+                    ->allowedHeaders([
+                        'content-type' => true,
+                        'some-disabled-header' => null,
+                        'x-enabled-custom-header' => true,
+                    ], true)
+                    ->exposedHeaders([
+                        'Content-Type' => true,
+                        'X-Custom-Header' => true,
+                        'X-Disabled-Header' => null,
+                    ])
+                    ->allowCredentials()
+                    ->maxAge(0)
+                    ->checkHost(true),
             ],
             $url
         );

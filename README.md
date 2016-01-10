@@ -348,18 +348,36 @@ $dispatcher = $relay->getInstance([
 To use the [neomerx/cors-psr7](https://github.com/neomerx/cors-psr7) library:
 
 ```php
-use Neomerx\Cors\Strategies\Settings
-
-$settings = (new Settings())
-    ->setServerOrigin([
-        'scheme' => 'http',
-        'host'   => 'example.com',
-        'port'   => '123',
-    ]);
+use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Cors($settings)
+    Middleware::Cors($settings)                 //(optional) instance of Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface
+        ->origin('http://example.com:123')      //(optional) the server origin
+        ->allowedOrigins([                      //(optional) Allowed origins
+            'http://good.example.com:321' => true,
+            'http://evil.example.com:123' => null,
+        ])
+        ->allowedMethods([                      //(optional) Allowed methods. The second argument forces to add the allowed methods to preflight response
+            'GET' => true,
+            'PATCH' => null,
+            'POST' => true,
+            'PUT' => null,
+            'DELETE' => true,
+        ], true)
+        ->allowedHeaders([                      //(optional) Allowed headers. The second argument forces to add the allowed headers to preflight response
+            'content-type' => true,
+            'some-disabled-header' => null,
+            'x-enabled-custom-header' => true,
+        ], true)
+        ->exposedHeaders([                      //(optional) Headers other than the simple ones that might be exposed to user agent
+            'Content-Type' => true,
+            'X-Custom-Header' => true,
+            'X-Disabled-Header' => null,
+        ])
+        ->allowCredentials()                    //(optional) If access with credentials is supported by the resource.
+        ->maxAge(0)                             //(optional) Set pre-flight cache max period in seconds.
+        ->checkHost(true)                       //(optional) If request 'Host' header should be checked against server's origin.
 ]);
 ```
 

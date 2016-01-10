@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Neomerx\Cors\Analyzer;
 use Neomerx\Cors\Contracts\AnalysisResultInterface;
 use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
+use Neomerx\Cors\Strategies\Settings;
 
 /**
  * Middleware to implement Cors.
@@ -21,11 +22,145 @@ class Cors
     /**
      * Defines the settings used.
      *
-     * @param SettingsStrategyInterface $settings
+     * @param SettingsStrategyInterface|null $settings
      */
-    public function __construct(SettingsStrategyInterface $settings)
+    public function __construct(SettingsStrategyInterface $settings = null)
     {
-        $this->settings = $settings;
+        $this->settings = $settings ?: new Settings();
+    }
+
+    /**
+     * Set the server origin
+     * 
+     * @see Neomerx\Cors\Contracts\Strategies::setServerOrigin
+     * 
+     * @param string|array $origin
+     * 
+     * @return self
+     */
+    public function origin($origin)
+    {
+        $this->settings->setServerOrigin($origin);
+
+        return $this;
+    }
+
+    /**
+     * Set allowed origins
+     * 
+     * @see Neomerx\Cors\Contracts\Strategies::setRequestAllowedOrigins
+     * 
+     * @param array $origins
+     * 
+     * @return self
+     */
+    public function allowedOrigins(array $origins)
+    {
+        $this->settings->setRequestAllowedOrigins($origins);
+
+        return $this;
+    }
+
+    /**
+     * Set allowed methods
+     * 
+     * @see Neomerx\Cors\Contracts\Strategies::setRequestAllowedMethods
+     * @see Neomerx\Cors\Contracts\Strategies::setForceAddAllowedMethodsToPreFlightResponse
+     * 
+     * @param array $methods
+     * @param bool  $force   If allowed methods should be added to pre-flight response
+     * 
+     * @return self
+     */
+    public function allowedMethods(array $methods, $force = false)
+    {
+        $this->settings->setRequestAllowedMethods($methods);
+        $this->settings->setForceAddAllowedMethodsToPreFlightResponse($force);
+
+        return $this;
+    }
+
+    /**
+     * Set allowed headers
+     * 
+     * @see Neomerx\Cors\Contracts\Strategies::setRequestAllowedHeaders
+     * @see Neomerx\Cors\Contracts\Strategies::setForceAddAllowedHeadersToPreFlightResponse
+     * 
+     * @param array $headers
+     * @param bool  $force   If allowed headers should be added to pre-flight response
+     * 
+     * @return self
+     */
+    public function allowedHeaders(array $headers, $force = false)
+    {
+        $this->settings->setRequestAllowedHeaders($headers);
+        $this->settings->setForceAddAllowedHeadersToPreFlightResponse($force);
+
+        return $this;
+    }
+
+    /**
+     * Set headers other than the simple ones that might be exposed to user agent
+     * 
+     * @see Neomerx\Cors\Contracts\Strategies::setResponseExposedHeaders
+     * 
+     * @param array $headers
+     * 
+     * @return self
+     */
+    public function exposedHeaders(array $headers)
+    {
+        $this->settings->setResponseExposedHeaders($headers);
+
+        return $this;
+    }
+
+    /**
+     * If access with credentials is supported by the resource.
+     * 
+     * @see Neomerx\Cors\Contracts\Strategies::setRequestCredentialsSupported
+     * 
+     * @param bool $allow
+     * 
+     * @return self
+     */
+    public function allowCredentials($allow = true)
+    {
+        $this->settings->setRequestCredentialsSupported($allow);
+
+        return $this;
+    }
+
+    /**
+     * Set pre-flight cache max period in seconds.
+     * 
+     * @see Neomerx\Cors\Contracts\Strategies::setPreFlightCacheMaxAge
+     * 
+     * @param int $maxAge
+     * 
+     * @return self
+     */
+    public function maxAge($maxAge)
+    {
+        $this->settings->setPreFlightCacheMaxAge($maxAge);
+
+        return $this;
+    }
+
+    /**
+     * If request 'Host' header should be checked against server's origin.
+     * 
+     * @see Neomerx\Cors\Contracts\Strategies::setCheckHost
+     * 
+     * @param bool $checkHost
+     * 
+     * @return self
+     */
+    public function checkHost($checkHost = true)
+    {
+        $this->settings->setCheckHost($checkHost);
+
+        return $this;
     }
 
     /**
