@@ -10,7 +10,7 @@ class RobotsTest extends Base
 
         $this->assertSame('noindex, nofollow, noarchive', $response->getHeaderLine('X-Robots-Tag'));
 
-        $response = $this->execute([Middleware::Robots()->allowIndex()]);
+        $response = $this->execute([Middleware::Robots(true)]);
 
         $this->assertSame('index, follow', $response->getHeaderLine('X-Robots-Tag'));
     }
@@ -21,7 +21,7 @@ class RobotsTest extends Base
 
         $this->assertSame("User-Agent: *\nDisallow: /", (string) $response->getBody());
 
-        $response = $this->execute([Middleware::Robots()->allowIndex()], '/robots.txt');
+        $response = $this->execute([Middleware::Robots(true)], '/robots.txt');
 
         $this->assertSame("User-Agent: *\nAllow: /", (string) $response->getBody());
     }

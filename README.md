@@ -921,7 +921,7 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Robots()
+    Middleware::Robots(false) //(optional) Set true to allow search engines instead disallow
 ]);
 ```
 
