@@ -15,23 +15,14 @@ trait FormTrait
      * Insert content into all POST forms.
      * 
      * @param ResponseInterface $response
-     * @param string            $input
+     * @param callable          $replace
      * 
      * @return ResponseInterface
      */
-    private function insertIntoPostForms(ResponseInterface $response, $input)
+    private function insertIntoPostForms(ResponseInterface $response, callable $replace)
     {
         $html = (string) $response->getBody();
-
-        $html = preg_replace_callback(
-            '/(<form\s[^>]*method=["\']?POST["\']?[^>]*>)/i',
-            function ($match) use ($input) {
-                return $match[0].$input;
-            },
-            $html,
-            -1,
-            $count
-        );
+        $html = preg_replace_callback('/(<form\s[^>]*method=["\']?POST["\']?[^>]*>)/i', $replace, $html, -1, $count);
 
         if (!empty($count)) {
             $body = Middleware::createStream();

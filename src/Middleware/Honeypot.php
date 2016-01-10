@@ -77,7 +77,9 @@ class Honeypot
 
         $response = $next($request, $response);
 
-        return $this->insertIntoPostForms($response, '<input type="text" name="'.$this->inputName.'" class="'.$this->inputClass.'">');
+        return $this->insertIntoPostForms($response, function ($match) {
+            return $match[0].'<input type="text" name="'.$this->inputName.'" class="'.$this->inputClass.'">';
+        });
     }
 
     /**

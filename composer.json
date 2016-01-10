@@ -41,7 +41,8 @@
 		"imagecow/imagecow": "^1.5",
 		"filp/whoops": "^1.1",
 		"monolog/monolog": "^1.17",
-		"paragonie/csp-builder": "^1.2"
+		"paragonie/csp-builder": "^1.2",
+		"paragonie/anti-csrf": "^0.9.2"
 	},
 	"suggest": {
 		"aura/router": "To use AuraRouter",
@@ -60,7 +61,8 @@
 		"filp/whoops": "To use Whoops",
 		"psr/log-implementation": "To use AccessLog",
 		"psr/cache-implementation": "To use Cache",
-		"paragonie/csp-builder": "To use Csp"
+		"paragonie/csp-builder": "To use Csp",
+		"paragonie/anti-csrf": "To use Csrf"
 	},
 	"autoload": {
 		"psr-4": {

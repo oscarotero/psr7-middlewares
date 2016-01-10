@@ -99,7 +99,11 @@ class FormTimestamp
 
         $response = $next($request, $response);
 
-        return $this->insertIntoPostForms($response, '<input type="hidden" name="'.$this->inputName.'" value="'.$this->encrypt(time()).'">');
+        $value = $this->encrypt(time());
+
+        return $this->insertIntoPostForms($response, function ($match) use ($value) {
+            return $match[0].'<input type="text" name="'.$this->inputName.'" value="'.$value.'">';
+        });
     }
 
     /**

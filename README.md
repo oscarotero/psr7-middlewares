@@ -132,6 +132,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [ClientIp](#clientip)
 * [Cors](#cors)
 * [Csp](#csp)
+* [Csrf](#csrf)
 * [DebugBar](#debugbar)
 * [DetectDevice](#detectdevice)
 * [DigestAuthentication](#digestauthentication)
@@ -393,6 +394,25 @@ $dispatcher = $relay->getInstance([
         ->addSource('img-src', 'https://ytimg.com')       //(optional) to add extra sources to whitelist
         ->addDirective('upgrade-insecure-requests', true) //(optional) to add new directives (if it doesn't already exist)
         ->supportOldBrowsers(false)                       //(optional) support old browsers (e.g. safari). True by default
+]);
+```
+
+### Csrf
+
+To use the [paragonie/anti-csrf](https://github.com/paragonie/anti-csrf) library to add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not.
+Currently this middleware needs a PHP Session actived so you can use [PhpSession](#phpsession) middleware before:
+
+```php
+
+$dispatcher = $relay->getInstance([
+
+    //used to open a PHP session before
+    Middleware::phpSession(),
+
+    //required to get the format of the request (only executed in html requests)
+    Middleware::FormatNegotiator(),
+
+    Middleware::Csrf()
 ]);
 ```
 
