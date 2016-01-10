@@ -107,7 +107,7 @@ class ErrorHandler
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Error {statusCode}</title>
+    <title>Error {$statusCode}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
