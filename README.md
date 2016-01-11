@@ -128,6 +128,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [AuraSession](#aurasession)
 * [BasePath](#basepath)
 * [BasicAuthentication](#basicauthentication)
+* [BlockSpam](#blockspam)
 * [Cache](#cache)
 * [ClientIp](#clientip)
 * [Cors](#cors)
@@ -295,6 +296,19 @@ $dispatcher = $relay->getInstance([
             'username2' => 'password2'
         ])
         ->realm('My realm') //(optional) change the realm value
+]);
+```
+
+### BlockSpam
+
+To block referral spam usin the [piwik/referrer-spam-blacklist](https://github.com/piwik/referrer-spam-blacklist) list
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::BlockSpam('spammers.txt'), //(optional) to set a custom spammers list instead the piwik's list
 ]);
 ```
 

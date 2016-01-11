@@ -43,7 +43,8 @@
 		"monolog/monolog": "^1.17",
 		"paragonie/csp-builder": "^1.2",
 		"paragonie/anti-csrf": "^0.9.2",
-		"google/recaptcha": "^1.1"
+		"google/recaptcha": "^1.1",
+		"piwik/referrer-spam-blacklist": "^1.0"
 	},
 	"suggest": {
 		"aura/router": "To use AuraRouter",
@@ -64,7 +65,8 @@
 		"psr/cache-implementation": "To use Cache",
 		"paragonie/csp-builder": "To use Csp",
 		"paragonie/anti-csrf": "To use Csrf",
-		"google/recaptcha": "To use Recaptcha"
+		"google/recaptcha": "To use Recaptcha",
+		"piwik/referrer-spam-blacklist": "To use BlockSpam"
 	},
 	"autoload": {
 		"psr-4": {
