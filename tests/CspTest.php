@@ -10,7 +10,7 @@ class CspTest extends Base
             [
                 null,
                 true,
-                "object-src: 'self'; script-src: 'self'; ",
+                "frame-ancestors: 'self'; object-src: 'self'; script-src: 'self'; ",
             ],
             [
                 [

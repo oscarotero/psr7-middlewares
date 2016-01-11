@@ -27,11 +27,9 @@ class DebugBarTest extends Base
         $body = (string) $response->getBody();
 
         if ($expectedBody) {
-            $this->assertNotFalse(strpos($body, '<script>'));
-            $this->assertNotFalse(strpos($body, '<style>'));
+            $this->assertNotFalse(strpos($body, '</script>'));
         } else {
-            $this->assertFalse(strpos($body, '<script>'));
-            $this->assertFalse(strpos($body, '<style>'));
+            $this->assertFalse(strpos($body, '</script>'));
         }
 
         if ($expectedHeader) {
