@@ -10,6 +10,11 @@ use Psr7Middlewares\Middleware;
  */
 class Encoder extends Resolver
 {
+    protected $transformers = [
+        'gzip' => [__CLASS__, 'gzip'],
+        'deflate' => [__CLASS__, 'deflate'],
+    ];
+
     /**
      * Gzip minifier using gzencode().
      * 
@@ -17,7 +22,7 @@ class Encoder extends Resolver
      * 
      * @return ResponseInterface
      */
-    public function gzip(ResponseInterface $response)
+    public static function gzip(ResponseInterface $response)
     {
         $stream = Middleware::createStream();
         $stream->write(gzencode((string) $response->getBody()));
@@ -34,7 +39,7 @@ class Encoder extends Resolver
      * 
      * @return ResponseInterface
      */
-    public function deflate(ResponseInterface $response)
+    public static function deflate(ResponseInterface $response)
     {
         $stream = Middleware::createStream();
         $stream->write(gzdeflate((string) $response->getBody()));

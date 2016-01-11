@@ -7,21 +7,19 @@ use Psr\Http\Message\ServerRequestInterface;
 /**
  * Generic resolver to parse the body content.
  */
-class BodyParser implements ResolverInterface
+class BodyParser extends Resolver
 {
     /**
      * @var bool Whether convert the object into associative arrays
      */
     private $associative = true;
 
-    /**
-     * @var array List of all parseable content types
-     */
-    protected $contentTypes = [
-        'json' => 'application/json',
-        'urlencode' => 'application/x-www-form-urlencoded',
-        'csv' => 'text/csv',
-    ];
+    public function __construct()
+    {
+        $this->add('application/json', [$this, 'json']);
+        $this->add('application/x-www-form-urlencoded', [$this, 'urlencode']);
+        $this->add('text/csv', [$this, 'csv']);
+    }
 
     /**
      * @param string $id
@@ -30,9 +28,9 @@ class BodyParser implements ResolverInterface
      */
     public function resolve($id)
     {
-        foreach ($this->contentTypes as $method => $contentType) {
+        foreach ($this->transformers as $contentType => $transformer) {
             if (stripos($id, $contentType) === 0) {
-                return [$this, $method];
+                return $transformer;
             }
         }
     }

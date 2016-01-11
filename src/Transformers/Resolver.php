@@ -7,6 +7,19 @@ namespace Psr7Middlewares\Transformers;
  */
 abstract class Resolver implements ResolverInterface
 {
+    protected $transformers = [];
+
+    /**
+     * Add a new transformer.
+     * 
+     * @param string   $id
+     * @param callable $resolver
+     */
+    public function add($id, callable $resolver)
+    {
+        $this->transformers[$id] = $resolver;
+    }
+
     /**
      * Resolves the id and returns a transformer or null.
      * 
@@ -16,8 +29,8 @@ abstract class Resolver implements ResolverInterface
      */
     public function resolve($id)
     {
-        if (!empty($id) && $id !== __METHOD__ && method_exists($this, $id)) {
-            return [$this, $id];
+        if (isset($this->transformers[$id])) {
+            return $this->transformers[$id];
         }
     }
 }
