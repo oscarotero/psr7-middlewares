@@ -132,13 +132,13 @@ class Csrf
 
         $lockTo = $request->getUri()->getPath();
 
-        if (!hash_equals($lockTo, $stored['lockTo'])) {
+        if (!Utils\Helpers::hash_equals($lockTo, $stored['lockTo'])) {
             return false;
         }
 
         $expected = self::encode(hash_hmac('sha256', ClientIp::getIp($request), base64_decode($stored['token']), true));
 
-        return hash_equals($token, $expected);
+        return Utils\Helpers::hash_equals($token, $expected);
     }
 
     /**
