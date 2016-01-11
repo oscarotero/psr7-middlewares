@@ -414,8 +414,8 @@ $dispatcher = $relay->getInstance([
 
 ### Csrf
 
-To use the [paragonie/anti-csrf](https://github.com/paragonie/anti-csrf) library to add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not.
-Currently this middleware needs a PHP Session actived so you can use [PhpSession](#phpsession) middleware before:
+To add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not.
+Currently this middleware needs a PHP Session actived so you can use [PhpSession](#phpsession) middleware before.
 
 ```php
 
@@ -426,6 +426,9 @@ $dispatcher = $relay->getInstance([
 
     //required to get the format of the request (only executed in html requests)
     Middleware::FormatNegotiator(),
+
+    //required to get the user ip
+    Middleware::ClientIp(),
 
     Middleware::Csrf()
 ]);

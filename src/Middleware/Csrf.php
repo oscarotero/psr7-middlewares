@@ -58,7 +58,7 @@ class Csrf
             preg_match('/action=["\']?([^"\'\s]+)["\']?/i', $match[0], $matches);
 
             $action = empty($matches[1]) ? $request->getUri()->getPath() : $matches[1];
-            list($index, $token) = $this->getTokenArray($request, $action);
+            list($index, $token) = $this->generateTokens($request, $action);
 
             return $match[0]
                 .'<input type="text" name="'.$this->formIndex.'" value="'.htmlentities($index, ENT_QUOTES, 'UTF-8').'">'
@@ -69,11 +69,14 @@ class Csrf
     }
 
     /**
-     * Retrieve a token array.
+     * Generate and retrieve the tokens.
+     * 
+     * @param ServerRequestInterface $request
+     * @param string                 $lockTo
      *
      * @return array
      */
-    public function getTokenArray($request, $lockTo)
+    private function generateTokens(ServerRequestInterface $request, $lockTo)
     {
         if (!isset($_SESSION[$this->sessionIndex])) {
             $_SESSION[$this->sessionIndex] = [];
@@ -97,11 +100,13 @@ class Csrf
     }
 
     /**
-     * Validate a request based on $this->session and $this->post data.
+     * Validate the request.
+     * 
+     * @param ServerRequestInterface $request
      *
      * @return bool
      */
-    public function validateRequest($request)
+    private function validateRequest(ServerRequestInterface $request)
     {
         if (!isset($_SESSION[$this->sessionIndex])) {
             $_SESSION[$this->sessionIndex] = [];
@@ -140,7 +145,7 @@ class Csrf
      * Enforce an upper limit on the number of tokens stored in session state
      * by removing the oldest tokens first.
      */
-    protected function recycleTokens()
+    private function recycleTokens()
     {
         if (!$this->maxTokens || count($_SESSION[$this->sessionIndex]) <= $this->maxTokens) {
             return;
@@ -159,12 +164,12 @@ class Csrf
      * Encode string with base64, but strip padding.
      * PHP base64_decode does not croak on that.
      *
-     * @param string $s
+     * @param string $value
      *
      * @return string
      */
-    protected static function encode($s)
+    private static function encode($value)
     {
-        return rtrim(base64_encode($s), '=');
+        return rtrim(base64_encode($value), '=');
     }
 }
