@@ -737,7 +737,9 @@ $dispatcher = $relay->getInstance([
 
 ### ImageTransformer
 
-Uses [imagecow/imagecow](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other format. You can specify a predefined sizes using [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions).
+Uses [imagecow/imagecow](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
+
+To resize or crop images on demand, use the size as filename prefix. For example, to get the "small" value of the image `avatars/users.png`, the path is: `avatars/small.user.png`.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -747,7 +749,11 @@ $dispatcher = $relay->getInstance([
     //required to get the format of the request
     Middleware::formatNegotiator(),
 
-    Middleware::imageTransformer()
+    Middleware::imageTransformer([   // The available sizes of the images.
+            'small' => 'resizeCrop,50,50',
+            'medium' => 'resize,500|format,jpg',
+            'large' => 'resize,1000|format,jpg',
+        ])
         ->basePath('/imgs')          // (optional) The base path of the images urls
 
     //Used to read the image files and returns the response with them
@@ -755,27 +761,6 @@ $dispatcher = $relay->getInstance([
         ->storage('/path/to/images'),
 ]);
 ```
-
-To resize or crop images on demand, use the following syntax: `[directory]/[transform].[filename]`. For example, to resize and crop the image `avatars/users.png` to 50x50px, the path is: `avatars/resizeCrop,50,50.user.png`. Because this method allows to generate unlimited images using random values, you can specify a list of named transform values:
-
-```php
-use Psr7Middlewares\Middleware;
-
-$dispatcher = $relay->getInstance([
-    Middleware::formatNegotiator(),
-
-    Middleware::imageTransformer()
-        ->sizes([
-            'small' => 'resizeCrop,50,50',
-            'medium' => 'resize,500|format,jpg',
-            'large' => 'resize,1000|format,jpg',
-        ]), //(optional) The predefined sizes of the images.
-
-    Middleware::readResponse('/path/to/images')
-]);
-```
-
-Now, to get the 50x50 thumb, you have to use `avatars/small.user.png`. Any other value different to these predefined sizes returns a 404 response.
 
 ### LanguageNegotiation
 

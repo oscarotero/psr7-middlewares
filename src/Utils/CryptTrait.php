@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Utils;
 
 use phpseclib\Crypt\AES;
+use RuntimeException;
 
 /**
  * Trait used by all middlewares that needs encrypt/decrypt functions.
@@ -35,11 +36,11 @@ trait CryptTrait
      */
     private function encrypt($value)
     {
-        if ($this->cipher) {
-            return bin2hex($this->cipher->encrypt($value));
+        if (empty($this->cipher)) {
+            throw new RuntimeException('No encrypt key provided');
         }
 
-        return $value;
+        return bin2hex($this->cipher->encrypt($value));
     }
 
     /**
@@ -51,10 +52,10 @@ trait CryptTrait
      */
     private function decrypt($value)
     {
-        if ($this->cipher) {
-            return $this->cipher->decrypt(hex2bin($value));
+        if (empty($this->cipher)) {
+            throw new RuntimeException('No decrypt key provided');
         }
 
-        return $value;
+        return $this->cipher->decrypt(hex2bin($value));
     }
 }

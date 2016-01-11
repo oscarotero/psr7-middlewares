@@ -16,9 +16,11 @@ use Exception;
 class ImageTransformer
 {
     use Utils\BasePathTrait;
-    use Utils\CryptTrait;
 
-    protected $sizes;
+    /**
+     * @var array Available sizes
+     */
+    protected $sizes = [];
 
     /**
      * Define the available sizes, for example:
@@ -32,7 +34,7 @@ class ImageTransformer
      * 
      * @return self
      */
-    public function sizes(array $sizes)
+    public function __construct(array $sizes)
     {
         $this->sizes = $sizes;
 
@@ -108,7 +110,7 @@ class ImageTransformer
         $info = pathinfo($path);
 
         try {
-            $pieces = explode('.', $this->decrypt($info['filename']), 2);
+            $pieces = explode('.', $info['filename'], 2);
         } catch (Exception $e) {
             return;
         }
@@ -117,15 +119,11 @@ class ImageTransformer
             list($transform, $file) = $pieces;
 
             //Check if the size is valid
-            if (is_array($this->sizes)) {
-                if (!isset($this->sizes[$transform])) {
-                    return;
-                }
-
-                $transform = $this->sizes[$transform];
+            if (!isset($this->sizes[$transform])) {
+                return;
             }
 
-            return [Utils\Helpers::joinPath($info['dirname'], "{$file}.".$info['extension']), $transform];
+            return [Utils\Helpers::joinPath($info['dirname'], "{$file}.".$info['extension']), $this->sizes[$transform]];
         }
     }
 }
