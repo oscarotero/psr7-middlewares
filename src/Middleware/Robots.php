@@ -16,7 +16,7 @@ class Robots
     private $allow = false;
 
     /**
-     * Set whether search engines are allowed or not
+     * Set whether search engines are allowed or not.
      * 
      * @param bool $allow
      */
@@ -51,7 +51,7 @@ class Robots
         if ($this->allow) {
             return $next($request, $response->withHeader(self::HEADER, 'index, follow'));
         }
-        
+
         return $next($request, $response->withHeader(self::HEADER, 'noindex, nofollow, noarchive'));
     }
 }

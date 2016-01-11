@@ -3,14 +3,12 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use Exception;
 
 /**
- * Middleware to block request from blacklist referrer
+ * Middleware to block request from blacklist referrer.
  */
 class BlockSpam
 {

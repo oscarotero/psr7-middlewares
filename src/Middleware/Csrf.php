@@ -7,11 +7,10 @@ use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use Exception;
 
 /**
  * Middleware for CSRF protection
- * Code inspired from https://github.com/paragonie/anti-csrf
+ * Code inspired from https://github.com/paragonie/anti-csrf.
  */
 class Csrf
 {
@@ -70,7 +69,7 @@ class Csrf
     }
 
     /**
-     * Retrieve a token array
+     * Retrieve a token array.
      *
      * @return array
      */
@@ -87,7 +86,7 @@ class Csrf
             'created' => intval(date('YmdHis')),
             'uri' => $request->getUri()->getPath(),
             'token' => $token,
-            'lockTo' => $lockTo
+            'lockTo' => $lockTo,
         ];
 
         $this->recycleTokens();
@@ -98,17 +97,17 @@ class Csrf
     }
 
     /**
-     * Validate a request based on $this->session and $this->post data
+     * Validate a request based on $this->session and $this->post data.
      *
-     * @return boolean
+     * @return bool
      */
     public function validateRequest($request)
     {
         if (!isset($_SESSION[$this->sessionIndex])) {
             $_SESSION[$this->sessionIndex] = [];
+
             return false;
         }
-
 
         $data = $request->getParsedBody();
 
@@ -147,7 +146,7 @@ class Csrf
             return;
         }
 
-        uasort($_SESSION[$this->sessionIndex], function($a, $b) {
+        uasort($_SESSION[$this->sessionIndex], function ($a, $b) {
             return $a['created'] - $b['created'];
         });
 
@@ -161,6 +160,7 @@ class Csrf
      * PHP base64_decode does not croak on that.
      *
      * @param string $s
+     *
      * @return string
      */
     protected static function encode($s)

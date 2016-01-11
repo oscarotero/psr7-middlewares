@@ -55,7 +55,7 @@ class Helpers
     }
 
     /**
-     * Check if a request is post or any similar method
+     * Check if a request is post or any similar method.
      * 
      * @param RequestInterface $request
      * 

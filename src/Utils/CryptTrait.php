@@ -65,18 +65,19 @@ trait CryptTrait
         $iv = mb_substr($decoded, 32, 16, '8bit');
         $cipher = mb_substr($decoded, 48, null, '8bit');
         $calculated = hash_hmac('sha256', $iv.$cipher, $this->authentication, true);
-    
+
         if (hash_equals($hmac, $calculated)) {
             $value = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->key, $cipher, 'ctr', $iv), "\0");
+
             return json_decode($value, true);
         }
     }
 
     /**
      * Get derived key
-     * http://tools.ietf.org/html/rfc5869
+     * http://tools.ietf.org/html/rfc5869.
      * 
-     * @param string $ikm Initial Keying Material
+     * @param string $ikm  Initial Keying Material
      * @param string $info What sort of key are we deriving?
      * 
      * @return string
