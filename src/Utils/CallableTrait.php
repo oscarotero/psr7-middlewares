@@ -12,7 +12,19 @@ use Psr\Http\Message\ResponseInterface;
  */
 trait CallableTrait
 {
-    use ArgumentsTrait;
+    private $arguments = [];
+
+    /**
+     * Extra arguments passed to the callable.
+     *
+     * @return self
+     */
+    public function arguments()
+    {
+        $this->arguments = func_get_args();
+
+        return $this;
+    }
 
     /**
      * Execute the callable.

@@ -649,10 +649,10 @@ $dispatcher = $relay->getInstance([
     Middleware::FormatNegotiator(),
 
     Middleware::FormTimestamp()
+        ->key('my-secret-key'),   //Key used to encrypt/decrypt the input value.
         ->min(5)                  //(optional) Minimum seconds needed to validate the request (default: 3)
         ->max(3600)               //(optional) Life of the form in second. Default is 0 (no limit)
         ->inputName('time-token') //(optional) Name of the input (default: hpt_time)
-        ->key('my-secret-key'),   //(optional but recomended) Key used to encrypt/decrypt the input value. If it's not defined, the value wont be encrypted
 ]);
 ```
 
