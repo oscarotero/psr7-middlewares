@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Helpers
 {
-    private $hash_equals;
+    private static $hash_equals;
 
     /**
      * helper function to fix paths '//' or '/./' or '/foo/../' in a path.
