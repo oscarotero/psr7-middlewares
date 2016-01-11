@@ -105,11 +105,11 @@ $dispatcher = $relay->newInstance([
     //Detects the format
     Middleware::formatNegotiator(),
 
-    //Execute fast route
-    Middleware::fastRoute($app->get('dispatcher')),
-
     //Adds the php debug bar
     Middleware::debugBar(),
+
+    //Execute fast route
+    Middleware::fastRoute($app->get('dispatcher')),
 
     //Add Google Analytics
     Middleware::googleAnalytics('UA-XXXXX-X'),
@@ -419,7 +419,9 @@ $dispatcher = $relay->getInstance([
 
 ### DebugBar
 
-Inserts the [PHP debug bar](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses.
+Inserts the [PHP debug bar](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses. 
+
+Because this middleware serves also the debugbar assets (css, js and fonts), it must be added before the router to avoid 404 responses.
 
 ```php
 use Psr7Middlewares\Middleware;

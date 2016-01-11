@@ -65,6 +65,29 @@ class DebugBar
             throw new RuntimeException('This middleware needs FormatNegotiator executed before');
         }
 
+        $renderer = $this->debugBar->getJavascriptRenderer();
+
+        //Is an asset?
+        $path = $request->getUri()->getPath();
+        $renderPath = $renderer->getBaseUrl();
+
+        if (strpos($path, $renderPath) === 0) {
+            $file = $renderer->getBasePath().substr($path, strlen($renderPath));
+
+            if (file_exists($file)) {
+                $body = Middleware::createStream();
+                $body->write(file_get_contents($file));
+
+                return $response->withBody($body);
+            }
+        }
+
+        $response = $next($request, $response);
+
+        //Fix the render baseUrl
+        $renderPath = Utils\Helpers::joinPath(BasePath::getBasePath($request), $renderer->getBaseUrl());
+        $renderer->setBaseUrl($renderPath);
+
         $ajax = Utils\Helpers::isAjax($request);
 
         //Redirection response
@@ -75,20 +98,11 @@ class DebugBar
 
         //Html response
         } elseif (FormatNegotiator::getFormat($request) === 'html') {
-            $renderer = $this->debugBar->getJavascriptRenderer();
+            if (!$ajax) {
+                $response = $this->inject($response, $renderer->renderHead(), 'head');
+            }
 
-            ob_start();
-            echo '<style>';
-            $renderer->dumpCssAssets();
-            echo '</style>';
-
-            echo '<script>';
-            $renderer->dumpJsAssets();
-            echo '</script>';
-
-            echo $renderer->render(!$ajax);
-
-            $response = $this->inject($response, ob_get_clean());
+            $response = $this->inject($response, $renderer->render(!$ajax), 'body');
 
         //Ajax response
         } elseif ($ajax && $this->captureAjax) {
@@ -99,6 +113,6 @@ class DebugBar
             }
         }
 
-        return $next($request, $response);
+        return $response;
     }
 }
