@@ -134,6 +134,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Csp](#csp)
 * [Csrf](#csrf)
 * [DebugBar](#debugbar)
+* [Delay](#delay)
 * [DetectDevice](#detectdevice)
 * [DigestAuthentication](#digestauthentication)
 * [EncodingNegotiator](#encodingnegotiator)
@@ -435,6 +436,21 @@ $dispatcher = $relay->getInstance([
 
     Middleware::DebugBar($debugBar) //(optional) Own instance of debugbar
         ->captureAjax(true)         //(optional) To send data in headers in ajax
+]);
+```
+
+### Delay
+
+Delays the response to simulate slow bandwidth in local environments. You can use a number or an array to generate random values in seconds.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::delay(3.5),      //delay the response 3.5 seconds
+
+    Middleware::delay([1, 2.5]), //delay the response between 1 and 1.5 seconds
 ]);
 ```
 
