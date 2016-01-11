@@ -290,8 +290,7 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::BasicAuthentication()
-        ->users([
+    Middleware::BasicAuthentication([
             'username1' => 'password1',
             'username2' => 'password2'
         ])
@@ -508,8 +507,7 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::DigestAuthentication()
-        ->users([
+    Middleware::DigestAuthentication([
             'username1' => 'password1',
             'username2' => 'password2'
         ])
