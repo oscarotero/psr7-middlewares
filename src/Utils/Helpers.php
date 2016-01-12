@@ -116,7 +116,7 @@ class Helpers
      * 
      * @return bool
      */
-    public static function hash_equals($a, $b)
+    public static function hashEquals($a, $b)
     {
         if (self::$hash_equals === null) {
             self::$hash_equals = function_exists('hash_equals');

@@ -6,6 +6,7 @@ use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 /**
  * Middleware to span protection using the honeypot technique.

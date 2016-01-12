@@ -21,8 +21,8 @@ trait CryptTrait
      */
     public function key($key)
     {
-        $this->key = self::HKDF($key, 'KeyForEncryption');
-        $this->authentication = self::HKDF($key, 'KeyForAuthentication');
+        $this->key = self::hkdf($key, 'KeyForEncryption');
+        $this->authentication = self::hkdf($key, 'KeyForAuthentication');
 
         return $this;
     }
@@ -66,7 +66,7 @@ trait CryptTrait
         $cipher = mb_substr($decoded, 48, null, '8bit');
         $calculated = hash_hmac('sha256', $iv.$cipher, $this->authentication, true);
 
-        if (Helpers::hash_equals($hmac, $calculated)) {
+        if (Helpers::hashEquals($hmac, $calculated)) {
             $value = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->key, $cipher, 'ctr', $iv), "\0");
 
             return json_decode($value, true);
@@ -82,7 +82,7 @@ trait CryptTrait
      * 
      * @return string
      */
-    private static function HKDF($ikm, $info = '')
+    private static function hkdf($ikm, $info = '')
     {
         $salt = str_repeat("\x00", 32);
         $prk = hash_hmac('sha256', $ikm, $salt, true);

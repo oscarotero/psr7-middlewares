@@ -64,8 +64,6 @@ class Csrf
                 .'<input type="text" name="'.$this->formIndex.'" value="'.htmlentities($index, ENT_QUOTES, 'UTF-8').'">'
                 .'<input type="text" name="'.$this->formToken.'" value="'.htmlentities($token, ENT_QUOTES, 'UTF-8').'">';
         });
-
-        return $response;
     }
 
     /**
@@ -132,13 +130,13 @@ class Csrf
 
         $lockTo = $request->getUri()->getPath();
 
-        if (!Utils\Helpers::hash_equals($lockTo, $stored['lockTo'])) {
+        if (!Utils\Helpers::hashEquals($lockTo, $stored['lockTo'])) {
             return false;
         }
 
         $expected = self::encode(hash_hmac('sha256', ClientIp::getIp($request), base64_decode($stored['token']), true));
 
-        return Utils\Helpers::hash_equals($token, $expected);
+        return Utils\Helpers::hashEquals($token, $expected);
     }
 
     /**

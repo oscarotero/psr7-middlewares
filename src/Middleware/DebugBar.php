@@ -8,6 +8,7 @@ use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 /**
  * Middleware to render a debugbar in html responses.

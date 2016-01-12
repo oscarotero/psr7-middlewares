@@ -6,6 +6,7 @@ use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr7Middlewares\Utils;
+use RuntimeException;
 
 class Piwik
 {
@@ -74,12 +75,11 @@ class Piwik
     /**
      * Add an option.
      *
-     * @param string $name
-     *                     ...
+     * ...
      *
      * @return self
      */
-    public function addOption($name)
+    public function addOption()
     {
         $this->options[] = func_get_args();
 

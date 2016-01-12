@@ -7,6 +7,7 @@ use Psr7Middlewares\Utils;
 use Psr7Middlewares\Transformers;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
 
 /**
  * Middleware to gzip encode the response body.
