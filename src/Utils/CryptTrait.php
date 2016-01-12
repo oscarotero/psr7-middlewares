@@ -87,12 +87,13 @@ trait CryptTrait
         $salt = str_repeat("\x00", 32);
         $prk = hash_hmac('sha256', $ikm, $salt, true);
 
-        $t = '';
-        $last_block = '';
+        $t = $last_block = '';
+        $length = 0;
 
-        for ($block_index = 1; mb_strlen($t, '8bit') < 16; ++$block_index) {
+        for ($block_index = 1; $length < 16; ++$block_index) {
             $last_block = hash_hmac('sha256', $last_block.$info.chr($block_index), $prk, true);
             $t .= $last_block;
+            $length = mb_strlen($t, '8bit');
         }
 
         return mb_substr($t, 0, 16, '8bit');
