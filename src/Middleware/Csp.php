@@ -33,8 +33,6 @@ class Csp
         }
 
         $this->csp = new CSPBuilder($policies);
-
-        return $this;
     }
 
     /**

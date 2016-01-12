@@ -31,14 +31,10 @@ class ImageTransformer
      * ].
      * 
      * @param array $sizes
-     * 
-     * @return self
      */
     public function __construct(array $sizes)
     {
         $this->sizes = $sizes;
-
-        return $this;
     }
 
     /**

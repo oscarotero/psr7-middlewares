@@ -73,9 +73,10 @@ class ErrorHandler
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
+        ob_start();
+        $level = ob_get_level();
+
         try {
-            ob_start();
-            $level = ob_get_level();
             $response = $next($request, $response);
         } catch (\Exception $exception) {
             if (!$this->catchExceptions) {
