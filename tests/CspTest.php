@@ -10,7 +10,7 @@ class CspTest extends Base
             [
                 null,
                 true,
-                "frame-ancestors: 'self'; object-src: 'self'; script-src: 'self'; ",
+                "frame-ancestors 'self'; object-src 'self'; script-src 'self'; ",
             ],
             [
                 [
@@ -18,7 +18,7 @@ class CspTest extends Base
                     'report-uri' => '/csp_violation_reporting_endpoint',
                 ],
                 true,
-                "default-src: 'self'; report-uri /csp_violation_reporting_endpoint; ",
+                "default-src 'self'; report-uri /csp_violation_reporting_endpoint; ",
             ],
         ];
     }
