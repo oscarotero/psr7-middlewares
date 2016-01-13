@@ -43,7 +43,7 @@ class Csrf
     private $sessionIndex = 'CSRF';
 
     /**
-     * Set the storage of the CSRF
+     * Set the storage of the CSRF.
      * 
      * @param array|ArrayAccess|null $storage
      */

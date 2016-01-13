@@ -109,7 +109,7 @@ class Helpers
 
     /**
      * Very short timing attack safe string comparison for PHP < 5.6
-     * http://php.net/manual/en/function.hash-equals.php#118384
+     * http://php.net/manual/en/function.hash-equals.php#118384.
      * 
      * @param string $a
      * @param string $b
@@ -126,6 +126,6 @@ class Helpers
             return hash_equals($a, $b);
         }
 
-        return substr_count($a ^ $b, "\0") * 2 === strlen($a . $b);
+        return substr_count($a ^ $b, "\0") * 2 === strlen($a.$b);
     }
 }
