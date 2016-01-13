@@ -417,13 +417,12 @@ $dispatcher = $relay->getInstance([
 ### Csrf
 
 To add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not.
-Currently this middleware needs a PHP Session actived so you can use [PhpSession](#phpsession) middleware before.
 
 ```php
 
 $dispatcher = $relay->getInstance([
 
-    //used to open a PHP session before
+    //(optional) Used to open a PHP session before
     Middleware::phpSession(),
 
     //required to get the format of the request (only executed in html requests)
@@ -432,7 +431,7 @@ $dispatcher = $relay->getInstance([
     //required to get the user ip
     Middleware::ClientIp(),
 
-    Middleware::Csrf()
+    Middleware::Csrf($storage)  //(optional) array or ArrayAccess used to store the CSRF tokens. If it's not defined use $_SESSION.
 ]);
 ```
 
