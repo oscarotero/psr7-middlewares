@@ -114,7 +114,7 @@ class Csrf
      * @param ServerRequestInterface $request
      * @param string                 $lockTo
      *
-     * @return array
+     * @return string
      */
     private function generateTokens(ServerRequestInterface $request, $lockTo)
     {
