@@ -112,6 +112,6 @@ class Uuid
         $args = $this->version;
         $fn = 'uuid'.array_shift($args);
 
-        return call_user_func_array('Rhumsaa\Uuid\Uuid::'.$fn, $args);
+        return call_user_func_array('Ramsey\Uuid\Uuid::'.$fn, $args);
     }
 }
