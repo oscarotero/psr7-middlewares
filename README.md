@@ -1037,7 +1037,7 @@ $dispatcher = $relay->getInstance([
 
 ### Uuid
 
-Uses [ramsey/uuid](https://github.com/ramsey/uuid) to generate an Uuid (Universally Unique Identifiers) for each request (compatible with [RFC 4122](http://tools.ietf.org/html/rfc4122) versions 1, 3, 4 and 5). It's usefull for debugging purposes.
+Uses [ramsey/uuid (3.x)](https://github.com/ramsey/uuid) to generate an Uuid (Universally Unique Identifiers) for each request (compatible with [RFC 4122](http://tools.ietf.org/html/rfc4122) versions 1, 3, 4 and 5). It's usefull for debugging purposes.
 
 ```php
 use Psr7Middlewares\Middleware;
