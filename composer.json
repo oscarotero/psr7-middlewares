@@ -31,7 +31,7 @@
 		"m6web/firewall": "~1.0",
 		"mrclay/minify": "^2.2",
 		"matthiasmullie/scrapbook": "^1.0",
-		"ramsey/uuid": "^2.8",
+		"ramsey/uuid": "^3.1",
 		"neomerx/cors-psr7": "^0.2.0",
 		"maximebf/debugbar": "~1.11",
 		"mobiledetect/mobiledetectlib": "^2.8",
