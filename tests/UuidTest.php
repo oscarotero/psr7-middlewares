@@ -1,7 +1,7 @@
 <?php
 
 use Psr7Middlewares\Middleware;
-use Rhumsaa\Uuid\Uuid;
+use Ramsey\Uuid\Uuid;
 
 class UuidTest extends Base
 {
