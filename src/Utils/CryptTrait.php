@@ -36,7 +36,7 @@ trait CryptTrait
      */
     private function encrypt($value)
     {
-        $this->testKey();
+        $this->checkKey();
 
         $iv = mcrypt_create_iv(16, MCRYPT_DEV_URANDOM);
         $cipher = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->key, json_encode($value), 'ctr', $iv);
@@ -54,7 +54,7 @@ trait CryptTrait
      */
     private function decrypt($value)
     {
-        $this->testKey();
+        $this->checkKey();
 
         $decoded = base64_decode($value);
         $hmac = mb_substr($decoded, 0, 32, '8bit');
@@ -70,11 +70,11 @@ trait CryptTrait
     }
 
     /**
-     * Test whether the key exists or not.
+     * Check whether the key exists or not.
      * 
      * @throws RuntimeException
      */
-    private function testKey()
+    private function checkKey()
     {
         if (empty($this->key) || empty($this->authentication)) {
             $key = $this->secureRandomKey();
