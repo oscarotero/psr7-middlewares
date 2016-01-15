@@ -15,7 +15,7 @@ trait CryptTrait
     /**
      * Set the keys to encrypt and authenticate.
      * 
-     * @param string $key
+     * @param string $key The binary key
      *
      * @return self
      */
@@ -36,9 +36,7 @@ trait CryptTrait
      */
     private function encrypt($value)
     {
-        if (empty($this->key) || empty($this->authentication)) {
-            throw new RuntimeException('No crypt keys provided');
-        }
+        $this->testKey();
 
         $iv = mcrypt_create_iv(16, MCRYPT_DEV_URANDOM);
         $cipher = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $this->key, json_encode($value), 'ctr', $iv);
@@ -56,9 +54,7 @@ trait CryptTrait
      */
     private function decrypt($value)
     {
-        if (empty($this->key) || empty($this->authentication)) {
-            throw new RuntimeException('No crypt keys provided');
-        }
+        $this->testKey();
 
         $decoded = base64_decode($value);
         $hmac = mb_substr($decoded, 0, 32, '8bit');
@@ -70,6 +66,44 @@ trait CryptTrait
             $value = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->key, $cipher, 'ctr', $iv), "\0");
 
             return json_decode($value, true);
+        }
+    }
+
+    /**
+     * Test whether the key exists or not.
+     * 
+     * @throws RuntimeException
+     */
+    private function testKey()
+    {
+        if (empty($this->key) || empty($this->authentication)) {
+            $key = $this->secureRandomKey();
+            $message = 'No binary key provided to encrypt/decrypt data.';
+
+            if ($key) {
+                $message .= sprintf(" For example: base64_decode('%s')", base64_encode($key));
+            }
+
+            throw new RuntimeException($message);
+        }
+    }
+
+    /**
+     * Generate a secure random key.
+     * 
+     * @return string|null
+     */
+    private static function secureRandomKey()
+    {
+        if (!function_exists('openssl_random_pseudo_bytes')) {
+            return;
+        }
+
+        $secure = false;
+        $random = openssl_random_pseudo_bytes(16, $secure);
+
+        if ($secure) {
+            return $random;
         }
     }
 
