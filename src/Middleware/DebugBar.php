@@ -2,12 +2,9 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use DebugBar\DebugBar as Bar;
-use DebugBar\StandardDebugBar;
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use DebugBar\{DebugBar as Bar, StandardDebugBar};
+use Psr7Middlewares\{Middleware, Utils};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 
 /**
@@ -44,7 +41,7 @@ class DebugBar
      * 
      * @return self
      */
-    public function captureAjax($captureAjax = true)
+    public function captureAjax(bool $captureAjax = true): self
     {
         $this->captureAjax = $captureAjax;
 
@@ -60,7 +57,7 @@ class DebugBar
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('This middleware needs FormatNegotiator executed before');

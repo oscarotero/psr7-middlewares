@@ -5,8 +5,7 @@ namespace Psr7Middlewares\Middleware;
 use RuntimeException;
 use Psr7Middlewares\Middleware;
 use M6Web\Component\Firewall\Firewall as IpFirewall;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 /**
  * Middleware to filter request by ip.
@@ -40,7 +39,7 @@ class Firewall
      *
      * @return self
      */
-    public function trusted(array $trusted)
+    public function trusted(array $trusted): self
     {
         $this->trusted = $trusted;
 
@@ -52,7 +51,7 @@ class Firewall
      *
      * @return self
      */
-    public function untrusted(array $untrusted)
+    public function untrusted(array $untrusted): self
     {
         $this->untrusted = $untrusted;
 
@@ -68,7 +67,7 @@ class Firewall
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('Firewall middleware needs ClientIp executed before');

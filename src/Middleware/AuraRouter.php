@@ -2,12 +2,9 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
-use Aura\Router\RouterContainer;
-use Aura\Router\Route;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Utils, Middleware};
+use Aura\Router\{RouterContainer, Route};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 class AuraRouter
 {
@@ -51,7 +48,7 @@ class AuraRouter
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $matcher = $this->router->getMatcher();
         $route = $matcher->match($request);

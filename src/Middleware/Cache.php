@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Utils, Middleware};
+use Psr\Http\Message\{RequestInterface, ResponseInterface};
 use Psr\Cache\CacheItemPoolInterface;
 use Datetime;
 
@@ -40,7 +38,7 @@ class Cache
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $item = $this->cache->getItem(self::getCacheKey($request));
 
@@ -111,7 +109,7 @@ class Cache
      *
      * @return string
      */
-    private function getCacheKey(RequestInterface $request)
+    private function getCacheKey(RequestInterface $request): string
     {
         return $request->getMethod().md5((string) $request->getUri());
     }

@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Utils, Middleware};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use Imagecow\Image;
 use RuntimeException;
 use Exception;
@@ -46,7 +44,7 @@ class ImageTransformer
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');
@@ -79,7 +77,7 @@ class ImageTransformer
      * 
      * @return ResponseInterface
      */
-    private function transform(ResponseInterface $response, $transform)
+    private function transform(ResponseInterface $response, string $transform): ResponseInterface
     {
         $image = Image::createFromString((string) $response->getBody());
         $image->transform($transform);
@@ -101,7 +99,7 @@ class ImageTransformer
      * 
      * @return null|array [file, transform]
      */
-    private function parsePath($path)
+    private function parsePath(string $path)
     {
         $info = pathinfo($path);
 

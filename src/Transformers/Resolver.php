@@ -15,7 +15,7 @@ abstract class Resolver implements ResolverInterface
      * @param string   $id
      * @param callable $resolver
      */
-    public function add($id, callable $resolver)
+    public function add(string $id, callable $resolver)
     {
         $this->transformers[$id] = $resolver;
     }
@@ -27,7 +27,7 @@ abstract class Resolver implements ResolverInterface
      * 
      * @return callable|null
      */
-    public function resolve($id)
+    public function resolve(string $id)
     {
         if (isset($this->transformers[$id])) {
             return $this->transformers[$id];

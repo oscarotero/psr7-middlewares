@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{RequestInterface, ResponseInterface};
 
 /**
  * Middleware to block robots search engine.
@@ -20,7 +19,7 @@ class Robots
      * 
      * @param bool $allow
      */
-    public function __construct($allow = false)
+    public function __construct(bool $allow = false)
     {
         $this->allow = $allow;
     }
@@ -34,7 +33,7 @@ class Robots
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if ($request->getUri()->getPath() === '/robots.txt') {
             $body = Middleware::createStream();

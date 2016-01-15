@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Middleware, Utils};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 use ReCaptcha\ReCaptcha as GoogleRecaptcha;
 
@@ -21,7 +19,7 @@ class Recaptcha
      *
      * @param string $secret
      */
-    public function __construct($secret)
+    public function __construct(string $secret)
     {
         $this->secret = $secret;
     }
@@ -35,7 +33,7 @@ class Recaptcha
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('Recaptcha middleware needs ClientIp executed before');
@@ -45,7 +43,7 @@ class Recaptcha
             $recaptcha = new GoogleRecaptcha($this->secret);
 
             $data = $request->getParsedBody();
-            $res = $recaptcha->verify(isset($data['g-recaptcha-response']) ? $data['g-recaptcha-response'] : '', ClientIp::getIp($request));
+            $res = $recaptcha->verify($data['g-recaptcha-response'] ?? '', ClientIp::getIp($request));
 
             if (!$res->isSuccess()) {
                 return $response->withStatus(403);

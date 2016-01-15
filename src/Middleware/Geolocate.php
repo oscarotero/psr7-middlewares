@@ -2,15 +2,16 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Geocoder\Geocoder;
-use Geocoder\ProviderAggregator;
-use Geocoder\Provider\FreeGeoIp;
-use Geocoder\Model\AddressCollection;
-use Ivory\HttpAdapter\FopenHttpAdapter;
 use RuntimeException;
+use Psr7Middlewares\Middleware;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
+use Ivory\HttpAdapter\FopenHttpAdapter;
+use Geocoder\{
+    Geocoder,
+    ProviderAggregator,
+    Provider\FreeGeoIp,
+    Model\AddressCollection
+};
 
 /**
  * Middleware to geolocate the client using the ip.
@@ -60,7 +61,7 @@ class Geolocate
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('Geolocate middleware needs ClientIp executed before');

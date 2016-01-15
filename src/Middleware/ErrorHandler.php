@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Utils, Middleware};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 /**
  * Middleware to handle php errors and exceptions.
@@ -55,7 +53,7 @@ class ErrorHandler
      *
      * @return self
      */
-    public function catchExceptions($catch = true)
+    public function catchExceptions(bool $catch = true): self
     {
         $this->catchExceptions = (boolean) $catch;
 
@@ -71,7 +69,7 @@ class ErrorHandler
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         ob_start();
         $level = ob_get_level();
@@ -96,7 +94,7 @@ class ErrorHandler
         return $response;
     }
 
-    public static function defaultHandler(ServerRequestInterface $request, ResponseInterface $response)
+    public static function defaultHandler(ServerRequestInterface $request, ResponseInterface $response): string
     {
         $exception = self::getException($request);
 

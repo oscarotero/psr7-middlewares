@@ -19,7 +19,7 @@ class Helpers
      *
      * @return string
      */
-    public static function fixPath($path)
+    public static function fixPath(string $path): string
     {
         $path = str_replace('\\', '/', $path); //windows paths
         $replace = ['#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#'];
@@ -39,7 +39,7 @@ class Helpers
      * 
      * @return string
      */
-    public static function joinPath()
+    public static function joinPath(): string
     {
         return self::fixPath(implode('/', func_get_args()));
     }
@@ -51,7 +51,7 @@ class Helpers
      * 
      * @return bool
      */
-    public static function isAjax(RequestInterface $request)
+    public static function isAjax(RequestInterface $request): bool
     {
         return strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest';
     }
@@ -63,7 +63,7 @@ class Helpers
      * 
      * @return bool
      */
-    public static function isPost(RequestInterface $request)
+    public static function isPost(RequestInterface $request): bool
     {
         switch (strtoupper($request->getMethod())) {
             case 'GET':
@@ -84,7 +84,7 @@ class Helpers
      * 
      * @return bool
      */
-    public static function isRedirect(ResponseInterface $response)
+    public static function isRedirect(ResponseInterface $response): bool
     {
         return in_array($response->getStatusCode(), [302, 301]);
     }
@@ -96,7 +96,7 @@ class Helpers
      * 
      * @return string
      */
-    public static function getOutput($level)
+    public static function getOutput(int $level): string
     {
         $output = '';
 
@@ -105,27 +105,5 @@ class Helpers
         }
 
         return $output;
-    }
-
-    /**
-     * Very short timing attack safe string comparison for PHP < 5.6
-     * http://php.net/manual/en/function.hash-equals.php#118384.
-     * 
-     * @param string $a
-     * @param string $b
-     * 
-     * @return bool
-     */
-    public static function hashEquals($a, $b)
-    {
-        if (self::$hash_equals === null) {
-            self::$hash_equals = function_exists('hash_equals');
-        }
-
-        if (self::$hash_equals) {
-            return hash_equals($a, $b);
-        }
-
-        return substr_count($a ^ $b, "\0") * 2 === strlen($a.$b);
     }
 }

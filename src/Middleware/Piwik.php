@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr7Middlewares\Utils;
+use Psr7Middlewares\{Middleware, Utils};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 
 class Piwik
@@ -32,7 +30,7 @@ class Piwik
      *
      * @param string $piwikUrl
      */
-    public function __construct($piwikUrl = null)
+    public function __construct(string $piwikUrl = null)
     {
         if ($piwikUrl !== null) {
             $this->piwikUrl($piwikUrl);
@@ -46,7 +44,7 @@ class Piwik
      *
      * @return self
      */
-    public function siteId($siteId)
+    public function siteId(int $siteId): self
     {
         $this->siteId = $siteId;
 
@@ -60,7 +58,7 @@ class Piwik
      *
      * @return self
      */
-    public function piwikUrl($url)
+    public function piwikUrl(string $url): self
     {
         $this->piwikUrl = (string) $url;
 
@@ -79,9 +77,9 @@ class Piwik
      *
      * @return self
      */
-    public function addOption()
+    public function addOption(string ...$args): self
     {
-        $this->options[] = func_get_args();
+        $this->options[] = $args;
 
         return $this;
     }
@@ -95,7 +93,7 @@ class Piwik
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('The Piwik middleware needs FormatNegotiator executed before');
@@ -113,7 +111,7 @@ class Piwik
      * 
      * @return string
      */
-    private function getCode()
+    private function getCode(): string
     {
         $_paq = '';
 

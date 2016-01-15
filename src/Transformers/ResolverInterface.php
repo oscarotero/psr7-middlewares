@@ -12,5 +12,5 @@ interface ResolverInterface
      * 
      * @return callable|null
      */
-    public function resolve($id);
+    public function resolve(string $id);
 }

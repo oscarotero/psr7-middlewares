@@ -22,7 +22,7 @@ class Encoder extends Resolver
      * 
      * @return ResponseInterface
      */
-    public static function gzip(ResponseInterface $response)
+    public static function gzip(ResponseInterface $response): ResponseInterface
     {
         $stream = Middleware::createStream();
         $stream->write(gzencode((string) $response->getBody()));
@@ -39,7 +39,7 @@ class Encoder extends Resolver
      * 
      * @return ResponseInterface
      */
-    public static function deflate(ResponseInterface $response)
+    public static function deflate(ResponseInterface $response): ResponseInterface
     {
         $stream = Middleware::createStream();
         $stream->write(gzdeflate((string) $response->getBody()));

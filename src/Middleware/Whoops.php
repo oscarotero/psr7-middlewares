@@ -3,12 +3,9 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use Whoops\Run;
-use Whoops\Handler\PrettyPageHandler;
-use Whoops\Handler\PlainTextHandler;
-use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\{PrettyPageHandler, PlainTextHandler, JsonResponseHandler};
 
 /**
  * Middleware to use whoops as error handler.
@@ -42,7 +39,7 @@ class Whoops
      *
      * @return self
      */
-    public function catchErrors($catchErrors = true)
+    public function catchErrors(bool $catchErrors = true): self
     {
         $this->catchErrors = (bool) $catchErrors;
 
@@ -58,7 +55,7 @@ class Whoops
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $whoops = $this->getWhoopsInstance($request);
 
@@ -93,7 +90,7 @@ class Whoops
      *
      * @return Run
      */
-    private function getWhoopsInstance(ServerRequestInterface $request)
+    private function getWhoopsInstance(ServerRequestInterface $request): Run
     {
         if ($this->whoops) {
             return $this->whoops;

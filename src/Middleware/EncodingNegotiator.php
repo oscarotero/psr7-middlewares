@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Middleware, Utils};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use Negotiation\EncodingNegotiator as Negotiator;
 
 /**
@@ -56,7 +54,7 @@ class EncodingNegotiator
      *
      * @return self
      */
-    public function encodings(array $encodings)
+    public function encodings(array $encodings): self
     {
         $this->encodings = $encodings;
 
@@ -72,7 +70,7 @@ class EncodingNegotiator
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $encoding = $this->negotiateHeader($request->getHeaderLine('Accept-Encoding'), new Negotiator(), $this->encodings);
 

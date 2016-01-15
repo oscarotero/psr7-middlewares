@@ -19,7 +19,7 @@ trait CryptTrait
      *
      * @return self
      */
-    public function key($key)
+    public function key(string $key): self
     {
         $this->key = self::hkdf($key, 'KeyForEncryption');
         $this->authentication = self::hkdf($key, 'KeyForAuthentication');
@@ -34,7 +34,7 @@ trait CryptTrait
      * 
      * @return string
      */
-    private function encrypt($value)
+    private function encrypt(string $value): string
     {
         $this->checkKey();
 
@@ -52,7 +52,7 @@ trait CryptTrait
      * 
      * @return string
      */
-    private function decrypt($value)
+    private function decrypt(string $value): string
     {
         $this->checkKey();
 
@@ -62,7 +62,7 @@ trait CryptTrait
         $cipher = mb_substr($decoded, 48, null, '8bit');
         $calculated = hash_hmac('sha256', $iv.$cipher, $this->authentication, true);
 
-        if (Helpers::hashEquals($hmac, $calculated)) {
+        if (hash_equals($hmac, $calculated)) {
             $value = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $this->key, $cipher, 'ctr', $iv), "\0");
 
             return json_decode($value, true);
@@ -77,33 +77,7 @@ trait CryptTrait
     private function checkKey()
     {
         if (empty($this->key) || empty($this->authentication)) {
-            $key = $this->secureRandomKey();
-            $message = 'No binary key provided to encrypt/decrypt data.';
-
-            if ($key) {
-                $message .= sprintf(" For example: base64_decode('%s')", base64_encode($key));
-            }
-
-            throw new RuntimeException($message);
-        }
-    }
-
-    /**
-     * Generate a secure random key.
-     * 
-     * @return string|null
-     */
-    private static function secureRandomKey()
-    {
-        if (!function_exists('openssl_random_pseudo_bytes')) {
-            return;
-        }
-
-        $secure = false;
-        $random = openssl_random_pseudo_bytes(16, $secure);
-
-        if ($secure) {
-            return $random;
+            throw new RuntimeException(sprintf("No binary key provided to encrypt/decrypt data. For example: base64_decode('%s')", base64_encode(random_bytes(16))));
         }
     }
 
@@ -116,7 +90,7 @@ trait CryptTrait
      * 
      * @return string
      */
-    private static function hkdf($ikm, $info = '')
+    private static function hkdf($ikm, $info = ''): string
     {
         $salt = str_repeat("\x00", 32);
         $prk = hash_hmac('sha256', $ikm, $salt, true);

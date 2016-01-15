@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{RequestInterface, ResponseInterface};
 
 /**
  * Middleware to create basic http authentication.
@@ -22,7 +21,7 @@ class BasicAuthentication
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $authorization = self::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
 
@@ -43,7 +42,7 @@ class BasicAuthentication
      *
      * @return bool
      */
-    private function checkUserPassword($username, $password)
+    private function checkUserPassword(string $username, string $password): bool
     {
         if (!isset($this->users[$username]) || $this->users[$username] !== $password) {
             return false;
@@ -59,7 +58,7 @@ class BasicAuthentication
      *
      * @return false|array
      */
-    private static function parseAuthorizationHeader($header)
+    private static function parseAuthorizationHeader(string $header)
     {
         if (strpos($header, 'Basic') !== 0) {
             return false;
@@ -69,7 +68,7 @@ class BasicAuthentication
 
         return [
             'username' => $header[0],
-            'password' => isset($header[1]) ? $header[1] : null,
+            'password' => $header[1] ?? null,
         ];
     }
 }

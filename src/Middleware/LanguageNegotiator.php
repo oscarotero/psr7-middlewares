@@ -2,11 +2,9 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
+use Psr7Middlewares\{Middleware, Utils};
 use Negotiation\LanguageNegotiator as Negotiator;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 /**
  * Middleware returns the client preferred language.
@@ -35,29 +33,13 @@ class LanguageNegotiator
     }
 
     /**
-     * Constructor. Defines de available languages.
+     * Defines de available languages.
      *
      * @param array $languages
      */
     public function __construct(array $languages = null)
     {
-        if ($languages !== null) {
-            $this->languages($languages);
-        }
-    }
-
-    /**
-     * Configure the available languages.
-     *
-     * @param array $languages
-     *
-     * @return self
-     */
-    public function languages(array $languages)
-    {
         $this->languages = $languages;
-
-        return $this;
     }
 
     /**
@@ -69,12 +51,12 @@ class LanguageNegotiator
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $language = $this->negotiateHeader($request->getHeaderLine('Accept-Language'), new Negotiator(), $this->languages);
 
         if (empty($language)) {
-            $language = isset($this->languages[0]) ? $this->languages[0] : null;
+            $language = $this->languages[0] ?? null;
         }
 
         $request = Middleware::setAttribute($request, self::KEY, $language);

@@ -2,12 +2,13 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Neomerx\Cors\Analyzer;
-use Neomerx\Cors\Contracts\AnalysisResultInterface;
-use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
-use Neomerx\Cors\Strategies\Settings;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
+use Neomerx\Cors\{
+    Analyzer,
+    Contracts\AnalysisResultInterface,
+    Contracts\Strategies\SettingsStrategyInterface,
+    Strategies\Settings
+};
 
 /**
  * Middleware to implement Cors.
@@ -38,7 +39,7 @@ class Cors
      * 
      * @return self
      */
-    public function origin($origin)
+    public function origin($origin): self
     {
         $this->settings->setServerOrigin($origin);
 
@@ -54,7 +55,7 @@ class Cors
      * 
      * @return self
      */
-    public function allowedOrigins(array $origins)
+    public function allowedOrigins(array $origins): self
     {
         $this->settings->setRequestAllowedOrigins($origins);
 
@@ -72,7 +73,7 @@ class Cors
      * 
      * @return self
      */
-    public function allowedMethods(array $methods, $force = false)
+    public function allowedMethods(array $methods, bool $force = false): self
     {
         $this->settings->setRequestAllowedMethods($methods);
         $this->settings->setForceAddAllowedMethodsToPreFlightResponse($force);
@@ -91,7 +92,7 @@ class Cors
      * 
      * @return self
      */
-    public function allowedHeaders(array $headers, $force = false)
+    public function allowedHeaders(array $headers, bool $force = false): self
     {
         $this->settings->setRequestAllowedHeaders($headers);
         $this->settings->setForceAddAllowedHeadersToPreFlightResponse($force);
@@ -108,7 +109,7 @@ class Cors
      * 
      * @return self
      */
-    public function exposedHeaders(array $headers)
+    public function exposedHeaders(array $headers): self
     {
         $this->settings->setResponseExposedHeaders($headers);
 
@@ -124,7 +125,7 @@ class Cors
      * 
      * @return self
      */
-    public function allowCredentials($allow = true)
+    public function allowCredentials(bool $allow = true): self
     {
         $this->settings->setRequestCredentialsSupported($allow);
 
@@ -140,7 +141,7 @@ class Cors
      * 
      * @return self
      */
-    public function maxAge($maxAge)
+    public function maxAge(int $maxAge): self
     {
         $this->settings->setPreFlightCacheMaxAge($maxAge);
 
@@ -156,7 +157,7 @@ class Cors
      * 
      * @return self
      */
-    public function checkHost($checkHost = true)
+    public function checkHost(bool $checkHost = true): self
     {
         $this->settings->setCheckHost($checkHost);
 
@@ -172,7 +173,7 @@ class Cors
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $cors = Analyzer::instance($this->settings)->analyze($request);
 

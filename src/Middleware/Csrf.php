@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Middleware, Utils};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 use ArrayAccess;
 
@@ -67,7 +65,7 @@ class Csrf
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('Csrf middleware needs FormatNegotiator executed before');
@@ -116,7 +114,7 @@ class Csrf
      *
      * @return string
      */
-    private function generateTokens(ServerRequestInterface $request, $lockTo)
+    private function generateTokens(ServerRequestInterface $request, string $lockTo): string
     {
         $index = self::encode(random_bytes(18));
         $token = self::encode(random_bytes(32));
@@ -143,7 +141,7 @@ class Csrf
      *
      * @return bool
      */
-    private function validateRequest(ServerRequestInterface $request)
+    private function validateRequest(ServerRequestInterface $request): bool
     {
         $data = $request->getParsedBody();
 
@@ -163,13 +161,13 @@ class Csrf
 
         $lockTo = $request->getUri()->getPath();
 
-        if (!Utils\Helpers::hashEquals($lockTo, $stored['lockTo'])) {
+        if (!hash_equals($lockTo, $stored['lockTo'])) {
             return false;
         }
 
         $expected = self::encode(hash_hmac('sha256', ClientIp::getIp($request), base64_decode($stored['token']), true));
 
-        return Utils\Helpers::hashEquals($token, $expected);
+        return hash_equals($token, $expected);
     }
 
     /**
@@ -199,7 +197,7 @@ class Csrf
      *
      * @return string
      */
-    private static function encode($value)
+    private static function encode(string $value): string
     {
         return rtrim(base64_encode($value), '=');
     }

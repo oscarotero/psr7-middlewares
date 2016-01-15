@@ -21,7 +21,7 @@ trait FileTrait
      *
      * @param string $directory
      */
-    public function __construct($directory)
+    public function __construct(string $directory)
     {
         $this->directory = $directory;
     }
@@ -34,13 +34,13 @@ trait FileTrait
      *
      * @return string
      */
-    private function getFilename(RequestInterface $request, $indexExt = 'html')
+    private function getFilename(RequestInterface $request, string $indexExt = 'html'): string
     {
         $path = $this->getPath($request->getUri()->getPath());
 
         $parts = pathinfo($path);
-        $path = isset($parts['dirname']) ? $parts['dirname'] : '';
-        $filename = isset($parts['basename']) ? $parts['basename'] : '';
+        $path = $parts['dirname'] ?? '';
+        $filename = $parts['basename'] ?? '';
 
         //if it's a directory, append the index file
         if (empty($parts['extension'])) {

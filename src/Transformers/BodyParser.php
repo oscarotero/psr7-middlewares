@@ -26,7 +26,7 @@ class BodyParser extends Resolver
      * 
      * @return callable|null
      */
-    public function resolve($id)
+    public function resolve(string $id)
     {
         foreach ($this->transformers as $contentType => $transformer) {
             if (stripos($id, $contentType) === 0) {
@@ -42,7 +42,7 @@ class BodyParser extends Resolver
      * 
      * @return ServerRequestInterface
      */
-    public function json(ServerRequestInterface $request)
+    public function json(ServerRequestInterface $request): ServerRequestInterface
     {
         $data = json_decode((string) $request->getBody(), $this->associative);
 
@@ -56,7 +56,7 @@ class BodyParser extends Resolver
      * 
      * @return ServerRequestInterface
      */
-    public function urlencode(ServerRequestInterface $request)
+    public function urlencode(ServerRequestInterface $request): ServerRequestInterface
     {
         parse_str((string) $request->getBody(), $data);
 
@@ -70,7 +70,7 @@ class BodyParser extends Resolver
      * 
      * @return ServerRequestInterface
      */
-    public function csv(ServerRequestInterface $request)
+    public function csv(ServerRequestInterface $request): ServerRequestInterface
     {
         $body = $request->getBody();
 

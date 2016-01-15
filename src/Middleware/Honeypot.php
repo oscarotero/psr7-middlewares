@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Middleware, Utils};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 
 /**
@@ -32,7 +30,7 @@ class Honeypot
      * 
      * @return self
      */
-    public function inputName($inputName)
+    public function inputName(string $inputName): self
     {
         $this->inputName = $inputName;
 
@@ -46,7 +44,7 @@ class Honeypot
      * 
      * @return self
      */
-    public function inputClass($inputClass)
+    public function inputClass(string $inputClass): self
     {
         $this->inputClass = $inputClass;
 
@@ -62,7 +60,7 @@ class Honeypot
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('Honeypot middleware needs FormatNegotiator executed before');
@@ -90,7 +88,7 @@ class Honeypot
      * 
      * @return bool
      */
-    private function isValid(ServerRequestInterface $request)
+    private function isValid(ServerRequestInterface $request): bool
     {
         $data = $request->getParsedBody();
 

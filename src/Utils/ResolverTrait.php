@@ -21,7 +21,7 @@ trait ResolverTrait
      *
      * @return self
      */
-    public function resolver(ResolverInterface $resolver)
+    public function resolver(ResolverInterface $resolver): self
     {
         $this->resolver = $resolver;
 

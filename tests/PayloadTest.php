@@ -28,6 +28,7 @@ class PayloadTest extends Base
 
             function ($request, $response, $next) use ($result) {
                 $this->assertEquals($result, $request->getParsedBody());
+                return $next($request, $response);
             },
         ], $request, $this->response());
     }

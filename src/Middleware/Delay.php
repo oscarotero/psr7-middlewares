@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 /**
  * Middleware to simulate delay in responses.
@@ -32,7 +31,7 @@ class Delay
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $ms = $this->seconds;
 

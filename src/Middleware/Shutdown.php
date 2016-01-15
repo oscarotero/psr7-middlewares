@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Utils, Middleware};
+use Psr\Http\Message\{RequestInterface, ResponseInterface};
 
 /**
  * Middleware to display temporary 503 maintenance pages.
@@ -38,7 +36,7 @@ class Shutdown
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $response = $this->executeCallable($this->handler, $request, $response);
 

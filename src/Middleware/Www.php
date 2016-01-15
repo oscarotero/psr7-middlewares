@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{RequestInterface, ResponseInterface};
 
 /**
  * Middleware to redirect to force www subdomain or remove it.
@@ -23,7 +22,7 @@ class Www
      *
      * @param bool $addWww
      */
-    public function __construct($addWww = false)
+    public function __construct(bool $addWww = false)
     {
         $this->addWww = (boolean) $addWww;
     }
@@ -37,7 +36,7 @@ class Www
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $uri = $request->getUri();
         $host = $uri->getHost();
@@ -69,7 +68,7 @@ class Www
      *
      * @return bool
      */
-    private function canAddWww($host)
+    private function canAddWww(string $host): bool
     {
         if (empty($host) || filter_var($host, FILTER_VALIDATE_IP)) {
             return false;

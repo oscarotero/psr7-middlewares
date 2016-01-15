@@ -18,7 +18,7 @@ trait FormTrait
      * 
      * @return ResponseInterface
      */
-    private function insertIntoPostForms(ResponseInterface $response, callable $replace)
+    private function insertIntoPostForms(ResponseInterface $response, callable $replace): ResponseInterface
     {
         $html = (string) $response->getBody();
         $html = preg_replace_callback('/(<form\s[^>]*method=["\']?POST["\']?[^>]*>)/i', $replace, $html, -1, $count);

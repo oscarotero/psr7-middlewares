@@ -2,11 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr7Middlewares\Transformers;
+use Psr7Middlewares\{Utils, Middleware, Transformers};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 
 class Minify
@@ -26,7 +23,7 @@ class Minify
      *
      * @return self
      */
-    public function forCache($forCache = true)
+    public function forCache(bool $forCache = true): self
     {
         $this->forCache = $forCache;
 
@@ -42,7 +39,7 @@ class Minify
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if ($this->forCache && !self::isCacheable($request, $response)) {
             return $next($request, $response);

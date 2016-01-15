@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{RequestInterface, ResponseInterface};
 
 /**
  * Middleware to create a digest http authentication.
@@ -25,7 +24,7 @@ class DigestAuthentication
      *
      * @return self
      */
-    public function nonce($nonce)
+    public function nonce(string $nonce): self
     {
         $this->nonce = $nonce;
 
@@ -41,7 +40,7 @@ class DigestAuthentication
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if ($this->login($request)) {
             return $next($request, $response);
@@ -59,7 +58,7 @@ class DigestAuthentication
      *
      * @return bool
      */
-    private function login(RequestInterface $request)
+    private function login(RequestInterface $request): bool
     {
         //Check header
         $authorization = self::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
@@ -86,7 +85,7 @@ class DigestAuthentication
      *
      * @return bool
      */
-    private function checkAuthentication(array $authorization, $method, $password)
+    private function checkAuthentication(array $authorization, string $method, string $password): bool
     {
         $A1 = md5("{$authorization['username']}:{$this->realm}:{$password}");
         $A2 = md5("{$method}:{$authorization['uri']}");
@@ -103,7 +102,7 @@ class DigestAuthentication
      *
      * @return false|array
      */
-    private static function parseAuthorizationHeader($header)
+    private static function parseAuthorizationHeader(string $header)
     {
         if (strpos($header, 'Digest') !== 0) {
             return false;

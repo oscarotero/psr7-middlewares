@@ -29,7 +29,7 @@ class Middleware
      *
      * @return StreamInterface
      */
-    public static function createStream($file = 'php://temp', $mode = 'r+')
+    public static function createStream(string $file = 'php://temp', string $mode = 'r+'): StreamInterface
     {
         if (empty(self::$streamFactory)) {
             if (class_exists('Zend\\Diactoros\\Stream')) {
@@ -47,8 +47,10 @@ class Middleware
      *
      * @param string $name
      * @param array  $args
+     * 
+     * @return callable
      */
-    public static function __callStatic($name, $args)
+    public static function __callStatic(string $name, array $args): callable
     {
         $class = __NAMESPACE__.'\\Middleware\\'.ucfirst($name);
 
@@ -75,9 +77,9 @@ class Middleware
      * 
      * @return callable
      */
-    public static function create(callable $factory)
+    public static function create(callable $factory): callable
     {
-        return function (RequestInterface $request, ResponseInterface $response, callable $next) use ($factory) {
+        return function (RequestInterface $request, ResponseInterface $response, callable $next) use ($factory): ResponseInterface {
             $middleware = $factory($request, $response);
 
             if ($middleware === false) {
@@ -101,7 +103,7 @@ class Middleware
      *
      * @return ServerRequestInterface
      */
-    public static function setAttribute(ServerRequestInterface $request, $name, $value)
+    public static function setAttribute(ServerRequestInterface $request, string $name, $value): ServerRequestInterface
     {
         $attributes = $request->getAttribute(self::KEY, []);
         $attributes[$name] = $value;
@@ -117,13 +119,11 @@ class Middleware
      *
      * @return mixed
      */
-    public static function getAttribute(ServerRequestInterface $request, $name)
+    public static function getAttribute(ServerRequestInterface $request, string $name)
     {
         $attributes = $request->getAttribute(self::KEY);
 
-        if (isset($attributes[$name])) {
-            return $attributes[$name];
-        }
+        return $attributes[$name] ?? null;
     }
 
     /**
@@ -134,7 +134,7 @@ class Middleware
      *
      * @return bool
      */
-    public static function hasAttribute(ServerRequestInterface $request, $name)
+    public static function hasAttribute(ServerRequestInterface $request, string $name): bool
     {
         $attributes = $request->getAttribute(self::KEY);
 

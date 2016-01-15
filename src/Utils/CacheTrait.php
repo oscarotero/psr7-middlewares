@@ -18,7 +18,7 @@ trait CacheTrait
      *
      * @return bool
      */
-    private static function isCacheable(RequestInterface $request, ResponseInterface $response)
+    private static function isCacheable(RequestInterface $request, ResponseInterface $response): bool
     {
         if ($request->getMethod() !== 'GET') {
             return false;
@@ -45,7 +45,7 @@ trait CacheTrait
      *
      * @return array
      */
-    private static function parseCacheControl($header)
+    private static function parseCacheControl(string $header): array
     {
         if (empty($header)) {
             return [];

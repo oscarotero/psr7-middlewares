@@ -3,9 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\{RequestInterface, ResponseInterface, StreamInterface};
 use RuntimeException;
 
 /**
@@ -25,7 +23,7 @@ class SaveResponse
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $response = $next($request, $response);
 
@@ -53,7 +51,7 @@ class SaveResponse
      * @param StreamInterface $stream
      * @param string          $path
      */
-    private static function writeStream(StreamInterface $stream, $path)
+    private static function writeStream(StreamInterface $stream, string $path)
     {
         $dir = dirname($path);
 

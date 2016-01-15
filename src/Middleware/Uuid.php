@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 /**
  * Middleware to generate UUID on each request.
@@ -28,7 +27,7 @@ class Uuid
      *
      * @param ServerRequestInterface $request
      *
-     * @return \Rhumsaa\Uuid\Uuid|null
+     * @return \Ramsey\Uuid\Uuid|null
      */
     public static function getUuid(ServerRequestInterface $request)
     {
@@ -40,7 +39,7 @@ class Uuid
      *
      * @param int|null $version
      */
-    public function __construct($version = null)
+    public function __construct(int $version = null)
     {
         if ($version !== null) {
             call_user_func_array([$this, 'version'], func_get_args());
@@ -54,7 +53,7 @@ class Uuid
      *
      * @return self
      */
-    public function version($version)
+    public function version(int $version): self
     {
         if (!in_array($version, [1, 3, 4, 5])) {
             throw new \InvalidArgumentException('Only 1, 3, 4 and 5 versions are available');
@@ -73,7 +72,7 @@ class Uuid
      *
      * @return self
      */
-    public function header($header)
+    public function header($header): self
     {
         $this->header = $header;
 
@@ -89,7 +88,7 @@ class Uuid
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $uuid = $this->generateUuid();
 
@@ -107,7 +106,7 @@ class Uuid
      *
      * @return string
      */
-    private function generateUuid()
+    private function generateUuid(): string
     {
         $args = $this->version;
         $fn = 'uuid'.array_shift($args);

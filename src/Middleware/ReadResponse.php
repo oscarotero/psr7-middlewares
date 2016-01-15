@@ -2,11 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
+use Psr7Middlewares\{Utils, Middleware};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface, StreamInterface};
 
 /**
  * Middleware to read the response.
@@ -24,7 +21,7 @@ class ReadResponse
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         //If basePath does not match
         if (!$this->testBasePath($request->getUri()->getPath())) {
@@ -67,7 +64,7 @@ class ReadResponse
      * @param string          $file
      * @param StreamInterface $body
      */
-    private static function readFile($file, StreamInterface $body)
+    private static function readFile(string $file, StreamInterface $body)
     {
         if (filesize($file) <= 4096) {
             $body->write(file_get_contents($file));
@@ -92,7 +89,7 @@ class ReadResponse
      * 
      * @return ResponseInterface
      */
-    private static function range(ServerRequestInterface $request, ResponseInterface $response)
+    private static function range(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $response = $response->withHeader('Accept-Ranges', 'bytes');
 
@@ -122,7 +119,7 @@ class ReadResponse
      *
      * @return false|array [first, last]
      */
-    private static function parseRangeHeader($header)
+    private static function parseRangeHeader(string $header)
     {
         if (preg_match('/bytes=(?P<first>\d+)-(?P<last>\d+)?/', $header, $matches)) {
             return [

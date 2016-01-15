@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Utils;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Middleware, Utils};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use Negotiation\Negotiator;
 
 /**
@@ -73,7 +71,7 @@ class FormatNegotiator
      *
      * @return self
      */
-    public function addFormat($format, array $mimeTypes)
+    public function addFormat(string $format, array $mimeTypes): self
     {
         $this->formats[$format] = $mimeTypes;
 
@@ -87,7 +85,7 @@ class FormatNegotiator
      *
      * @return self
      */
-    public function defaultFormat($format)
+    public function defaultFormat(string $format): self
     {
         $this->default = $format;
 
@@ -103,7 +101,7 @@ class FormatNegotiator
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $format = $this->getFromExtension($request) ?: $this->getFromHeader($request) ?: $this->default;
 

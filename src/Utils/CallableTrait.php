@@ -19,7 +19,7 @@ trait CallableTrait
      *
      * @return self
      */
-    public function arguments()
+    public function arguments(): self
     {
         $this->arguments = func_get_args();
 
@@ -35,7 +35,7 @@ trait CallableTrait
      *
      * @return ResponseInterface
      */
-    private function executeCallable($target, RequestInterface $request, ResponseInterface $response)
+    private function executeCallable($target, RequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         ob_start();
         $level = ob_get_level();
@@ -74,7 +74,7 @@ trait CallableTrait
      *
      * @return callable
      */
-    private static function getCallable($target, array $construct_args)
+    private static function getCallable($target, array $construct_args): callable
     {
         if (empty($target)) {
             throw new RuntimeException('No callable provided');

@@ -2,11 +2,10 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Psr7Middlewares\Middleware;
+use Psr\Log\LoggerInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 class AccessLog
 {
@@ -37,7 +36,7 @@ class AccessLog
      *
      * @return self
      */
-    public function combined($combined = true)
+    public function combined(bool $combined = true): self
     {
         $this->combined = $combined;
 
@@ -53,7 +52,7 @@ class AccessLog
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('AccessLog middleware needs ClientIp executed before');
@@ -81,7 +80,7 @@ class AccessLog
      * 
      * @return string
      */
-    private static function commonFormat(ServerRequestInterface $request, ResponseInterface $response)
+    private static function commonFormat(ServerRequestInterface $request, ResponseInterface $response): string
     {
         return sprintf('%s %s [%s] "%s %s %s/%s" %d %d',
             ClientIp::getIp($request),
@@ -105,7 +104,7 @@ class AccessLog
      * 
      * @return string
      */
-    private static function combinedFormat(ServerRequestInterface $request, ResponseInterface $response)
+    private static function combinedFormat(ServerRequestInterface $request, ResponseInterface $response): string
     {
         return sprintf('%s "%s" "%s"',
             self::commonFormat($request, $response),

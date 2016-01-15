@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{RequestInterface, ResponseInterface};
 
 /**
  * Middleware to add or remove the trailing slash.
@@ -24,7 +23,7 @@ class TrailingSlash
      *
      * @param bool $addSlash
      */
-    public function __construct($addSlash = false)
+    public function __construct(bool $addSlash = false)
     {
         $this->addSlash = (boolean) $addSlash;
     }
@@ -38,7 +37,7 @@ class TrailingSlash
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $uri = $request->getUri();
         $path = $uri->getPath();

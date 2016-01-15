@@ -3,10 +3,8 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Aura\Session\SessionFactory;
-use Aura\Session\Session;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Aura\Session\{SessionFactory, Session};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 class AuraSession
 {
@@ -51,7 +49,7 @@ class AuraSession
      *
      * @return self
      */
-    public function name($name)
+    public function name(string $name): self
     {
         $this->name = $name;
 
@@ -67,7 +65,7 @@ class AuraSession
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $session = $this->factory->newInstance($request->getCookieParams());
 

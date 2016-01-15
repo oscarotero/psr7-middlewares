@@ -27,7 +27,7 @@ trait AuthenticationTrait
      *
      * @return self
      */
-    public function realm($realm)
+    public function realm(string $realm): self
     {
         $this->realm = $realm;
 

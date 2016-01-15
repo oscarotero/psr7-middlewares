@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr7Middlewares\Utils;
+use Psr7Middlewares\{Middleware, Utils};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 
 class GoogleAnalytics
@@ -22,9 +20,9 @@ class GoogleAnalytics
      *
      * @param string $siteId
      */
-    public function __construct($siteId)
+    public function __construct(string $siteId)
     {
-        $this->siteId = (string) $siteId;
+        $this->siteId = $siteId;
     }
 
     /**
@@ -36,7 +34,7 @@ class GoogleAnalytics
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('The GoogleAnalytics middleware needs FormatNegotiator executed before');
@@ -55,7 +53,7 @@ class GoogleAnalytics
      * 
      * @return string
      */
-    private function getCode()
+    private function getCode(): string
     {
         return <<<GA
 <script>

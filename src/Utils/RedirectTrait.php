@@ -24,7 +24,7 @@ trait RedirectTrait
      * 
      * @return self
      */
-    public function redirect($redirectStatus = 302)
+    public function redirect(int $redirectStatus = 302): self
     {
         if (!in_array($redirectStatus, [301, 302], true)) {
             throw new InvalidArgumentException('The redirect status code must be 301 or 302');
@@ -41,8 +41,10 @@ trait RedirectTrait
      * @param int               $redirectStatus
      * @param UriInterface      $uri
      * @param ResponseInterface $response
+     * 
+     * @return ResponseInterface
      */
-    private static function getRedirectResponse($redirectStatus, UriInterface $uri, ResponseInterface $response)
+    private static function getRedirectResponse(int $redirectStatus, UriInterface $uri, ResponseInterface $response): ResponseInterface
     {
         return $response
             ->withStatus($redirectStatus)

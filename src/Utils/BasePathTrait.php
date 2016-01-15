@@ -16,7 +16,7 @@ trait BasePathTrait
      *
      * @return self
      */
-    public function basePath($basePath)
+    public function basePath(string $basePath): self
     {
         if (strlen($basePath) > 1 && substr($basePath, -1) === '/') {
             $this->basePath = substr($basePath, 0, -1);
@@ -34,7 +34,7 @@ trait BasePathTrait
      *
      * @return string
      */
-    private function getPath($path)
+    private function getPath(string $path): string
     {
         if ($this->testBasePath($path)) {
             return substr($path, strlen($this->basePath)) ?: '';
@@ -50,7 +50,7 @@ trait BasePathTrait
      *
      * @return bool
      */
-    private function testBasePath($path)
+    private function testBasePath(string $path): bool
     {
         if ($path === '') {
             $path = '/';

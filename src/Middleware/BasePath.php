@@ -2,10 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr7Middlewares\{Utils, Middleware};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 /**
  * Middleware to strip the path prefix.
@@ -38,7 +36,7 @@ class BasePath
      *
      * @param string|null $basePath
      */
-    public function __construct($basePath = null)
+    public function __construct(string $basePath = null)
     {
         if ($basePath !== null) {
             $this->basePath($basePath);
@@ -52,7 +50,7 @@ class BasePath
      * 
      * @return self
      */
-    public function autodetect($autodetect = true)
+    public function autodetect($autodetect = true): self
     {
         $this->autodetect = $autodetect;
 
@@ -68,7 +66,7 @@ class BasePath
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if ($this->autodetect) {
             $this->basePath(Utils\Helpers::joinPath(self::detectBasePath($request), $this->basePath));
@@ -96,14 +94,14 @@ class BasePath
      *
      * @return string
      */
-    private static function detectBasePath(ServerRequestInterface $request)
+    private static function detectBasePath(ServerRequestInterface $request): string
     {
         $server = $request->getServerParams();
 
-        $filename = isset($server['SCRIPT_FILENAME']) ? $server['SCRIPT_FILENAME'] : '';
-        $scriptName = isset($server['SCRIPT_NAME']) ? $server['SCRIPT_NAME'] : null;
-        $phpSelf = isset($server['PHP_SELF']) ? $server['PHP_SELF'] : null;
-        $origScriptName = isset($server['ORIG_SCRIPT_NAME']) ? $server['ORIG_SCRIPT_NAME'] : null;
+        $filename = $server['SCRIPT_FILENAME'] ?? '';
+        $scriptName = $server['SCRIPT_NAME'] ?? null;
+        $phpSelf = $server['PHP_SELF'] ?? null;
+        $origScriptName = $server['ORIG_SCRIPT_NAME'] ?? null;
 
         if ($scriptName !== null && basename($scriptName) === $filename) {
             $baseUrl = $scriptName;

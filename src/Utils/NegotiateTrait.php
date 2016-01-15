@@ -18,7 +18,7 @@ trait NegotiateTrait
      *
      * @return string|null
      */
-    private function negotiateHeader($accept, AbstractNegotiator $negotiator, array $priorities)
+    private function negotiateHeader(string $accept, AbstractNegotiator $negotiator, array $priorities)
     {
         if (empty($accept) || empty($priorities)) {
             return;

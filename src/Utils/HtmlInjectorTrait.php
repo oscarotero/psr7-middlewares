@@ -19,7 +19,7 @@ trait HtmlInjectorTrait
      * 
      * @return ResponseInterface
      */
-    private function inject(ResponseInterface $response, $code, $tag = 'body')
+    private function inject(ResponseInterface $response, string $code, string $tag = 'body'): ResponseInterface
     {
         $html = (string) $response->getBody();
         $pos = strripos($html, "</{$tag}>");

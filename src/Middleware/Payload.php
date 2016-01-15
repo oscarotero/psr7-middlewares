@@ -2,11 +2,8 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
-use Psr7Middlewares\Transformers;
-use Psr7Middlewares\Utils;
+use Psr7Middlewares\{Middleware, Utils, Transformers};
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 /**
  * Middleware to parse the body.
@@ -24,7 +21,7 @@ class Payload
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (!$request->getParsedBody() && in_array($request->getMethod(), ['POST', 'PUT', 'DELETE'], true)) {
             $resolver = $this->resolver ?: new Transformers\BodyParser();

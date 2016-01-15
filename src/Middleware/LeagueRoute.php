@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use League\Route\RouteCollection;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 class LeagueRoute
 {
@@ -32,7 +31,7 @@ class LeagueRoute
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         return $next($request, $this->router->dispatch($request, $response));
     }

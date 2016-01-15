@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 
 /**
  * Middleware returns the client ip.
@@ -53,7 +52,7 @@ class ClientIp
     {
         $ips = self::getIps($request);
 
-        return isset($ips[0]) ? $ips[0] : null;
+        return $ips[0] ?? null;
     }
 
     /**
@@ -75,7 +74,7 @@ class ClientIp
      *
      * @return self
      */
-    public function headers(array $headers)
+    public function headers(array $headers): self
     {
         $this->headers = $headers;
 
@@ -90,7 +89,7 @@ class ClientIp
      *
      * @return self
      */
-    public function remote($remote = true)
+    public function remote(bool $remote = true): self
     {
         $this->remote = $remote;
 
@@ -106,7 +105,7 @@ class ClientIp
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $request = Middleware::setAttribute($request, self::KEY, $this->scanIps($request));
 
@@ -120,7 +119,7 @@ class ClientIp
      *
      * @return array
      */
-    private function scanIps(ServerRequestInterface $request)
+    private function scanIps(ServerRequestInterface $request): array
     {
         $server = $request->getServerParams();
         $ips = [];

@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 
 /**
@@ -41,7 +40,7 @@ class PhpSession
      *
      * @return self
      */
-    public function name($name)
+    public function name(string $name): self
     {
         $this->name = $name;
 
@@ -55,7 +54,7 @@ class PhpSession
      *
      * @return self
      */
-    public function id($id)
+    public function id(string $id): self
     {
         $this->id = $id;
 
@@ -71,7 +70,7 @@ class PhpSession
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if (session_status() === PHP_SESSION_DISABLED) {
             throw new RuntimeException('PHP sessions are disabled');

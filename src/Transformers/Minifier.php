@@ -26,7 +26,7 @@ class Minifier extends Resolver
      * 
      * @return ResponseInterface
      */
-    public static function js(ResponseInterface $response)
+    public static function js(ResponseInterface $response): ResponseInterface
     {
         $stream = Middleware::createStream();
         $stream->write(JSMinPlus::minify((string) $response->getBody()));
@@ -41,7 +41,7 @@ class Minifier extends Resolver
      * 
      * @return ResponseInterface
      */
-    public static function css(ResponseInterface $response)
+    public static function css(ResponseInterface $response): ResponseInterface
     {
         $stream = Middleware::createStream();
         $stream->write((new CSSmin())->run((string) $response->getBody()));
@@ -56,7 +56,7 @@ class Minifier extends Resolver
      * 
      * @return ResponseInterface
      */
-    public static function html(ResponseInterface $response)
+    public static function html(ResponseInterface $response): ResponseInterface
     {
         $stream = Middleware::createStream();
         $stream->write(Minify_HTML::minify((string) $response->getBody(), ['jsCleanComments' => true]));

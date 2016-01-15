@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use RuntimeException;
 
 /**
@@ -15,7 +14,7 @@ class BlockSpam
     private $spammers;
     private $list;
 
-    public function __construct($spammers = null)
+    public function __construct(string $spammers = null)
     {
         if ($spammers === null) {
             $spammers = __DIR__.'/../../../../vendor/piwik/referrer-spam-blacklist/spammers.txt';
@@ -33,7 +32,7 @@ class BlockSpam
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         if ($this->list === null) {
             if (!is_file($this->spammers)) {

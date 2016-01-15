@@ -3,8 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
 use ParagonIE\CSPBuilder\CSPBuilder;
 
 /**
@@ -43,7 +42,7 @@ class Csp
      * 
      * @return self
      */
-    public function addSource($directive, $path)
+    public function addSource(string $directive, string $path): self
     {
         $this->csp->addSource($directive, $path);
 
@@ -59,7 +58,7 @@ class Csp
      * 
      * @return self
      */
-    public function addDirective($directive, $value)
+    public function addDirective(string $directive, $value): self
     {
         $this->csp->addDirective($directive, $value);
 
@@ -73,7 +72,7 @@ class Csp
      * 
      * @return self
      */
-    public function supportOldBrowsers($support = true)
+    public function supportOldBrowsers(bool $support = true): self
     {
         if ($support) {
             $this->csp->enableOldBrowserSupport();
@@ -93,7 +92,7 @@ class Csp
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $this->csp->compile();
 

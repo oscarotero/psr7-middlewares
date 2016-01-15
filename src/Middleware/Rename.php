@@ -2,8 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\{RequestInterface, ResponseInterface};
 
 /**
  * Middleware to rename the uri path.
@@ -34,7 +33,7 @@ class Rename
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
         $uri = $request->getUri();
         $path = $uri->getPath();

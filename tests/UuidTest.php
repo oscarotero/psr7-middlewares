@@ -12,7 +12,7 @@ class UuidTest extends Base
                 Middleware::Uuid(),
                 function ($request, $response, $next) {
                     $this->assertRegExp('/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/', $request->getHeaderLine('X-Uuid'));
-                    $next($request, $response);
+                    return $next($request, $response);
                 },
             ]
         );
@@ -25,7 +25,7 @@ class UuidTest extends Base
                 Middleware::Uuid(3, Uuid::NAMESPACE_DNS, 'oscarotero.com'),
                 function ($request, $response, $next) {
                     $this->assertRegExp('/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/', $request->getHeaderLine('X-Uuid'));
-                    $next($request, $response);
+                    return $next($request, $response);
                 },
             ]
         );
@@ -38,7 +38,7 @@ class UuidTest extends Base
                 Middleware::Uuid(4),
                 function ($request, $response, $next) {
                     $this->assertRegExp('/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/', $request->getHeaderLine('X-Uuid'));
-                    $next($request, $response);
+                    return $next($request, $response);
                 },
             ]
         );
@@ -51,7 +51,7 @@ class UuidTest extends Base
                 Middleware::Uuid(5, Uuid::NAMESPACE_DNS, 'oscarotero.com'),
                 function ($request, $response, $next) {
                     $this->assertRegExp('/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}/', $request->getHeaderLine('X-Uuid'));
-                    $next($request, $response);
+                    return $next($request, $response);
                 },
             ]
         );
