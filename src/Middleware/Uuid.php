@@ -28,7 +28,7 @@ class Uuid
      *
      * @param ServerRequestInterface $request
      *
-     * @return \Rhumsaa\Uuid\Uuid|null
+     * @return \Ramsey\Uuid\Uuid|null
      */
     public static function getUuid(ServerRequestInterface $request)
     {
