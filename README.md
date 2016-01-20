@@ -739,9 +739,11 @@ $dispatcher = $relay->getInstance([
 
 ### ImageTransformer
 
-Uses [imagecow/imagecow](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
+Uses [imagecow/imagecow 2.x](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
 
 To resize or crop images on demand, use the size as filename prefix. For example, to get the "small" value of the image `avatars/users.png`, the path is: `avatars/small.user.png`.
+
+There's also support for [Client hints](https://www.smashingmagazine.com/2016/01/leaner-responsive-images-client-hints/) to avoid to serve images larger than needed (currently supported only in chrome and opera).
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -757,6 +759,7 @@ $dispatcher = $relay->getInstance([
             'large' => 'resize,1000|format,jpg',
         ])
         ->basePath('/imgs')          // (optional) The base path of the images urls
+        ->clientHints(true)          // (optional) To enable the client hints headers
 
     //Used to read the image files and returns the response with them
     Middleware::readResponse()

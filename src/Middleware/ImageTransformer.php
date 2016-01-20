@@ -18,6 +18,11 @@ class ImageTransformer
     use Utils\BasePathTrait;
 
     /**
+     * @var array Enable client hints
+     */
+    protected $clientHints = false;
+
+    /**
      * @var array Available sizes
      */
     protected $sizes = [];
@@ -38,6 +43,20 @@ class ImageTransformer
     }
 
     /**
+     * Enable the client hints
+     * 
+     * @param bool $clientHints
+     * 
+     * @return self
+     */
+    public function clientHints($clientHints = true)
+    {
+        $this->clientHints = $clientHints;
+
+        return $this;
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -52,36 +71,70 @@ class ImageTransformer
             throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');
         }
 
-        //If it's not an image or basePath does not match or invalid transform values, don't do anything
-        if (!in_array(FormatNegotiator::getFormat($request), ['jpg', 'jpeg', 'gif', 'png']) || !$this->testBasePath($request->getUri()->getPath()) || !($info = $this->parsePath($request->getUri()->getPath()))) {
-            return $next($request, $response);
+        switch (FormatNegotiator::getFormat($request)) {
+            case 'html':
+                $response = $next($request, $response);
+
+                if ($this->clientHints) {
+                    return $response->withHeader('Accept-CH', 'DPR,Width,Viewport-Width');
+                }
+
+                return $response;
+
+            case 'jpg':
+            case 'jpeg':
+            case 'gif':
+            case 'png':
+                $path = $request->getUri()->getPath();
+
+                if (!$this->testBasePath($path)) {
+                    break;
+                }
+
+                $info = $this->parsePath($path);
+
+                if (!$info && !$this->clientHints) {
+                    break;
+                }
+
+                //Removes the transform from the path
+                list($path, $transform) = $info;
+                $request = $request->withUri($request->getUri()->withPath($path));
+
+                $response = $next($request, $response);
+
+                //Transform
+                if ($response->getStatusCode() === 200 && $response->getBody()->getSize()) {
+                    return $this->transform($request, $response, $transform);
+                }
+
+                return $response;
         }
 
-        list($path, $transform) = $info;
-        $uri = $request->getUri()->withPath($path);
-        $request = $request->withUri($uri);
-
-        $response = $next($request, $response);
-
-        //Check the response and transform the image
-        if ($transform && $response->getStatusCode() === 200 && $response->getBody()->getSize()) {
-            return $this->transform($response, $transform);
-        }
-
-        return $response;
+        return $next($request, $response);
     }
 
     /**
      * Transform the image.
      * 
-     * @param ResponseInterface $response
-     * @param string            $transform
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param string                 $transform
      * 
      * @return ResponseInterface
      */
-    private function transform(ResponseInterface $response, $transform)
+    private function transform(ServerRequestInterface $request, ResponseInterface $response, $transform)
     {
-        $image = Image::createFromString((string) $response->getBody());
+        $image = Image::fromString((string) $response->getBody());
+
+        if ($this->clientHints) {
+            $image->setClientHints([
+                'dpr' => $request->getHeaderLine('Dpr') ?: null,
+                'viewport-width' => $request->getHeaderLine('Viewport-Width') ?: null,
+                'width' => $request->getHeaderLine('Width') ?: null,
+            ]);
+        }
+
         $image->transform($transform);
 
         $body = Middleware::createStream();
