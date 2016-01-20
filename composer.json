@@ -42,7 +42,8 @@
 		"monolog/monolog": "^1.17",
 		"paragonie/csp-builder": "^1.2",
 		"google/recaptcha": "^1.1",
-		"piwik/referrer-spam-blacklist": "^1.0"
+		"piwik/referrer-spam-blacklist": "^1.0",
+		"micheh/psr7-cache": "^0.3.0"
 	},
 	"suggest": {
 		"aura/router": "To use AuraRouter",

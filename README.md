@@ -741,7 +741,7 @@ $dispatcher = $relay->getInstance([
 
 Uses [imagecow/imagecow 2.x](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
 
-To resize or crop images on demand, use the size as filename prefix. For example, to get the "small" value of the image `avatars/users.png`, the path is: `avatars/small.user.png`.
+To define the available sizes, you have to asign a filename prefix for this size, so any file requested with this prefix will be dinamically transformed.
 
 There's also support for [Client hints](https://www.smashingmagazine.com/2016/01/leaner-responsive-images-client-hints/) to avoid to serve images larger than needed (currently supported only in chrome and opera).
 
@@ -754,11 +754,10 @@ $dispatcher = $relay->getInstance([
     Middleware::formatNegotiator(),
 
     Middleware::imageTransformer([   // The available sizes of the images.
-            'small' => 'resizeCrop,50,50',
-            'medium' => 'resize,500|format,jpg',
-            'large' => 'resize,1000|format,jpg',
+            'small.' => 'resizeCrop,50,50', //Creates a 50x50 thumb of any image prefixed with "small." (example: /images/small.avatar.jpg)
+            'medium.' => 'resize,500|format,jpg', //Resize the image to 500px width
+            'pictures/large.' => 'resize,1000|format,jpg', //Transform only images inside "pictures" directory
         ])
-        ->basePath('/imgs')          // (optional) The base path of the images urls
         ->clientHints(true)          // (optional) To enable the client hints headers
 
     //Used to read the image files and returns the response with them

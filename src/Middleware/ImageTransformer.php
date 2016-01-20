@@ -15,8 +15,6 @@ use Exception;
  */
 class ImageTransformer
 {
-    use Utils\BasePathTrait;
-
     /**
      * @var array Enable client hints
      */
@@ -85,15 +83,9 @@ class ImageTransformer
             case 'jpeg':
             case 'gif':
             case 'png':
-                $path = $request->getUri()->getPath();
+                $info = $this->parsePath($request->getUri()->getPath());
 
-                if (!$this->testBasePath($path)) {
-                    break;
-                }
-
-                $info = $this->parsePath($path);
-
-                if (!$info && !$this->clientHints) {
+                if (!$info) {
                     break;
                 }
 
@@ -128,11 +120,19 @@ class ImageTransformer
         $image = Image::fromString((string) $response->getBody());
 
         if ($this->clientHints) {
-            $image->setClientHints([
-                'dpr' => $request->getHeaderLine('Dpr') ?: null,
-                'viewport-width' => $request->getHeaderLine('Viewport-Width') ?: null,
-                'width' => $request->getHeaderLine('Width') ?: null,
-            ]);
+            $hints = [];
+
+            foreach (['Dpr', 'Viewport-Width', 'Width'] as $name) {
+                if ($request->hasHeader($name)) {
+                    $hints[$name] = $request->getHeaderLine($name);
+                }
+            }
+
+            $image->setClientHints($hints);
+
+            if ($hints) {
+                $response = $response->withHeader('Vary', implode(', ', $hints));
+            }
         }
 
         $image->transform($transform);
@@ -152,27 +152,28 @@ class ImageTransformer
      * 
      * @param string $path
      * 
-     * @return null|array [file, transform]
+     * @return false|array [file, transform]
      */
     private function parsePath($path)
     {
         $info = pathinfo($path);
+        $file = $info['basename'];
+        $path = $info['dirname'];
 
-        try {
-            $pieces = explode('.', $info['filename'], 2);
-        } catch (Exception $e) {
-            return;
-        }
-
-        if (count($pieces) === 2) {
-            list($transform, $file) = $pieces;
-
-            //Check if the size is valid
-            if (!isset($this->sizes[$transform])) {
-                return;
+        foreach ($this->sizes as $pattern => $transform) {
+            if (strpos($pattern, '/') === false) {
+                $patternFile = $pattern;
+                $patternPath = '';
+            } else {
+                $patternFile = pathinfo($pattern, PATHINFO_BASENAME);
+                $patternPath = pathinfo($pattern, PATHINFO_BASENAME);
             }
 
-            return [Utils\Helpers::joinPath($info['dirname'], "{$file}.".$info['extension']), $this->sizes[$transform]];
+            if (substr($file, 0, strlen($patternFile)) === $patternFile && ($patternPath === '' || substr($path, -strlen($patternPath)) === $patternPath)) {
+                return [Utils\Helpers::joinPath($path, substr($file, strlen($patternFile))), $transform];
+            }
         }
+
+        return false;
     }
 }
