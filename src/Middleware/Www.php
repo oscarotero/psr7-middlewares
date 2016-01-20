@@ -75,7 +75,7 @@ class Www
             return false;
         }
 
-        $host = array_reverse(explode('.', $host));
+        $host = explode('.', $host);
 
         switch (count($host)) {
             case 1: //localhost
@@ -86,7 +86,7 @@ class Www
 
             case 3:
                 //example.co.uk
-                if ($host[1] === 'co') {
+                if (array_slice($host, -2, 1)[0] === 'co') {
                     return true;
                 }
 
