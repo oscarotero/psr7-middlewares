@@ -9,6 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Datetime;
 use Micheh\Cache\CacheUtil;
+use Micheh\Cache\Header\CacheControl;
 
 /**
  * Middleware to cache the response using Cache-Control and other directives.
@@ -28,14 +29,37 @@ class Cache
     private $cacheUtil;
 
     /**
+     * @var CacheControl
+     */
+    private $cacheControl;
+
+    /**
      * Set the psr-6 cache pool.
      *
-     * @param CacheItemPoolInterface|null $cache
+     * @param CacheItemPoolInterface $cache
      */
     public function __construct(CacheItemPoolInterface $cache)
     {
         $this->cache = $cache;
         $this->cacheUtil = new CacheUtil();
+    }
+
+    /**
+     * Set a cache-control header to all responses
+     * 
+     * @param string|CacheControl $cacheControl
+     * 
+     * @return self
+     */
+    public function cacheControl($cacheControl)
+    {
+        if (!($cacheControl instanceof CacheControl)) {
+            $cacheControl = CacheControl::fromString($cacheControl);
+        }
+
+        $this->cacheControl = $cacheControl;
+
+        return $this;
     }
 
     /**
@@ -67,6 +91,11 @@ class Cache
         }
 
         $response = $next($request, $response);
+
+        //Add cache-control header
+        if ($this->cacheControl && !$response->hasHeader('Cache-Control')) {
+            $response = $this->cacheUtil->withCacheControl($response, $this->cacheControl);
+        }
 
         //Save in the cache
         if ($this->cacheUtil->isCacheable($response)) {
