@@ -15,8 +15,6 @@ use Micheh\Cache\Header\CacheControl;
  */
 class Cache
 {
-    use Utils\CacheTrait;
-
     /**
      * @var CacheItemPoolInterface The cache implementation used
      */
