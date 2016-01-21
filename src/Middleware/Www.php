@@ -26,6 +26,7 @@ class Www
     public function __construct($addWww = false)
     {
         $this->addWww = (boolean) $addWww;
+        $this->redirect(301);
     }
 
     /**

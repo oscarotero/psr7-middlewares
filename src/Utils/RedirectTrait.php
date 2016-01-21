@@ -13,21 +13,21 @@ use InvalidArgumentException;
 trait RedirectTrait
 {
     /** 
-     * @var int Redirect HTTP status code
+     * @var int|false Redirect HTTP status code
      */
     private $redirectStatus;
 
     /**
      * Set HTTP redirect status code.
      *
-     * @param int $redirectStatus Redirect HTTP status code
+     * @param int|false $redirectStatus Redirect HTTP status code
      * 
      * @return self
      */
     public function redirect($redirectStatus = 302)
     {
-        if (!in_array($redirectStatus, [301, 302], true)) {
-            throw new InvalidArgumentException('The redirect status code must be 301 or 302');
+        if (!in_array($redirectStatus, [false, 301, 302], true)) {
+            throw new InvalidArgumentException('The redirect status code must be 301, 302 or false');
         }
 
         $this->redirectStatus = $redirectStatus;
