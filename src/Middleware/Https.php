@@ -25,9 +25,8 @@ class Https
      */
     private $includeSubdomains = false;
 
-
     /**
-     * Set basic config
+     * Set basic config.
      */
     public function __construct()
     {
@@ -35,7 +34,7 @@ class Https
     }
 
     /**
-     * Configure the max-age HSTS in seconds
+     * Configure the max-age HSTS in seconds.
      *
      * @param int $maxAge
      * 
@@ -49,7 +48,7 @@ class Https
     }
 
     /**
-     * Configure the includeSubDomains HSTS directive
+     * Configure the includeSubDomains HSTS directive.
      *
      * @param bool $includeSubdomains
      * 
@@ -80,7 +79,7 @@ class Https
         }
 
         if (!empty($this->maxAge)) {
-            $response = $response->withHeader(self::HEADER, sprintf("max-age=%d%s", $this->maxAge, $this->includeSubdomains ? ';includeSubDomains' : ''));
+            $response = $response->withHeader(self::HEADER, sprintf('max-age=%d%s', $this->maxAge, $this->includeSubdomains ? ';includeSubDomains' : ''));
         }
 
         return $next($request, $response);

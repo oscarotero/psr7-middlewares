@@ -64,7 +64,8 @@
 		"psr/cache-implementation": "To use Cache",
 		"paragonie/csp-builder": "To use Csp",
 		"google/recaptcha": "To use Recaptcha",
-		"piwik/referrer-spam-blacklist": "To use BlockSpam"
+		"piwik/referrer-spam-blacklist": "To use BlockSpam",
+		"micheh/psr7-cache": "To use Cache"
 	},
 	"autoload": {
 		"psr-4": {
