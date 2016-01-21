@@ -4,6 +4,8 @@
 [![Build Status](https://travis-ci.org/oscarotero/psr7-middlewares.svg)](https://travis-ci.org/oscarotero/psr7-middlewares)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/oscarotero/psr7-middlewares/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/oscarotero/psr7-middlewares/?branch=master)
 
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/0d91152f-1308-4709-b834-ea048afee7da/big.png)](https://insight.sensiolabs.com/projects/0d91152f-1308-4709-b834-ea048afee7da)
+
 Collection of [PSR-7](http://www.php-fig.org/psr/psr-7/) middlewares.
 
 ## Requirements
@@ -105,11 +107,11 @@ $dispatcher = $relay->newInstance([
     //Detects the format
     Middleware::formatNegotiator(),
 
-    //Execute fast route
-    Middleware::fastRoute($app->get('dispatcher')),
-
     //Adds the php debug bar
     Middleware::debugBar(),
+
+    //Execute fast route
+    Middleware::fastRoute($app->get('dispatcher')),
 
     //Add Google Analytics
     Middleware::googleAnalytics('UA-XXXXX-X'),
@@ -128,12 +130,14 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [AuraSession](#aurasession)
 * [BasePath](#basepath)
 * [BasicAuthentication](#basicauthentication)
+* [BlockSpam](#blockspam)
 * [Cache](#cache)
 * [ClientIp](#clientip)
 * [Cors](#cors)
 * [Csp](#csp)
 * [Csrf](#csrf)
 * [DebugBar](#debugbar)
+* [Delay](#delay)
 * [DetectDevice](#detectdevice)
 * [DigestAuthentication](#digestauthentication)
 * [EncodingNegotiator](#encodingnegotiator)
@@ -288,12 +292,24 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::BasicAuthentication()
-        ->users([
+    Middleware::BasicAuthentication([
             'username1' => 'password1',
             'username2' => 'password2'
         ])
         ->realm('My realm') //(optional) change the realm value
+]);
+```
+
+### BlockSpam
+
+To block referral spam usin the [piwik/referrer-spam-blacklist](https://github.com/piwik/referrer-spam-blacklist) list
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::BlockSpam('spammers.txt'), //(optional) to set a custom spammers list instead the piwik's list
 ]);
 ```
 
@@ -400,26 +416,30 @@ $dispatcher = $relay->getInstance([
 
 ### Csrf
 
-To use the [paragonie/anti-csrf](https://github.com/paragonie/anti-csrf) library to add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not.
-Currently this middleware needs a PHP Session actived so you can use [PhpSession](#phpsession) middleware before:
+To add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not.
 
 ```php
 
 $dispatcher = $relay->getInstance([
 
-    //used to open a PHP session before
+    //(optional) Used to open a PHP session before
     Middleware::phpSession(),
 
     //required to get the format of the request (only executed in html requests)
     Middleware::FormatNegotiator(),
 
-    Middleware::Csrf()
+    //required to get the user ip
+    Middleware::ClientIp(),
+
+    Middleware::Csrf($storage)  //(optional) array or ArrayAccess used to store the CSRF tokens. If it's not defined use $_SESSION.
 ]);
 ```
 
 ### DebugBar
 
-Inserts the [PHP debug bar](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses.
+Inserts the [PHP debug bar](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses. 
+
+Because this middleware serves also the debugbar assets (css, js and fonts), it must be added before the router to avoid 404 responses.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -433,6 +453,21 @@ $dispatcher = $relay->getInstance([
 
     Middleware::DebugBar($debugBar) //(optional) Own instance of debugbar
         ->captureAjax(true)         //(optional) To send data in headers in ajax
+]);
+```
+
+### Delay
+
+Delays the response to simulate slow bandwidth in local environments. You can use a number or an array to generate random values in seconds.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::delay(3.5),      //delay the response 3.5 seconds
+
+    Middleware::delay([1, 2.5]), //delay the response between 1 and 1.5 seconds
 ]);
 ```
 
@@ -476,8 +511,7 @@ use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::DigestAuthentication()
-        ->users([
+    Middleware::DigestAuthentication([
             'username1' => 'password1',
             'username2' => 'password2'
         ])
@@ -617,10 +651,10 @@ $dispatcher = $relay->getInstance([
     Middleware::FormatNegotiator(),
 
     Middleware::FormTimestamp()
+        ->key('my-secret-key'),   //Key used to encrypt/decrypt the input value.
         ->min(5)                  //(optional) Minimum seconds needed to validate the request (default: 3)
         ->max(3600)               //(optional) Life of the form in second. Default is 0 (no limit)
         ->inputName('time-token') //(optional) Name of the input (default: hpt_time)
-        ->key('my-secret-key'),   //(optional but recomended) Key used to encrypt/decrypt the input value. If it's not defined, the value wont be encrypted
 ]);
 ```
 
@@ -705,7 +739,11 @@ $dispatcher = $relay->getInstance([
 
 ### ImageTransformer
 
-Uses [imagecow/imagecow](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other format. You can specify a predefined sizes using [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions).
+Uses [imagecow/imagecow 2.x](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
+
+To define the available sizes, you have to asign a filename prefix for this size, so any file requested with this prefix will be dinamically transformed.
+
+There's also support for [Client hints](https://www.smashingmagazine.com/2016/01/leaner-responsive-images-client-hints/) to avoid to serve images larger than needed (currently supported only in chrome and opera).
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -715,35 +753,18 @@ $dispatcher = $relay->getInstance([
     //required to get the format of the request
     Middleware::formatNegotiator(),
 
-    Middleware::imageTransformer()
-        ->basePath('/imgs')          // (optional) The base path of the images urls
+    Middleware::imageTransformer([   // The available sizes of the images.
+            'small.' => 'resizeCrop,50,50', //Creates a 50x50 thumb of any image prefixed with "small." (example: /images/small.avatar.jpg)
+            'medium.' => 'resize,500|format,jpg', //Resize the image to 500px width
+            'pictures/large.' => 'resize,1000|format,jpg', //Transform only images inside "pictures" directory
+        ])
+        ->clientHints(true)          // (optional) To enable the client hints headers
 
     //Used to read the image files and returns the response with them
     Middleware::readResponse()
         ->storage('/path/to/images'),
 ]);
 ```
-
-To resize or crop images on demand, use the following syntax: `[directory]/[transform].[filename]`. For example, to resize and crop the image `avatars/users.png` to 50x50px, the path is: `avatars/resizeCrop,50,50.user.png`. Because this method allows to generate unlimited images using random values, you can specify a list of named transform values:
-
-```php
-use Psr7Middlewares\Middleware;
-
-$dispatcher = $relay->getInstance([
-    Middleware::formatNegotiator(),
-
-    Middleware::imageTransformer()
-        ->sizes([
-            'small' => 'resizeCrop,50,50',
-            'medium' => 'resize,500|format,jpg',
-            'large' => 'resize,1000|format,jpg',
-        ]), //(optional) The predefined sizes of the images.
-
-    Middleware::readResponse('/path/to/images')
-]);
-```
-
-Now, to get the 50x50 thumb, you have to use `avatars/small.user.png`. Any other value different to these predefined sizes returns a 404 response.
 
 ### LanguageNegotiation
 
@@ -1018,7 +1039,7 @@ $dispatcher = $relay->getInstance([
 
 ### Uuid
 
-Uses [ramsey/uuid](https://github.com/ramsey/uuid) to generate an Uuid (Universally Unique Identifiers) for each request (compatible with [RFC 4122](http://tools.ietf.org/html/rfc4122) versions 1, 3, 4 and 5). It's usefull for debugging purposes.
+Uses [ramsey/uuid (3.x)](https://github.com/ramsey/uuid) to generate an Uuid (Universally Unique Identifiers) for each request (compatible with [RFC 4122](http://tools.ietf.org/html/rfc4122) versions 1, 3, 4 and 5). It's usefull for debugging purposes.
 
 ```php
 use Psr7Middlewares\Middleware;

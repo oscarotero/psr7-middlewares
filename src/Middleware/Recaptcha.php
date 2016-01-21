@@ -7,11 +7,10 @@ use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use Exception;
 use ReCaptcha\ReCaptcha as GoogleRecaptcha;
 
 /**
- * Middleware to include google recaptcha protection
+ * Middleware to include google recaptcha protection.
  */
 class Recaptcha
 {
@@ -44,7 +43,7 @@ class Recaptcha
 
         if (Utils\Helpers::isPost($request)) {
             $recaptcha = new GoogleRecaptcha($this->secret);
-            
+
             $data = $request->getParsedBody();
             $res = $recaptcha->verify(isset($data['g-recaptcha-response']) ? $data['g-recaptcha-response'] : '', ClientIp::getIp($request));
 

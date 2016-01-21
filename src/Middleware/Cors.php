@@ -30,7 +30,7 @@ class Cors
     }
 
     /**
-     * Set the server origin
+     * Set the server origin.
      * 
      * @see Neomerx\Cors\Contracts\Strategies::setServerOrigin
      * 
@@ -46,7 +46,7 @@ class Cors
     }
 
     /**
-     * Set allowed origins
+     * Set allowed origins.
      * 
      * @see Neomerx\Cors\Contracts\Strategies::setRequestAllowedOrigins
      * 
@@ -62,7 +62,7 @@ class Cors
     }
 
     /**
-     * Set allowed methods
+     * Set allowed methods.
      * 
      * @see Neomerx\Cors\Contracts\Strategies::setRequestAllowedMethods
      * @see Neomerx\Cors\Contracts\Strategies::setForceAddAllowedMethodsToPreFlightResponse
@@ -81,7 +81,7 @@ class Cors
     }
 
     /**
-     * Set allowed headers
+     * Set allowed headers.
      * 
      * @see Neomerx\Cors\Contracts\Strategies::setRequestAllowedHeaders
      * @see Neomerx\Cors\Contracts\Strategies::setForceAddAllowedHeadersToPreFlightResponse
@@ -100,7 +100,7 @@ class Cors
     }
 
     /**
-     * Set headers other than the simple ones that might be exposed to user agent
+     * Set headers other than the simple ones that might be exposed to user agent.
      * 
      * @see Neomerx\Cors\Contracts\Strategies::setResponseExposedHeaders
      * 

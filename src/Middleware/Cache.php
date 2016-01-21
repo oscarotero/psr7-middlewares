@@ -51,14 +51,16 @@ class Cache
     {
         $item = $this->cache->getItem(self::getCacheKey($request));
 
+        //If it's cached
         if ($item->isHit()) {
-            list($headers, $body) = $item->get();
-
-            $response = $response->withBody(Middleware::createStream());
-            $response->getBody()->write($body);
+            $headers = $item->get();
 
             foreach ($headers as $name => $header) {
                 $response = $response->withHeader($name, $header);
+            }
+
+            if ($this->cacheUtil->isNotModified($request, $response)) {
+                return $response->withStatus(304);
             }
 
             return $response;
@@ -66,36 +68,20 @@ class Cache
 
         $response = $next($request, $response);
 
-        if (self::isCacheable($request, $response)) {
-            $item->set([
-                $response->getHeaders(),
-                (string) $response->getBody(),
-            ]);
+        //Save in the cache
+        if ($this->cacheUtil->isCacheable($response)) {
+            $item->set($response->getHeaders());
 
-            if (($time = $this->getExpiration($response)) !== null) {
-                $item->expiresAt($time);
+            $time = $this->cacheUtil->getLifetime($response);
+
+            if ($time) {
+                $item->expiresAt(time() + $time);
             }
 
             $this->cache->save($item);
         }
 
         return $response;
-    }
-
-    /**
-     * Check the cache headers and return the expiration time.
-     *
-     * @param ResponseInterface $response
-     *
-     * @return Datetime|null
-     */
-    private function getExpiration(ResponseInterface $response)
-    {
-        $lifetime = $this->cacheUtil->getLifetime($response);
-
-        if ($lifetime) {
-            return new Datetime('@'.(time() + $lifetime));
-        }
     }
 
     /**

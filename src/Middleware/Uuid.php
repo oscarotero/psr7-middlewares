@@ -28,7 +28,7 @@ class Uuid
      *
      * @param ServerRequestInterface $request
      *
-     * @return \Rhumsaa\Uuid\Uuid|null
+     * @return \Ramsey\Uuid\Uuid|null
      */
     public static function getUuid(ServerRequestInterface $request)
     {
@@ -112,6 +112,6 @@ class Uuid
         $args = $this->version;
         $fn = 'uuid'.array_shift($args);
 
-        return call_user_func_array('Rhumsaa\Uuid\Uuid::'.$fn, $args);
+        return call_user_func_array('Ramsey\Uuid\Uuid::'.$fn, $args);
     }
 }

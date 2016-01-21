@@ -6,6 +6,7 @@ use Psr7Middlewares\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
 /**
  * Middleware to save the response into a file.

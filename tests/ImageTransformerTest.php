@@ -11,7 +11,6 @@ class ImageTransformerTest extends Base
             ['http://domain.com/my-images/image.png', 512, 512, ['small' => 'resizeCrop,50,50']],
             ['http://domain.com/small.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
             ['http://domain.com/my-images/invalid.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
-            ['http://domain.com/my-images/resizeCrop,40,40.image.png', 40, 40, null],
             ['http://domain.com/my-images/resizeCrop,40,40.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
         ];
     }
@@ -28,11 +27,7 @@ class ImageTransformerTest extends Base
             [
                 Middleware::FormatNegotiator(),
 
-                Middleware::create(function () use ($sizes) {
-                    $m = Middleware::ImageTransformer();
-
-                    return $sizes ? $m->sizes($sizes) : $m;
-                }),
+                Middleware::ImageTransformer($sizes),
 
                 Middleware::readResponse($storage)
                     ->basePath('/my-images'),

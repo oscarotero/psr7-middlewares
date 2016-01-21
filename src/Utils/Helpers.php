@@ -10,6 +10,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Helpers
 {
+    private static $hash_equals;
+
     /**
      * helper function to fix paths '//' or '/./' or '/foo/../' in a path.
      *
@@ -55,7 +57,7 @@ class Helpers
     }
 
     /**
-     * Check if a request is post or any similar method
+     * Check if a request is post or any similar method.
      * 
      * @param RequestInterface $request
      * 
@@ -103,5 +105,27 @@ class Helpers
         }
 
         return $output;
+    }
+
+    /**
+     * Very short timing attack safe string comparison for PHP < 5.6
+     * http://php.net/manual/en/function.hash-equals.php#118384.
+     * 
+     * @param string $a
+     * @param string $b
+     * 
+     * @return bool
+     */
+    public static function hashEquals($a, $b)
+    {
+        if (self::$hash_equals === null) {
+            self::$hash_equals = function_exists('hash_equals');
+        }
+
+        if (self::$hash_equals) {
+            return hash_equals($a, $b);
+        }
+
+        return substr_count($a ^ $b, "\0") * 2 === strlen($a.$b);
     }
 }

@@ -13,6 +13,12 @@ use Minify_HTML;
  */
 class Minifier extends Resolver
 {
+    protected $transformers = [
+        'js' => [__CLASS__, 'js'],
+        'css' => [__CLASS__, 'css'],
+        'html' => [__CLASS__, 'html'],
+    ];
+
     /**
      * Javascript minifier.
      * 
@@ -20,7 +26,7 @@ class Minifier extends Resolver
      * 
      * @return ResponseInterface
      */
-    public function js(ResponseInterface $response)
+    public static function js(ResponseInterface $response)
     {
         $stream = Middleware::createStream();
         $stream->write(JSMinPlus::minify((string) $response->getBody()));
@@ -35,7 +41,7 @@ class Minifier extends Resolver
      * 
      * @return ResponseInterface
      */
-    public function css(ResponseInterface $response)
+    public static function css(ResponseInterface $response)
     {
         $stream = Middleware::createStream();
         $stream->write((new CSSmin())->run((string) $response->getBody()));
@@ -50,7 +56,7 @@ class Minifier extends Resolver
      * 
      * @return ResponseInterface
      */
-    public function html(ResponseInterface $response)
+    public static function html(ResponseInterface $response)
     {
         $stream = Middleware::createStream();
         $stream->write(Minify_HTML::minify((string) $response->getBody(), ['jsCleanComments' => true]));

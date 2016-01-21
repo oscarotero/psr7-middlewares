@@ -15,10 +15,15 @@ use Exception;
  */
 class ImageTransformer
 {
-    use Utils\BasePathTrait;
-    use Utils\CryptTrait;
+    /**
+     * @var array Enable client hints
+     */
+    protected $clientHints = false;
 
-    protected $sizes;
+    /**
+     * @var array Available sizes
+     */
+    protected $sizes = [];
 
     /**
      * Define the available sizes, for example:
@@ -29,12 +34,22 @@ class ImageTransformer
      * ].
      * 
      * @param array $sizes
+     */
+    public function __construct(array $sizes)
+    {
+        $this->sizes = $sizes;
+    }
+
+    /**
+     * Enable the client hints
+     * 
+     * @param bool $clientHints
      * 
      * @return self
      */
-    public function sizes(array $sizes)
+    public function clientHints($clientHints = true)
     {
-        $this->sizes = $sizes;
+        $this->clientHints = $clientHints;
 
         return $this;
     }
@@ -54,36 +69,72 @@ class ImageTransformer
             throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');
         }
 
-        //If it's not an image or basePath does not match or invalid transform values, don't do anything
-        if (!in_array(FormatNegotiator::getFormat($request), ['jpg', 'jpeg', 'gif', 'png']) || !$this->testBasePath($request->getUri()->getPath()) || !($info = $this->parsePath($request->getUri()->getPath()))) {
-            return $next($request, $response);
+        switch (FormatNegotiator::getFormat($request)) {
+            case 'html':
+                $response = $next($request, $response);
+
+                if ($this->clientHints) {
+                    return $response->withHeader('Accept-CH', 'DPR,Width,Viewport-Width');
+                }
+
+                return $response;
+
+            case 'jpg':
+            case 'jpeg':
+            case 'gif':
+            case 'png':
+                $info = $this->parsePath($request->getUri()->getPath());
+
+                if (!$info) {
+                    break;
+                }
+
+                //Removes the transform from the path
+                list($path, $transform) = $info;
+                $request = $request->withUri($request->getUri()->withPath($path));
+
+                $response = $next($request, $response);
+
+                //Transform
+                if ($response->getStatusCode() === 200 && $response->getBody()->getSize()) {
+                    return $this->transform($request, $response, $transform);
+                }
+
+                return $response;
         }
 
-        list($path, $transform) = $info;
-        $uri = $request->getUri()->withPath($path);
-        $request = $request->withUri($uri);
-
-        $response = $next($request, $response);
-
-        //Check the response and transform the image
-        if ($transform && $response->getStatusCode() === 200 && $response->getBody()->getSize()) {
-            return $this->transform($response, $transform);
-        }
-
-        return $response;
+        return $next($request, $response);
     }
 
     /**
      * Transform the image.
      * 
-     * @param ResponseInterface $response
-     * @param string            $transform
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param string                 $transform
      * 
      * @return ResponseInterface
      */
-    private function transform(ResponseInterface $response, $transform)
+    private function transform(ServerRequestInterface $request, ResponseInterface $response, $transform)
     {
-        $image = Image::createFromString((string) $response->getBody());
+        $image = Image::fromString((string) $response->getBody());
+
+        if ($this->clientHints) {
+            $hints = [];
+
+            foreach (['Dpr', 'Viewport-Width', 'Width'] as $name) {
+                if ($request->hasHeader($name)) {
+                    $hints[$name] = $request->getHeaderLine($name);
+                }
+            }
+
+            $image->setClientHints($hints);
+
+            if ($hints) {
+                $response = $response->withHeader('Vary', implode(', ', $hints));
+            }
+        }
+
         $image->transform($transform);
 
         $body = Middleware::createStream();
@@ -101,31 +152,28 @@ class ImageTransformer
      * 
      * @param string $path
      * 
-     * @return null|array [file, transform]
+     * @return false|array [file, transform]
      */
     private function parsePath($path)
     {
         $info = pathinfo($path);
+        $file = $info['basename'];
+        $path = $info['dirname'];
 
-        try {
-            $pieces = explode('.', $this->decrypt($info['filename']), 2);
-        } catch (Exception $e) {
-            return;
-        }
-
-        if (count($pieces) === 2) {
-            list($transform, $file) = $pieces;
-
-            //Check if the size is valid
-            if (is_array($this->sizes)) {
-                if (!isset($this->sizes[$transform])) {
-                    return;
-                }
-
-                $transform = $this->sizes[$transform];
+        foreach ($this->sizes as $pattern => $transform) {
+            if (strpos($pattern, '/') === false) {
+                $patternFile = $pattern;
+                $patternPath = '';
+            } else {
+                $patternFile = pathinfo($pattern, PATHINFO_BASENAME);
+                $patternPath = pathinfo($pattern, PATHINFO_BASENAME);
             }
 
-            return [Utils\Helpers::joinPath($info['dirname'], "{$file}.".$info['extension']), $transform];
+            if (substr($file, 0, strlen($patternFile)) === $patternFile && ($patternPath === '' || substr($path, -strlen($patternPath)) === $patternPath)) {
+                return [Utils\Helpers::joinPath($path, substr($file, strlen($patternFile))), $transform];
+            }
         }
+
+        return false;
     }
 }

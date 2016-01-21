@@ -12,7 +12,19 @@ use Psr\Http\Message\ResponseInterface;
  */
 trait CallableTrait
 {
-    use ArgumentsTrait;
+    private $arguments = [];
+
+    /**
+     * Extra arguments passed to the callable.
+     *
+     * @return self
+     */
+    public function arguments()
+    {
+        $this->arguments = func_get_args();
+
+        return $this;
+    }
 
     /**
      * Execute the callable.
@@ -25,9 +37,10 @@ trait CallableTrait
      */
     private function executeCallable($target, RequestInterface $request, ResponseInterface $response)
     {
+        ob_start();
+        $level = ob_get_level();
+
         try {
-            ob_start();
-            $level = ob_get_level();
             $arguments = array_merge([$request, $response], $this->arguments);
             $target = self::getCallable($target, $arguments);
             $return = call_user_func_array($target, $arguments);

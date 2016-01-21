@@ -7,33 +7,17 @@ namespace Psr7Middlewares\Utils;
  */
 trait AuthenticationTrait
 {
-    private $users = [];
+    private $users;
     private $realm = 'Login';
 
     /**
-     * Constructor. Defines de users.
-     *
-     * @param array|null $users [username => password]
-     */
-    public function __construct(array $users = null)
-    {
-        if ($users !== null) {
-            $this->users($users);
-        }
-    }
-
-    /**
-     * Configure the users and passwords.
+     * Defines de users.
      *
      * @param array $users [username => password]
-     *
-     * @return self
      */
-    public function users(array $users)
+    public function __construct(array $users)
     {
         $this->users = $users;
-
-        return $this;
     }
 
     /**

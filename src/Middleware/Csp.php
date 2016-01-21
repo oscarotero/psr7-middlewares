@@ -28,12 +28,11 @@ class Csp
             $policies = [
                 'script-src' => ['self' => true],
                 'object-src' => ['self' => true],
+                'frame-ancestors' => ['self' => true],
             ];
         }
 
         $this->csp = new CSPBuilder($policies);
-
-        return $this;
     }
 
     /**
