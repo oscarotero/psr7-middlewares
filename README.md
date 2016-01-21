@@ -1093,7 +1093,7 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::Www(true) //(optional) Add www instead remove it
-        ->redirect(301)   //(optional) to return a 301 (seo friendly) or 302 response to the new host
+        ->redirect(301)   //(optional) to return a 301 (seo friendly), 302 response to the new host or false to don't redirect. (301 by default)
 ]);
 ```
 
@@ -1123,6 +1123,15 @@ $dispatcher = $relay->getInstance([
     //This middleware is needed only in production
     Middleware::create(function () {
         return (getenv('ENV') !== 'production') ? false : Middleware::minify();
+    }),
+
+    //This middleware is needed in some cases
+    Middleware::create(function ($request, $response) {
+        if ($request->hasHeader('Foo')) {
+            return Middleware::www();
+        }
+
+        return false;
     })
 ]);
 ```
