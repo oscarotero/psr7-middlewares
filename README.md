@@ -149,6 +149,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Geolocate](#geolocate)
 * [GoogleAnalytics](#googleanalytics)
 * [Honeypot](#honeypot)
+* [Https](#https)
 * [ImageTransformer](#imagetransformer)
 * [LanguageNegotiation](#languagenegotiation)
 * [LeagueRoute](#leagueroute)
@@ -730,6 +731,21 @@ $dispatcher = $relay->getInstance([
     Middleware::Honeypot()
         ->inputName('my_name') //(optional) The name of the input field (by default "hpt_name")
         ->inputClass('hidden') //(optional) The class of the input field (by default "hpt_input")
+]);
+```
+
+### Https
+
+Returns a redirection using https protocol if the request uri is http. It also adds the [Strict Transport Security](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security) header to protect against protocol downgrade attacks and cookie hijacking.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Https()
+        ->maxAge(1000000)     //(optional) max-age directive for the Strict-Transport-Security header. By default is 31536000 (1 year)
+        ->includeSubdomains() //(optional) To add the "includeSubDomains" attribute to Strict-Transport-Security header.
 ]);
 ```
 
