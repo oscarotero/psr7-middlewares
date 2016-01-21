@@ -86,7 +86,7 @@ class Www
 
             case 3:
                 //example.co.uk
-                if (array_slice($host, -2, 1)[0] === 'co') {
+                if ($host[1] === 'co') {
                     return true;
                 }
 
