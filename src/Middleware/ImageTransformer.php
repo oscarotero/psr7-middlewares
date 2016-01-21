@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Imagecow\Image;
 use RuntimeException;
-use Exception;
 
 /**
  * Middleware to manipulate images on demand.
@@ -41,7 +40,7 @@ class ImageTransformer
     }
 
     /**
-     * Enable the client hints
+     * Enable the client hints.
      * 
      * @param bool $clientHints
      * 

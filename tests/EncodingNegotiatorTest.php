@@ -12,15 +12,15 @@ class EncodingNegotiatorTest extends Base
                 'gzip,deflate',
                 ['gzip'],
                 'gzip',
-            ],[
+            ], [
                 'gzip,deflate',
                 ['deflate', 'gzip'],
                 'deflate',
-            ],[
+            ], [
                 '',
                 [],
                 null,
-            ],[
+            ], [
                 '',
                 ['gzip'],
                 null,

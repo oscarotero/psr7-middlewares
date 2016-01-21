@@ -93,7 +93,7 @@ class DigestAuthentication
 
         $validResponse = md5("{$A1}:{$authorization['nonce']}:{$authorization['nc']}:{$authorization['cnonce']}:{$authorization['qop']}:{$A2}");
 
-        return ($authorization['response'] === $validResponse);
+        return $authorization['response'] === $validResponse;
     }
 
     /**

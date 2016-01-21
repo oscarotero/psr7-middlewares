@@ -10,22 +10,22 @@ class HoneypotTest extends Base
             [
                 '<form method="post"></form>',
                 '<form method="post"><input type="text" name="hpt_name" class="hpt_input"></form>',
-            ],[
+            ], [
                 '<form action="" method="POST" class="form"></form>',
                 '<form action="" method="POST" class="form"><input type="text" name="hpt_name" class="hpt_input"></form>',
-            ],[
+            ], [
                 '<form></form><form method=POST></form>',
                 '<form></form><form method=POST><input type="text" name="hpt_name" class="hpt_input"></form>',
-            ],[
+            ], [
                 '<form></form><form method=\'POST\'></form>',
                 '<form></form><form method=\'POST\'><input type="text" name="hpt_name" class="hpt_input"></form>',
-            ],[
+            ], [
                 '<form></form>',
                 '<form></form>',
-            ],[
+            ], [
                 '<form method="get"></form>',
                 '<form method="get"></form>',
-            ],[
+            ], [
                 '<form method="POST"></form> <div><form method=POST></form></div>',
                 '<form method="POST"><input type="text" name="hpt_name" class="hpt_input"></form> <div><form method=POST><input type="text" name="hpt_name" class="hpt_input"></form></div>',
             ],

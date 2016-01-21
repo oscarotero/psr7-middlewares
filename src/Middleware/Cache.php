@@ -7,7 +7,6 @@ use Psr7Middlewares\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use Datetime;
 use Micheh\Cache\CacheUtil;
 use Micheh\Cache\Header\CacheControl;
 
@@ -45,7 +44,7 @@ class Cache
     }
 
     /**
-     * Set a cache-control header to all responses
+     * Set a cache-control header to all responses.
      * 
      * @param string|CacheControl $cacheControl
      * 

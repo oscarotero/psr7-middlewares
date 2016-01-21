@@ -12,23 +12,23 @@ class LanguageNegotiatorTest extends Base
                 'gl-es, es;q=0.8, en;q=0.7',
                 ['gl'],
                 'gl',
-            ],[
+            ], [
                 'gl-es, es;q=0.8, en;q=0.7',
                 ['es', 'en'],
                 'es',
-            ],[
+            ], [
                 'gl-es, es;q=0.8, en;q=0.7',
                 ['en', 'es'],
                 'es',
-            ],[
+            ], [
                 '',
                 [],
                 null,
-            ],[
+            ], [
                 '',
                 ['es', 'en'],
                 'es',
-            ],[
+            ], [
                 '',
                 ['en', 'es'],
                 'en',

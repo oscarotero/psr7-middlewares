@@ -11,11 +11,11 @@ class BasePathTest extends Base
                 'http://localhost/project-name/public',
                 '/project-name/public',
                 'http://localhost',
-            ],[
+            ], [
                 'http://localhost/project-name/public',
                 '/other/path',
                 'http://localhost/project-name/public',
-            ],[
+            ], [
                 '/project-name/public',
                 '/project-name',
                 '/public',

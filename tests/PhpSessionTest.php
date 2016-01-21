@@ -10,7 +10,7 @@ class PhpSessionTest extends Base
             [
                 'session_1',
                 'Iván',
-            ],[
+            ], [
                 'session_2',
                 'Pablo',
             ],
