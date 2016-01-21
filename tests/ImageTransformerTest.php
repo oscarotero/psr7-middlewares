@@ -7,11 +7,11 @@ class ImageTransformerTest extends Base
     public function imagesProvider()
     {
         return [
-            ['http://domain.com/my-images/small.image.png', 50, 50, ['small' => 'resizeCrop,50,50']],
-            ['http://domain.com/my-images/image.png', 512, 512, ['small' => 'resizeCrop,50,50']],
-            ['http://domain.com/small.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
-            ['http://domain.com/my-images/invalid.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
-            ['http://domain.com/my-images/resizeCrop,40,40.image.png', 0, 0, ['small' => 'resizeCrop,50,50']],
+            ['http://domain.com/my-images/small.image.png', 50, 50, ['small.' => 'resizeCrop,50,50']],
+            ['http://domain.com/my-images/image.png', 512, 512, ['small.' => 'resizeCrop,50,50']],
+            ['http://domain.com/small.image.png', 0, 0, ['small.' => 'resizeCrop,50,50']],
+            ['http://domain.com/my-images/invalid.image.png', 0, 0, ['small.' => 'resizeCrop,50,50']],
+            ['http://domain.com/my-images/resizeCrop,40,40.image.png', 0, 0, ['small.' => 'resizeCrop,50,50']],
         ];
     }
 

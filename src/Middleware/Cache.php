@@ -72,7 +72,8 @@ class Cache
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $item = $this->cache->getItem(self::getCacheKey($request));
+        $key = self::getCacheKey($request);
+        $item = $this->cache->getItem($key);
 
         //If it's cached
         if ($item->isHit()) {
@@ -82,11 +83,14 @@ class Cache
                 $response = $response->withHeader($name, $header);
             }
 
+            $lastModified = $response->getHeaderLine('Last-Modified');
+            $modifiedSince = $request->getHeaderLine('If-Modified-Since');
+
             if ($this->cacheUtil->isNotModified($request, $response)) {
                 return $response->withStatus(304);
             }
 
-            return $response;
+            $this->cache->deleteItem($key);
         }
 
         $response = $next($request, $response);
@@ -94,6 +98,11 @@ class Cache
         //Add cache-control header
         if ($this->cacheControl && !$response->hasHeader('Cache-Control')) {
             $response = $this->cacheUtil->withCacheControl($response, $this->cacheControl);
+        }
+
+        //Add Last-Modified header
+        if (!$response->hasHeader('Last-Modified')) {
+            $response = $this->cacheUtil->withLastModified($response, time());
         }
 
         //Save in the cache
