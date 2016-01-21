@@ -315,19 +315,15 @@ $dispatcher = $relay->getInstance([
 
 ### Cache
 
-To save and reuse responses based in the Cache-Control: max-age directive and Expires header. You need a cache library compatible with psr-6
+Uses [micheh/psr7-cache](https://github.com/micheh/psr7-cache). Saves the responses' headers in cache and returns a 304 response (Not modified) if the request is cached. It also adds `Cache-Control` and `Last-Modified` headers to the response. You need a cache library compatible with psr-6.
 
 ```php
 use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Cache(new Psr6CachePool()), //the PSR-6 cache implementation
-
-    function($request, $response, $next) {
-        //Cache the response 1 hour
-        return $response->withHeader('Cache-Control', 'max-age=3600');
-    }
+    Middleware::Cache(new Psr6CachePool()) //the PSR-6 cache implementation
+        ->cacheControl('max-age=3600'),    //(optional) to add this Cache-Control header to all responses
 ]);
 ```
 
