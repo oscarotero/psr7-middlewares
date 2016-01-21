@@ -910,6 +910,7 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::ReadResponse('path/to/files') // Path where the files are stored
+        ->appendQuery(true)                   // (optional) to use the uri query in the filename
         ->basePath('public')                  // (optional) basepath ignored from the request uri
 ]);
 ```
@@ -999,6 +1000,7 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::SaveResponse('path/to/files') //Path directory where save the responses
+        ->appendQuery(true)                   // (optional) to append the uri query to the filename
         ->basePath('public')                  //(optional) basepath ignored from the request uri
 ]);
 ```

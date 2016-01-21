@@ -17,6 +17,11 @@ trait FileTrait
     private $directory;
 
     /**
+     * @var bool
+     */
+    private $appendQuery;
+
+    /**
      * Set the storage directory of the file.
      *
      * @param string $directory
@@ -24,6 +29,20 @@ trait FileTrait
     public function __construct($directory)
     {
         $this->directory = $directory;
+    }
+
+    /**
+     * Set whether use or not the uri query to generate the filenames
+     * 
+     * @param bool $appendQuery
+     * 
+     * @return self
+     */
+    public function appendQuery($appendQuery = true)
+    {
+        $this->appendQuery = $appendQuery;
+
+        return $this;
     }
 
     /**
@@ -45,6 +64,10 @@ trait FileTrait
         //if it's a directory, append the index file
         if (empty($parts['extension'])) {
             $filename .= "/index.{$indexExt}";
+        }
+
+        if ($this->appendQuery && $request->getUri()->getQuery()) {
+            $filename .= '?'.urlencode($request->getUri()->getQuery());
         }
 
         return Helpers::joinPath($this->directory, $path, $filename);
