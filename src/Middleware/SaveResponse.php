@@ -41,7 +41,7 @@ class SaveResponse
     }
 
     /**
-     * Check whether the response can be saved or not
+     * Check whether the response can be saved or not.
      * 
      * @param RequestInterface  $request
      * @param ResponseInterface $response

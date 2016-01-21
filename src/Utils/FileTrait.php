@@ -32,7 +32,7 @@ trait FileTrait
     }
 
     /**
-     * Set whether use or not the uri query to generate the filenames
+     * Set whether use or not the uri query to generate the filenames.
      * 
      * @param bool $appendQuery
      * 
