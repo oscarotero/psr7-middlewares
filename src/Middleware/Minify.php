@@ -11,27 +11,7 @@ use RuntimeException;
 
 class Minify
 {
-    use Utils\CacheTrait;
     use Utils\ResolverTrait;
-
-    /**
-     * @var bool Minify only cacheable responses
-     */
-    private $forCache = false;
-
-    /**
-     * Set forCache directive.
-     *
-     * @param bool $forCache
-     *
-     * @return self
-     */
-    public function forCache($forCache = true)
-    {
-        $this->forCache = $forCache;
-
-        return $this;
-    }
 
     /**
      * Execute the middleware.
@@ -44,10 +24,6 @@ class Minify
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->forCache && !self::isCacheable($request, $response)) {
-            return $next($request, $response);
-        }
-
         if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('Minify middleware needs FormatNegotiator executed before');
         }

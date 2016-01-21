@@ -835,7 +835,6 @@ $dispatcher = $relay->getInstance([
     Middleware::formatNegotiator(),
 
     Middleware::Minify()
-        ->forCache(true) //(optional) only minify cacheable responses
 ]);
 ```
 
