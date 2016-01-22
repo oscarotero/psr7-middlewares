@@ -736,7 +736,7 @@ $dispatcher = $relay->getInstance([
 
 ### Https
 
-Returns a redirection using https protocol if the request uri is http. It also adds the [Strict Transport Security](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security) header to protect against protocol downgrade attacks and cookie hijacking.
+Returns a redirection to the https scheme if the request uri is http. It also adds the [Strict Transport Security](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security) header to protect against protocol downgrade attacks and cookie hijacking.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -745,19 +745,19 @@ $dispatcher = $relay->getInstance([
 
     Middleware::Https()
         ->maxAge(1000000)     //(optional) max-age directive for the Strict-Transport-Security header. By default is 31536000 (1 year)
-        ->includeSubdomains() //(optional) To add the "includeSubDomains" attribute to Strict-Transport-Security header.
+        ->includeSubdomains() //(optional) To add the "includeSubDomains" attribute to the Strict-Transport-Security header.
 ]);
 ```
 
 ### ImageTransformer
 
-Uses [imagecow/imagecow 2.x](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
+Uses [imagecow/imagecow 2.x](https://github.com/oscarotero/imagecow) to transform images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
 
-To define the available sizes, you have to asign a filename prefix for this size, so any file requested with this prefix will be dinamically transformed.
+To define the available sizes, you have to asign a filename prefix representing the size, so any file requested with this prefix will be dinamically transformed.
 
 There's also support for [Client hints](https://www.smashingmagazine.com/2016/01/leaner-responsive-images-client-hints/) to avoid to serve images larger than needed (currently supported only in chrome and opera).
 
-You may also save the transformed images in the cache. You have to provide a library compatible with psr-6 for that.
+If you want to save the transformed images in the cache, provide a library compatible with psr-6 for that.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -772,7 +772,7 @@ $dispatcher = $relay->getInstance([
             'medium.' => 'resize,500|format,jpg', //Resize the image to 500px width
             'pictures/large.' => 'resize,1000|format,jpg', //Transform only images inside "pictures" directory
         ])
-        ->clientHints(true)          // (optional) To enable the client hints headers
+        ->clientHints()              // (optional) To enable the client hints headers
         ->cache(new Psr6CachePool()) // (optional) To save the transformed images in the cache
 
     //Used to read the image files and returns the response with them

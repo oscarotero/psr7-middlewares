@@ -87,13 +87,10 @@ class ImageTransformer
 
         switch (FormatNegotiator::getFormat($request)) {
             case 'html':
-                $response = $next($request, $response);
-
                 if (!empty($this->clientHints)) {
-                    return $response->withHeader('Accept-CH', implode(',', $this->clientHints));
+                    $response = $response->withHeader('Accept-CH', implode(',', $this->clientHints));
                 }
-
-                return $response;
+                break;
 
             case 'jpg':
             case 'jpeg':
@@ -106,8 +103,7 @@ class ImageTransformer
                     return $cached;
                 }
 
-                $uri = $request->getUri();
-                $info = $this->parsePath($uri->getPath());
+                $info = $this->parsePath($request->getUri()->getPath());
 
                 if (!$info) {
                     break;
@@ -115,7 +111,7 @@ class ImageTransformer
 
                 //Removes the transform from the path
                 list($path, $transform) = $info;
-                $request = $request->withUri($uri->withPath($path));
+                $request = $request->withUri($request->getUri()->withPath($path));
 
                 $response = $next($request, $response);
 
