@@ -769,8 +769,8 @@ $dispatcher = $relay->getInstance([
 
     Middleware::imageTransformer([   // The available sizes of the images.
             'small.' => 'resizeCrop,50,50', //Creates a 50x50 thumb of any image prefixed with "small." (example: /images/small.avatar.jpg)
-            'medium.' => 'resize,500|format,jpg', //Resize the image to 500px width
-            'pictures/large.' => 'resize,1000|format,jpg', //Transform only images inside "pictures" directory
+            'medium.' => 'resize,500|format,jpg', //Resize the image to 500px and convert to jpg
+            'pictures/large.' => 'resize,1000|format,jpg', //Transform only images inside "pictures" directory (example: /images/pcitures/large.avatar.jpg)
         ])
         ->clientHints()              // (optional) To enable the client hints headers
         ->cache(new Psr6CachePool()) // (optional) To save the transformed images in the cache

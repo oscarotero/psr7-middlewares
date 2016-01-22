@@ -80,9 +80,6 @@ class Cache
                 $response = $response->withHeader($name, $header);
             }
 
-            $lastModified = $response->getHeaderLine('Last-Modified');
-            $modifiedSince = $request->getHeaderLine('If-Modified-Since');
-
             if ($this->cacheUtil->isNotModified($request, $response)) {
                 return $response->withStatus(304);
             }

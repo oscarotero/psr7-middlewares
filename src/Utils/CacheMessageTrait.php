@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Utils;
 
 use Psr\Http\Message\MessageInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Trait used by all middlewares that needs to a psr-7 message into a psr-6 cache.
