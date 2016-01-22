@@ -81,7 +81,9 @@ class Whoops
             $response = $response->withStatus(500)->withBody($body);
         }
 
-        $whoops->unregister();
+        if ($this->catchErrors) {
+            $whoops->unregister();
+        }
 
         return $response;
     }
