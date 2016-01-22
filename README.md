@@ -780,7 +780,7 @@ $dispatcher = $relay->getInstance([
 
 ### LanguageNegotiation
 
-Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. You must provide an array with all available languages:
+Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language using the Accept-Language header and (optionally) the uri's path. You must provide an array with all available languages:
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -788,7 +788,10 @@ use Psr7Middlewares\Middleware\LanguageNegotiator;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::LanguageNegotiator(['gl', 'en', 'es']), //Available languages
+    Middleware::LanguageNegotiator(['gl', 'en']) //Available languages
+        ->usePath(true)                          //(optional) To search the language in the path: /gl/, /en/
+        ->redirect()                             //(optional) To return a redirection if the language is not in the path
+        ->basePath('/web')                       //(optional) Basepath used to search the language
 
     function ($request, $response, $next) {
         //Get the preferred language

@@ -14,6 +14,8 @@ use Psr\Http\Message\ResponseInterface;
 class LanguageNegotiator
 {
     use Utils\NegotiateTrait;
+    use Utils\BasePathTrait;
+    use Utils\RedirectTrait;
 
     const KEY = 'LANGUAGE';
 
@@ -21,6 +23,11 @@ class LanguageNegotiator
      * @var array Allowed languages
      */
     private $languages = [];
+
+    /**
+     * @var bool Use the path to detect the language
+     */
+    private $usePath = false;
 
     /**
      * Returns the language.
@@ -35,27 +42,25 @@ class LanguageNegotiator
     }
 
     /**
-     * Constructor. Defines de available languages.
+     * Define de available languages.
      *
      * @param array $languages
      */
-    public function __construct(array $languages = null)
+    public function __construct(array $languages)
     {
-        if ($languages !== null) {
-            $this->languages($languages);
-        }
+        $this->languages = $languages;
     }
 
     /**
-     * Configure the available languages.
+     * Use the base path to detect the current language.
      *
-     * @param array $languages
+     * @param bool $usePath
      *
      * @return self
      */
-    public function languages(array $languages)
+    public function usePath($usePath = true)
     {
-        $this->languages = $languages;
+        $this->usePath = $usePath;
 
         return $this;
     }
@@ -71,10 +76,38 @@ class LanguageNegotiator
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $language = $this->negotiateHeader($request->getHeaderLine('Accept-Language'), new Negotiator(), $this->languages);
+        $language = null;
 
-        if (empty($language)) {
-            $language = isset($this->languages[0]) ? $this->languages[0] : null;
+        //Use path
+        if ($this->usePath) {
+            $uri = $request->getUri();
+            $path = ltrim($this->getPath($uri->getPath()), '/');
+
+            $dirs = explode('/', $path, 2);
+            $first = array_shift($dirs);
+
+            if (!empty($first) && in_array($first, $this->languages, true)) {
+                $language = $first;
+
+                //remove the language in the path
+                $request = $request->withUri($uri->withPath('/'.array_shift($dirs)));
+            }
+        }
+
+        //Use http headers
+        if ($language === null) {
+            $language = $this->negotiateHeader($request->getHeaderLine('Accept-Language'), new Negotiator(), $this->languages);
+
+            if (empty($language)) {
+                $language = isset($this->languages[0]) ? $this->languages[0] : null;
+            }
+
+            //Redirect to a path with the language
+            if ($this->redirectStatus && $this->usePath) {
+                $path = Utils\Helpers::joinPath($this->basePath, $language, $this->getPath($uri->getPath()));
+
+                return self::getRedirectResponse($this->redirectStatus, $uri->withPath($path), $response);
+            }
         }
 
         $request = Middleware::setAttribute($request, self::KEY, $language);
