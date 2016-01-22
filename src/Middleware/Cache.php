@@ -69,7 +69,7 @@ class Cache
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $key = self::getCacheKey($request);
+        $key = $this->getCacheKey($request);
         $item = $this->cache->getItem($key);
 
         //If it's cached

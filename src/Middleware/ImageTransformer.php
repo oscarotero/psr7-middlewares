@@ -6,6 +6,7 @@ use Psr7Middlewares\Utils;
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Imagecow\Image;
 use RuntimeException;
 
@@ -14,15 +15,17 @@ use RuntimeException;
  */
 class ImageTransformer
 {
+    use Utils\CacheMessageTrait;
+
     /**
-     * @var array Enable client hints
+     * @var array|false Enable client hints
      */
-    protected $clientHints = false;
+    private $clientHints = false;
 
     /**
      * @var array Available sizes
      */
-    protected $sizes = [];
+    private $sizes = [];
 
     /**
      * Define the available sizes, for example:
@@ -40,13 +43,27 @@ class ImageTransformer
     }
 
     /**
-     * Enable the client hints.
+     * To save the transformed images in the cache
      * 
-     * @param bool $clientHints
+     * @param CacheItemPoolInterface $cache
      * 
      * @return self
      */
-    public function clientHints($clientHints = true)
+    public function cache(CacheItemPoolInterface $cache)
+    {
+        $this->cache = $cache;
+
+        return $this;
+    }
+
+    /**
+     * Enable the client hints.
+     * 
+     * @param array $clientHints
+     * 
+     * @return self
+     */
+    public function clientHints($clientHints = ['Dpr', 'Viewport-Width', 'Width'])
     {
         $this->clientHints = $clientHints;
 
@@ -72,8 +89,8 @@ class ImageTransformer
             case 'html':
                 $response = $next($request, $response);
 
-                if ($this->clientHints) {
-                    return $response->withHeader('Accept-CH', 'DPR,Width,Viewport-Width');
+                if (!empty($this->clientHints)) {
+                    return $response->withHeader('Accept-CH', implode(',', $this->clientHints));
                 }
 
                 return $response;
@@ -82,7 +99,15 @@ class ImageTransformer
             case 'jpeg':
             case 'gif':
             case 'png':
-                $info = $this->parsePath($request->getUri()->getPath());
+                $key = $this->getCacheKey($request);
+
+                //Get from the cache
+                if ($cached = $this->getFromCache($key, $response)) {
+                    return $cached;
+                }
+
+                $uri = $request->getUri();
+                $info = $this->parsePath($uri->getPath());
 
                 if (!$info) {
                     break;
@@ -90,13 +115,16 @@ class ImageTransformer
 
                 //Removes the transform from the path
                 list($path, $transform) = $info;
-                $request = $request->withUri($request->getUri()->withPath($path));
+                $request = $request->withUri($uri->withPath($path));
 
                 $response = $next($request, $response);
 
                 //Transform
                 if ($response->getStatusCode() === 200 && $response->getBody()->getSize()) {
-                    return $this->transform($request, $response, $transform);
+                    $response = $this->transform($request, $response, $transform);
+
+                    //Save in the cache
+                    $this->saveIntoCache($key, $response);
                 }
 
                 return $response;
@@ -117,21 +145,11 @@ class ImageTransformer
     private function transform(ServerRequestInterface $request, ResponseInterface $response, $transform)
     {
         $image = Image::fromString((string) $response->getBody());
+        $hints = $this->getClientHints($request);
 
-        if ($this->clientHints) {
-            $hints = [];
-
-            foreach (['Dpr', 'Viewport-Width', 'Width'] as $name) {
-                if ($request->hasHeader($name)) {
-                    $hints[$name] = $request->getHeaderLine($name);
-                }
-            }
-
+        if ($hints) {
             $image->setClientHints($hints);
-
-            if ($hints) {
-                $response = $response->withHeader('Vary', implode(', ', $hints));
-            }
+            $response = $response->withHeader('Vary', implode(', ', $hints));
         }
 
         $image->transform($transform);
@@ -174,5 +192,46 @@ class ImageTransformer
         }
 
         return false;
+    }
+
+    /**
+     * Returns the client hints sent
+     * 
+     * @param ServerRequestInterface $request
+     * 
+     * @return array|null
+     */
+    private function getClientHints(ServerRequestInterface $request)
+    {
+        if (!empty($this->clientHints)) {
+            $hints = [];
+
+            foreach ($this->clientHints as $name) {
+                if ($request->hasHeader($name)) {
+                    $hints[$name] = $request->getHeaderLine($name);
+                }
+            }
+
+            return $hints;
+        }
+    }
+
+    /**
+     * Generates the key used to save the image in cache
+     * 
+     * @param ServerRequestInterface $request
+     * 
+     * @return string
+     */
+    private function getCacheKey(ServerRequestInterface $request)
+    {
+        $id = base64_encode((string) $request->getUri());
+        $hints = $this->getClientHints($request);
+
+        if ($hints) {
+            $id .= '.'.base64_encode(json_encode($hints));
+        }
+
+        return $id;
     }
 }

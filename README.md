@@ -757,6 +757,8 @@ To define the available sizes, you have to asign a filename prefix for this size
 
 There's also support for [Client hints](https://www.smashingmagazine.com/2016/01/leaner-responsive-images-client-hints/) to avoid to serve images larger than needed (currently supported only in chrome and opera).
 
+You may also save the transformed images in the cache. You have to provide a library compatible with psr-6 for that.
+
 ```php
 use Psr7Middlewares\Middleware;
 
@@ -771,6 +773,7 @@ $dispatcher = $relay->getInstance([
             'pictures/large.' => 'resize,1000|format,jpg', //Transform only images inside "pictures" directory
         ])
         ->clientHints(true)          // (optional) To enable the client hints headers
+        ->cache(new Psr6CachePool()) // (optional) To save the transformed images in the cache
 
     //Used to read the image files and returns the response with them
     Middleware::readResponse()
