@@ -28,13 +28,14 @@ class ImageTransformerTest extends Base
         $usedAfter = 0;
         $cache = new Pool(new MemoryStore());
 
-        for ($i = 0; $i < 2; $i++) {
+        for ($i = 0; $i < 2; ++$i) {
             $response = $this->execute(
                 [
                     Middleware::FormatNegotiator(),
 
                     function ($request, $response, $next) use (&$usedBefore) {
                         ++$usedBefore;
+
                         return $next($request, $response);
                     },
 
@@ -45,8 +46,9 @@ class ImageTransformerTest extends Base
 
                     function ($request, $response, $next) use (&$usedAfter) {
                         ++$usedAfter;
+
                         return $next($request, $response);
-                    }
+                    },
                 ],
                 $url
             );

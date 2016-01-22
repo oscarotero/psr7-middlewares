@@ -43,7 +43,7 @@ class ImageTransformer
     }
 
     /**
-     * To save the transformed images in the cache
+     * To save the transformed images in the cache.
      * 
      * @param CacheItemPoolInterface $cache
      * 
@@ -195,7 +195,7 @@ class ImageTransformer
     }
 
     /**
-     * Returns the client hints sent
+     * Returns the client hints sent.
      * 
      * @param ServerRequestInterface $request
      * 
@@ -217,7 +217,7 @@ class ImageTransformer
     }
 
     /**
-     * Generates the key used to save the image in cache
+     * Generates the key used to save the image in cache.
      * 
      * @param ServerRequestInterface $request
      * 

@@ -3,7 +3,6 @@
 namespace Psr7Middlewares\Utils;
 
 use Psr\Http\Message\MessageInterface;
-use RuntimeException;
 
 /**
  * Trait used by all middlewares that needs to a psr-7 message into a psr-6 cache.
@@ -16,7 +15,7 @@ trait CacheMessageTrait
     private $cache;
 
     /**
-     * Provide the cache implementation
+     * Provide the cache implementation.
      * 
      * @param CacheItemPoolInterface $cache
      * 
@@ -30,9 +29,9 @@ trait CacheMessageTrait
     }
 
     /**
-     * Restore a message from the cache
+     * Restore a message from the cache.
      * 
-     * @param string $key The message key
+     * @param string           $key     The message key
      * @param MessageInterface $message
      *
      * @return MessageInterface|false
@@ -59,9 +58,9 @@ trait CacheMessageTrait
     }
 
     /**
-     * Store a message in the cache
+     * Store a message in the cache.
      * 
-     * @param string $key The message key
+     * @param string           $key     The message key
      * @param MessageInterface $message
      */
     private function saveIntoCache($key, MessageInterface $message)
@@ -71,7 +70,7 @@ trait CacheMessageTrait
 
             $item->set([
                 $message->getHeaders(),
-                (string) $message->getBody()
+                (string) $message->getBody(),
             ]);
 
             $this->cache->save($item);
