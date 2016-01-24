@@ -26,6 +26,8 @@ class SaveResponse
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
+        $response = $next($request, $response);
+
         if ($this->canSave($request, $response)) {
             $path = $this->getFilename($request);
 
@@ -37,7 +39,7 @@ class SaveResponse
             self::writeStream($response->getBody(), $path);
         }
 
-        return $next($request, $response);
+        return $response;
     }
 
     /**
