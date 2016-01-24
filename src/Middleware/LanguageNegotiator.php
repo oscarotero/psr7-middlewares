@@ -112,6 +112,10 @@ class LanguageNegotiator
 
         $request = Middleware::setAttribute($request, self::KEY, $language);
 
+        if ($language !== null) {
+            $response = $response->withHeader('Content-Language', $language);
+        }
+
         return $next($request, $response);
     }
 }

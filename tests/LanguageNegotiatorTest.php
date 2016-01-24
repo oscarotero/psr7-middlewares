@@ -55,6 +55,7 @@ class LanguageNegotiatorTest extends Base
         );
 
         $this->assertEquals($language, (string) $response->getBody());
+        $this->assertEquals($language, (string) $response->getHeaderLine('Content-Language'));
     }
 
     public function languagesPathProvider()
