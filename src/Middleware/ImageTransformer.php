@@ -179,7 +179,7 @@ class ImageTransformer
                 $patternPath = '';
             } else {
                 $patternFile = pathinfo($pattern, PATHINFO_BASENAME);
-                $patternPath = pathinfo($pattern, PATHINFO_BASENAME);
+                $patternPath = pathinfo($pattern, PATHINFO_DIRNAME);
             }
 
             if (substr($file, 0, strlen($patternFile)) === $patternFile && ($patternPath === '' || substr($path, -strlen($patternPath)) === $patternPath)) {
