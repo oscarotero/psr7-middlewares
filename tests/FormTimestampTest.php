@@ -45,4 +45,30 @@ class FormTimestampTest extends Base
             $this->assertEquals(403, $response->getStatusCode());
         }
     }
+
+    public function testForm()
+    {
+        $response = $this->dispatch(
+            [
+                Middleware::formatNegotiator(),
+                Middleware::formTimestamp()->key(hex2bin('000102030405060708090a0b0c0d0e0f')),
+                function ($request, $response, $next) {
+$html = <<<EOT
+    <html>
+    <body>
+        <form method="POST"><input type="submit"></form>
+    </body>
+EOT;
+
+                    $response->getBody()->write($html);
+
+                    return $next($request, $response);
+                }
+            ],
+            $this->request(),
+            $this->response()
+        );
+
+        $this->assertNotFalse(strpos((string) $response->getBody(), '<input type="hidden" '));
+    }
 }
