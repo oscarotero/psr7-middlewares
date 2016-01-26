@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Psr7Middlewares\Middleware;
 
@@ -97,10 +97,10 @@ class FormTimestamp
 
         $response = $next($request, $response);
 
-        $value = $this->encrypt(time());
+        $value = $this->encrypt((string) time());
 
         return $this->insertIntoPostForms($response, function ($match) use ($value) {
-            return $match[0].'<input type="text" name="'.$this->inputName.'" value="'.$value.'">';
+            return $match[0].'<input type="hidden" name="'.$this->inputName.'" value="'.$value.'">';
         });
     }
 

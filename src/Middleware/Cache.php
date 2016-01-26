@@ -1,32 +1,59 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\{Utils, Middleware};
 use Psr\Http\Message\{RequestInterface, ResponseInterface};
 use Psr\Cache\CacheItemPoolInterface;
-use Datetime;
+use Micheh\Cache\{CacheUtil, Header\CacheControl};
 
 /**
  * Middleware to cache the response using Cache-Control and other directives.
  */
 class Cache
 {
-    use Utils\CacheTrait;
-
     /**
      * @var CacheItemPoolInterface The cache implementation used
      */
     private $cache;
 
     /**
+     * @var CacheUtil
+     */
+    private $cacheUtil;
+
+    /**
+     * @var CacheControl
+     */
+    private $cacheControl;
+
+    /**
      * Set the psr-6 cache pool.
      *
-     * @param CacheItemPoolInterface|null $cache
+     * @param CacheItemPoolInterface $cache
      */
     public function __construct(CacheItemPoolInterface $cache)
     {
         $this->cache = $cache;
+        $this->cacheUtil = new CacheUtil();
+    }
+
+    /**
+     * Set a cache-control header to all responses.
+     * 
+     * @param string|CacheControl $cacheControl
+     * 
+     * @return self
+     */
+    public function cacheControl($cacheControl)
+    {
+        if (!($cacheControl instanceof CacheControl)) {
+            $cacheControl = CacheControl::fromString($cacheControl);
+        }
+
+        $this->cacheControl = $cacheControl;
+
+        return $this;
     }
 
     /**
@@ -40,66 +67,50 @@ class Cache
      */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
     {
-        $item = $this->cache->getItem(self::getCacheKey($request));
+        $key = $this->getCacheKey($request);
+        $item = $this->cache->getItem($key);
 
+        //If it's cached
         if ($item->isHit()) {
-            list($headers, $body) = $item->get();
-
-            $response = $response->withBody(Middleware::createStream());
-            $response->getBody()->write($body);
+            $headers = $item->get();
 
             foreach ($headers as $name => $header) {
                 $response = $response->withHeader($name, $header);
             }
 
-            return $response;
+            if ($this->cacheUtil->isNotModified($request, $response)) {
+                return $response->withStatus(304);
+            }
+
+            $this->cache->deleteItem($key);
         }
 
         $response = $next($request, $response);
 
-        if (self::isCacheable($request, $response)) {
-            $item->set([
-                $response->getHeaders(),
-                (string) $response->getBody(),
-            ]);
+        //Add cache-control header
+        if ($this->cacheControl && !$response->hasHeader('Cache-Control')) {
+            $response = $this->cacheUtil->withCacheControl($response, $this->cacheControl);
+        }
 
-            if (($time = self::getExpiration($response)) !== null) {
-                $item->expiresAt($time);
+        //Add Last-Modified header
+        if (!$response->hasHeader('Last-Modified')) {
+            $response = $this->cacheUtil->withLastModified($response, time());
+        }
+
+        //Save in the cache
+        if ($this->cacheUtil->isCacheable($response)) {
+            $item->set($response->getHeaders());
+
+            $time = $this->cacheUtil->getLifetime($response);
+
+            if ($time) {
+                $item->expiresAt(time() + $time);
             }
 
             $this->cache->save($item);
         }
 
         return $response;
-    }
-
-    /**
-     * Check the cache headers and return the expiration time.
-     *
-     * @param ResponseInterface $response
-     *
-     * @return Datetime|null
-     */
-    private static function getExpiration(ResponseInterface $response)
-    {
-        //Cache-Control
-        $cacheControl = $response->getHeaderLine('Cache-Control');
-
-        if (!empty($cacheControl)) {
-            $cacheControl = self::parseCacheControl($cacheControl);
-
-            //Max age
-            if (isset($cacheControl['max-age'])) {
-                return new Datetime('@'.(time() + (int) $cacheControl['max-age']));
-            }
-        }
-
-        //Expires
-        $expires = $response->getHeaderLine('Expires');
-
-        if (!empty($expires)) {
-            return new Datetime($expires);
-        }
     }
 
     /**

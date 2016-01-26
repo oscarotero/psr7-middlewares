@@ -149,6 +149,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Geolocate](#geolocate)
 * [GoogleAnalytics](#googleanalytics)
 * [Honeypot](#honeypot)
+* [Https](#https)
 * [ImageTransformer](#imagetransformer)
 * [LanguageNegotiation](#languagenegotiation)
 * [LeagueRoute](#leagueroute)
@@ -315,19 +316,15 @@ $dispatcher = $relay->getInstance([
 
 ### Cache
 
-To save and reuse responses based in the Cache-Control: max-age directive and Expires header. You need a cache library compatible with psr-6
+Uses [micheh/psr7-cache](https://github.com/micheh/psr7-cache). Saves the responses' headers in cache and returns a 304 response (Not modified) if the request is cached. It also adds `Cache-Control` and `Last-Modified` headers to the response. You need a cache library compatible with psr-6.
 
 ```php
 use Psr7Middlewares\Middleware;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Cache(new Psr6CachePool()), //the PSR-6 cache implementation
-
-    function($request, $response, $next) {
-        //Cache the response 1 hour
-        return $response->withHeader('Cache-Control', 'max-age=3600');
-    }
+    Middleware::Cache(new Psr6CachePool()) //the PSR-6 cache implementation
+        ->cacheControl('max-age=3600'),    //(optional) to add this Cache-Control header to all responses
 ]);
 ```
 
@@ -737,11 +734,30 @@ $dispatcher = $relay->getInstance([
 ]);
 ```
 
+### Https
+
+Returns a redirection to the https scheme if the request uri is http. It also adds the [Strict Transport Security](https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security) header to protect against protocol downgrade attacks and cookie hijacking.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::Https()
+        ->maxAge(1000000)     //(optional) max-age directive for the Strict-Transport-Security header. By default is 31536000 (1 year)
+        ->includeSubdomains() //(optional) To add the "includeSubDomains" attribute to the Strict-Transport-Security header.
+]);
+```
+
 ### ImageTransformer
 
-Uses [imagecow/imagecow](https://github.com/oscarotero/imagecow) to transform the images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
+Uses [imagecow/imagecow 2.x](https://github.com/oscarotero/imagecow) to transform images on demand. You can resize, crop, rotate and convert to other formats. Use the [the imagecow syntax](https://github.com/oscarotero/imagecow#execute-multiple-functions) to define the available sizes.
 
-To resize or crop images on demand, use the size as filename prefix. For example, to get the "small" value of the image `avatars/users.png`, the path is: `avatars/small.user.png`.
+To define the available sizes, you have to asign a filename prefix representing the size, so any file requested with this prefix will be dinamically transformed.
+
+There's also support for [Client hints](https://www.smashingmagazine.com/2016/01/leaner-responsive-images-client-hints/) to avoid to serve images larger than needed (currently supported only in chrome and opera).
+
+If you want to save the transformed images in the cache, provide a library compatible with psr-6 for that.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -752,11 +768,12 @@ $dispatcher = $relay->getInstance([
     Middleware::formatNegotiator(),
 
     Middleware::imageTransformer([   // The available sizes of the images.
-            'small' => 'resizeCrop,50,50',
-            'medium' => 'resize,500|format,jpg',
-            'large' => 'resize,1000|format,jpg',
+            'small.' => 'resizeCrop,50,50', //Creates a 50x50 thumb of any image prefixed with "small." (example: /images/small.avatar.jpg)
+            'medium.' => 'resize,500|format,jpg', //Resize the image to 500px and convert to jpg
+            'pictures/large.' => 'resize,1000|format,jpg', //Transform only images inside "pictures" directory (example: /images/pcitures/large.avatar.jpg)
         ])
-        ->basePath('/imgs')          // (optional) The base path of the images urls
+        ->clientHints()              // (optional) To enable the client hints headers
+        ->cache(new Psr6CachePool()) // (optional) To save the transformed images in the cache
 
     //Used to read the image files and returns the response with them
     Middleware::readResponse()
@@ -766,7 +783,7 @@ $dispatcher = $relay->getInstance([
 
 ### LanguageNegotiation
 
-Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language. You must provide an array with all available languages:
+Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to detect and negotiate the client language using the Accept-Language header and (optionally) the uri's path. You must provide an array with all available languages:
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -774,7 +791,10 @@ use Psr7Middlewares\Middleware\LanguageNegotiator;
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::LanguageNegotiator(['gl', 'en', 'es']), //Available languages
+    Middleware::LanguageNegotiator(['gl', 'en']) //Available languages
+        ->usePath(true)                          //(optional) To search the language in the path: /gl/, /en/
+        ->redirect()                             //(optional) To return a redirection if the language is not in the path
+        ->basePath('/web')                       //(optional) Basepath used to search the language
 
     function ($request, $response, $next) {
         //Get the preferred language
@@ -833,7 +853,6 @@ $dispatcher = $relay->getInstance([
     Middleware::formatNegotiator(),
 
     Middleware::Minify()
-        ->forCache(true) //(optional) only minify cacheable responses
 ]);
 ```
 
@@ -909,6 +928,7 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::ReadResponse('path/to/files') // Path where the files are stored
+        ->appendQuery(true)                   // (optional) to use the uri query in the filename
         ->basePath('public')                  // (optional) basepath ignored from the request uri
 ]);
 ```
@@ -998,6 +1018,7 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::SaveResponse('path/to/files') //Path directory where save the responses
+        ->appendQuery(true)                   // (optional) to append the uri query to the filename
         ->basePath('public')                  //(optional) basepath ignored from the request uri
 ]);
 ```
@@ -1065,7 +1086,7 @@ $dispatcher = $relay->getInstance([
 
 ### Whoops
 
-To use [whoops](https://github.com/filp/whoops) as error handler.
+To use [whoops 2.x](https://github.com/filp/whoops) as error handler.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -1076,7 +1097,10 @@ $whoops = new Run();
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Whoops($whoops) //(optional) provide a whoops instance
+    //(optional) this allows whoops to choose the best handler according with the expected format
+    Middleware::formatNegotiator(),
+
+    Middleware::Whoops($whoops) //(optional) provide a custom whoops instance
         ->catchErrors(false)    //(optional) to catch not only exceptions but also php errors (true by default)
 ]);
 ```
@@ -1094,7 +1118,7 @@ use Psr7Middlewares\Middleware;
 $dispatcher = $relay->getInstance([
 
     Middleware::Www(true) //(optional) Add www instead remove it
-        ->redirect(301)   //(optional) to return a 301 (seo friendly) or 302 response to the new host
+        ->redirect(301)   //(optional) to return a 301 (seo friendly), 302 response to the new host or false to don't redirect. (301 by default)
 ]);
 ```
 
@@ -1124,6 +1148,15 @@ $dispatcher = $relay->getInstance([
     //This middleware is needed only in production
     Middleware::create(function () {
         return (getenv('ENV') !== 'production') ? false : Middleware::minify();
+    }),
+
+    //This middleware is needed in some cases
+    Middleware::create(function ($request, $response) {
+        if ($request->hasHeader('Foo')) {
+            return Middleware::www();
+        }
+
+        return false;
     })
 ]);
 ```

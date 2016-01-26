@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Psr7Middlewares\Middleware;
 
@@ -11,7 +11,6 @@ use RuntimeException;
  */
 class SaveResponse
 {
-    use Utils\CacheTrait;
     use Utils\FileTrait;
 
     /**
@@ -27,11 +26,7 @@ class SaveResponse
     {
         $response = $next($request, $response);
 
-        if (
-            $this->testBasePath($request->getUri()->getPath())
-         && empty($request->getUri()->getQuery())
-         && self::isCacheable($request, $response)
-        ) {
+        if ($this->canSave($request, $response)) {
             $path = $this->getFilename($request);
 
             //if it's gz compressed, append .gz
@@ -43,6 +38,41 @@ class SaveResponse
         }
 
         return $response;
+    }
+
+    /**
+     * Check whether the response can be saved or not.
+     * 
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
+     * 
+     * @return bool
+     */
+    private function canSave(RequestInterface $request, ResponseInterface $response)
+    {
+        if ($request->getMethod() !== 'GET') {
+            return false;
+        }
+
+        if ($response->getStatusCode() !== 200) {
+            return false;
+        }
+
+        if (!$this->testBasePath($request->getUri()->getPath())) {
+            return false;
+        }
+
+        if (!$this->appendQuery && !empty($request->getUri()->getQuery())) {
+            return false;
+        }
+
+        $cacheControl = $response->getHeaderLine('Cache-Control');
+
+        if ($cacheControl && (stripos($cacheControl, 'no-cache') !== false || stripos($cacheControl, 'no-store') !== false)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

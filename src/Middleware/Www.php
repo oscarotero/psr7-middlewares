@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Psr7Middlewares\Middleware;
 
@@ -25,6 +25,7 @@ class Www
     public function __construct(bool $addWww = false)
     {
         $this->addWww = (boolean) $addWww;
+        $this->redirect(301);
     }
 
     /**
@@ -74,7 +75,7 @@ class Www
             return false;
         }
 
-        $host = array_reverse(explode('.', $host));
+        $host = explode('.', $host);
 
         switch (count($host)) {
             case 1: //localhost

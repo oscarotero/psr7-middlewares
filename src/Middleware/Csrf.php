@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\{Middleware, Utils};
 use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
+use InvalidArgumentException;
 use RuntimeException;
 use ArrayAccess;
 

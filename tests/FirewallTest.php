@@ -15,7 +15,7 @@ class FirewallTest extends Base
                 [],
                 [],
                 403,
-            ],[
+            ], [
                 [
                     'Client-Ip' => 'unknow,123.456.789.10,123.234.123.10',
                     'X-Forwarded' => '123.234.123.10',
@@ -23,7 +23,7 @@ class FirewallTest extends Base
                 ['123.234.123.10'],
                 [],
                 200,
-            ],[
+            ], [
                 [
                     'Client-Ip' => 'unknow,123.456.789.10,123.234.123.11',
                     'X-Forwarded' => '123.234.123.10',
@@ -31,7 +31,7 @@ class FirewallTest extends Base
                 ['123.234.123.11'],
                 ['123.234.123.10'],
                 403,
-            ],[
+            ], [
                 [
                     'Client-Ip' => '123.0.0.10,123.0.0.11',
                     'X-Forwarded' => '123.0.0.12',
@@ -39,7 +39,7 @@ class FirewallTest extends Base
                 ['123.0.0.*'],
                 [],
                 200,
-            ],[
+            ], [
                 [
                     'Client-Ip' => '123.0.0.10,123.0.0.11',
                     'X-Forwarded' => '123.0.0.12',

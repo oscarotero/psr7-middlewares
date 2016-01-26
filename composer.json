@@ -37,12 +37,13 @@
 		"mobiledetect/mobiledetectlib": "^2.8",
 		"willdurand/geocoder": "^3.2",
 		"league/route": "2.0.0-RC1",
-		"imagecow/imagecow": "^1.5",
-		"filp/whoops": "^1.1",
+		"imagecow/imagecow": "^2.0",
+		"filp/whoops": "2.*",
 		"monolog/monolog": "^1.17",
 		"paragonie/csp-builder": "^1.2",
 		"google/recaptcha": "^1.1",
-		"piwik/referrer-spam-blacklist": "^1.0"
+		"piwik/referrer-spam-blacklist": "^1.0",
+		"micheh/psr7-cache": "^0.3.0"
 	},
 	"suggest": {
 		"aura/router": "To use AuraRouter",
@@ -63,7 +64,8 @@
 		"psr/cache-implementation": "To use Cache",
 		"paragonie/csp-builder": "To use Csp",
 		"google/recaptcha": "To use Recaptcha",
-		"piwik/referrer-spam-blacklist": "To use BlockSpam"
+		"piwik/referrer-spam-blacklist": "To use BlockSpam",
+		"micheh/psr7-cache": "To use Cache"
 	},
 	"autoload": {
 		"psr-4": {

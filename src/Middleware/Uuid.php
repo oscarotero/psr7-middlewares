@@ -1,9 +1,10 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
 use Psr\Http\Message\{ServerRequestInterface, ResponseInterface};
+use Ramsey\Uuid\Uuid;
 
 /**
  * Middleware to generate UUID on each request.
@@ -27,7 +28,7 @@ class Uuid
      *
      * @param ServerRequestInterface $request
      *
-     * @return \Ramsey\Uuid\Uuid|null
+     * @return Uuid|null
      */
     public static function getUuid(ServerRequestInterface $request)
     {
@@ -104,9 +105,9 @@ class Uuid
     /**
      * Generate the uuid with the current configuration.
      *
-     * @return string
+     * @return Uuid
      */
-    private function generateUuid(): string
+    private function generateUuid(): Uuid
     {
         $args = $this->version;
         $fn = 'uuid'.array_shift($args);

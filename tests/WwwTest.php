@@ -25,7 +25,7 @@ class WwwTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::Www(true),
+                Middleware::Www(true)->redirect(false),
 
                 function ($request, $response, $next) {
                     $response->getBody()->write((string) $request->getUri());
@@ -59,7 +59,7 @@ class WwwTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::Www(false),
+                Middleware::Www(false)->redirect(false),
 
                 function ($request, $response, $next) {
                     $response->getBody()->write((string) $request->getUri());
@@ -77,12 +77,12 @@ class WwwTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::Www(false)->redirect(),
+                Middleware::Www(false),
             ],
             'http://www.example.com'
         );
 
-        $this->assertEquals(302, (string) $response->getStatusCode());
+        $this->assertEquals(301, (string) $response->getStatusCode());
         $this->assertEquals('http://example.com', $response->getHeaderLine('location'));
     }
 }
