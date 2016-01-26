@@ -104,6 +104,13 @@ class Whoops
         }
 
         $whoops = new Run();
+
+        if (php_sapi_name() === 'cli') {
+            $whoops->pushHandler(new PlainTextHandler());
+
+            return $whoops;
+        }
+
         $format = FormatNegotiator::getFormat($request);
 
         switch ($format) {
