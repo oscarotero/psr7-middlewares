@@ -1086,7 +1086,7 @@ $dispatcher = $relay->getInstance([
 
 ### Whoops
 
-To use [whoops](https://github.com/filp/whoops) as error handler.
+To use [whoops 2.x](https://github.com/filp/whoops) as error handler.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -1097,7 +1097,10 @@ $whoops = new Run();
 
 $dispatcher = $relay->getInstance([
 
-    Middleware::Whoops($whoops) //(optional) provide a whoops instance
+    //(optional) this allows whoops to choose the best handler according with the expected format
+    Middleware::formatNegotiator(),
+
+    Middleware::Whoops($whoops) //(optional) provide a custom whoops instance
         ->catchErrors(false)    //(optional) to catch not only exceptions but also php errors (true by default)
 ]);
 ```

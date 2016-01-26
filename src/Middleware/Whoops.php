@@ -9,6 +9,7 @@ use Whoops\Run;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Handler\PlainTextHandler;
 use Whoops\Handler\JsonResponseHandler;
+use Whoops\Handler\XmlResponseHandler;
 
 /**
  * Middleware to use whoops as error handler.
@@ -74,6 +75,7 @@ class Whoops
 
             $whoops->allowQuit(false);
             $whoops->writeToOutput(false);
+            $whoops->sendHttpCode(false);
 
             $body = Middleware::createStream();
             $body->write($whoops->$method($exception));
@@ -102,16 +104,30 @@ class Whoops
         }
 
         $whoops = new Run();
+        $format = FormatNegotiator::getFormat($request);
 
-        //Is ajax?
-        if (strtolower($request->getHeaderLine('X-Requested-With')) === 'xmlhttprequest') {
-            $whoops->pushHandler(new JsonResponseHandler());
-        } else {
-            $whoops->pushHandler(new PrettyPageHandler());
+        switch ($format) {
+            case 'json':
+                $whoops->pushHandler(new JsonResponseHandler());
+                break;
+
+            case 'html':
+                $whoops->pushHandler(new PrettyPageHandler());
+                break;
+
+            case 'xml':
+                $whoops->pushHandler(new XmlResponseHandler());
+                break;
+
+            default:
+                if (empty($format)) {
+                    $whoops->pushHandler(new PrettyPageHandler());
+                } else {
+                    $whoops->pushHandler(new PlainTextHandler());
+                }
+
+                break;
         }
-
-        //Command line
-        $whoops->pushHandler(new PlainTextHandler());
 
         return $whoops;
     }
