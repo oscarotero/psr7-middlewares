@@ -9,12 +9,13 @@ class GzipTest extends Base
         $response = $this->execute(
             [
                 Middleware::EncodingNegotiator(),
+                Middleware::Gzip(),
                 function ($request, $response, $next) {
+                    $response = $this->response();
                     $response->getBody()->write('Hello world');
 
                     return $next($request, $response);
                 },
-                Middleware::Gzip(),
             ],
             '',
             ['Accept-Encoding' => 'gzip, deflate']
