@@ -22,15 +22,18 @@ EOT;
 <!DOCTYPE html><html><head><title>Title</title></head><body><h1>Hello world!</h1></body></html>
 EOT;
 
-        $response = $this->response(['Content-Type' => 'text/html']);
-        $response->getBody()->write($body);
+        $response = $this->execute(
+            [
+                Middleware::FormatNegotiator(),
+                Middleware::Minify(),
+                function ($request, $response, $next) use ($body) {
+                    $response = $this->response();
+                    $response->getBody()->write($body);
 
-        $middlewares = [
-            Middleware::FormatNegotiator(),
-            Middleware::Minify(),
-        ];
-
-        $response = $this->dispatch($middlewares, $this->request(), $response);
+                    return $next($request, $response);
+                },
+            ]
+        );
 
         $this->assertEquals($body_minified, (string) $response->getBody());
     }

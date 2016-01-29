@@ -31,10 +31,12 @@ class Minify
         $resolver = $this->resolver ?: new Transformers\Minifier();
         $transformer = $resolver->resolve(FormatNegotiator::getFormat($request));
 
+        $response = $next($request, $response);
+
         if ($transformer) {
             $response = $transformer($response);
         }
 
-        return $next($request, $response);
+        return $response;
     }
 }
