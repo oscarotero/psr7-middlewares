@@ -101,11 +101,13 @@ class Piwik
             throw new RuntimeException('The Piwik middleware needs FormatNegotiator executed before');
         }
 
+        $response = $next($request, $response);
+
         if (FormatNegotiator::getFormat($request) === 'html' && !Utils\Helpers::isAjax($request)) {
-            $response = $this->inject($response, $this->getCode());
+            return $this->inject($response, $this->getCode());
         }
 
-        return $next($request, $response);
+        return $response;
     }
 
     /**
