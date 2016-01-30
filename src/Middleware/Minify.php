@@ -28,10 +28,10 @@ class Minify
             throw new RuntimeException('Minify middleware needs FormatNegotiator executed before');
         }
 
+        $response = $next($request, $response);
+
         $resolver = $this->resolver ?: new Transformers\Minifier();
         $transformer = $resolver->resolve(FormatNegotiator::getFormat($request));
-
-        $response = $next($request, $response);
 
         if ($transformer) {
             $response = $transformer($response);
