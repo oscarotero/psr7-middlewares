@@ -85,13 +85,9 @@ class ImageTransformer
             throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');
         }
 
-        switch (FormatNegotiator::getFormat($request)) {
-            case 'html':
-                if (!empty($this->clientHints)) {
-                    $response = $response->withHeader('Accept-CH', implode(',', $this->clientHints));
-                }
-                break;
+        $format = FormatNegotiator::getFormat($request);
 
+        switch ($format) {
             case 'jpg':
             case 'jpeg':
             case 'gif':
@@ -126,7 +122,13 @@ class ImageTransformer
                 return $response;
         }
 
-        return $next($request, $response);
+        $response = $next($request, $response);
+
+        if ($format = 'html' && !empty($this->clientHints)) {
+            return $response->withHeader('Accept-CH', implode(',', $this->clientHints));
+        }
+
+        return $response;
     }
 
     /**
