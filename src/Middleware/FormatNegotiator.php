@@ -113,7 +113,7 @@ class FormatNegotiator
 
         $response = $next($request, $response);
 
-        if ($format) {
+        if ($format && !$response->hasHeader('Content-Type')) {
             $response = $response->withHeader('Content-Type', $this->formats[$format][0].'; charset=utf-8');
         }
 
