@@ -17,7 +17,7 @@ class PayloadTest extends Base
     /**
      * @dataProvider payloadProvider
      */
-    public function testTrailingSlash($header, $body, $result)
+    public function testPayload($header, $body, $result)
     {
         $request = $this->request('', ['Content-Type' => $header])
             ->withMethod('POST')
@@ -25,7 +25,6 @@ class PayloadTest extends Base
 
         $response = $this->dispatch([
             Middleware::Payload(),
-
             function ($request, $response, $next) use ($result) {
                 $this->assertEquals($result, $request->getParsedBody());
             },
