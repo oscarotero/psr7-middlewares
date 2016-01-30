@@ -95,10 +95,10 @@ class Csp
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
+        $response = $next($request, $response);
+        
         $this->csp->compile();
 
-        $response = $this->csp->injectCSPHeader($response);
-
-        return $next($request, $response);
+        return $this->csp->injectCSPHeader($response);
     }
 }
