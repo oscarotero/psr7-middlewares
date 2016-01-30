@@ -109,10 +109,15 @@ class FormatNegotiator
 
         if ($format) {
             $request = Middleware::setAttribute($request, self::KEY, $format);
+        }
+
+        $response = $next($request, $response);
+
+        if ($format) {
             $response = $response->withHeader('Content-Type', $this->formats[$format][0].'; charset=utf-8');
         }
 
-        return $next($request, $response);
+        return $response;
     }
 
     /**

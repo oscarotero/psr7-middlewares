@@ -34,10 +34,12 @@ class Gzip
         $resolver = $this->resolver ?: new Transformers\Encoder();
         $transformer = $resolver->resolve(EncodingNegotiator::getEncoding($request));
 
+        $response = $next($request, $response);
+
         if ($transformer) {
             $response = $transformer($response);
         }
 
-        return $next($request, $response);
+        return $response;
     }
 }

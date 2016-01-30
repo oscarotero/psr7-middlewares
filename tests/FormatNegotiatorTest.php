@@ -40,16 +40,16 @@ class FormatNegotiatorTest extends Base
         $response = $this->execute(
             [
                 Middleware::FormatNegotiator(),
-                function ($request, $response, $next) {
-                    $response->getBody()->write(FormatNegotiator::getFormat($request));
+                function ($request, $response, $next) use ($format) {
+                    $this->assertEquals($format, FormatNegotiator::getFormat($request));
 
-                    return $response;
+                    return $this->response();
                 },
             ],
             $url,
             ['Accept' => $accept]
         );
 
-        $this->assertEquals($format, (string) $response->getBody());
+        $this->assertContains($format, $response->getHeader('Content-Type')[0]);
     }
 }
