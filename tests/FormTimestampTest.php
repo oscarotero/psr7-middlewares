@@ -63,7 +63,7 @@ EOT;
                     $response->getBody()->write($html);
 
                     return $next($request, $response);
-                }
+                },
             ],
             $this->request(),
             $this->response()
