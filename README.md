@@ -64,6 +64,12 @@ $dispatcher = $relay->newInstance([
 
     //Add an Uuid to request
     Middleware::uuid(),
+
+    //Minify the result
+    Middleware::minify(),
+
+    //Adds the php debug bar
+    Middleware::debugBar(),
     
     //Handle errors
     Middleware::errorHandler('error_handler_function')->catchExceptions(true),
@@ -107,17 +113,8 @@ $dispatcher = $relay->newInstance([
     //Detects the format
     Middleware::formatNegotiator(),
 
-    //Adds the php debug bar
-    Middleware::debugBar(),
-
     //Execute fast route
     Middleware::fastRoute($app->get('dispatcher')),
-
-    //Add Google Analytics
-    Middleware::googleAnalytics('UA-XXXXX-X'),
-
-    //Minify the result
-    Middleware::minify(),
 ]);
 
 $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
