@@ -75,7 +75,13 @@ class Https
         $uri = $request->getUri();
 
         if (strtolower($uri->getScheme()) !== 'https') {
-            return self::getRedirectResponse($this->redirectStatus, $uri->withScheme('https'), $response);
+            $uri = $uri->withScheme('https');
+
+            if ($this->redirectStatus) {
+                return self::getRedirectResponse($this->redirectStatus, $uri, $response);
+            }
+
+            $request = $request->withUri($uri);
         }
 
         if (!empty($this->maxAge)) {

@@ -124,7 +124,7 @@ class ImageTransformer
 
         $response = $next($request, $response);
 
-        if ($format = 'html' && !empty($this->clientHints)) {
+        if ($format === 'html' && !empty($this->clientHints)) {
             return $response->withHeader('Accept-CH', implode(',', $this->clientHints));
         }
 
