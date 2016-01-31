@@ -10,12 +10,12 @@ use Psr7Middlewares\Middleware;
  *
  * @todo Raise an exception if no attribute found?
  */
-class AttributeRouter
+class AttributeMapper
 {
     /**
      * @var array
      */
-    private $routing = [];
+    private $mapping = [];
 
     /**
      * Example:
@@ -24,11 +24,11 @@ class AttributeRouter
      *      BasicAuthentication::KEY => 'basic.username'
      * ]
      *
-     * @param array $routing
+     * @param array $mapping
      */
-    public function __construct($routing)
+    public function __construct(array $mapping)
     {
-        $this->routing = $routing;
+        $this->mapping = $mapping;
     }
 
     /**
@@ -45,7 +45,7 @@ class AttributeRouter
         ResponseInterface $response,
         callable $next
     ) {
-        foreach ($this->routing as $middleware => $attribute) {
+        foreach ($this->mapping as $middleware => $attribute) {
             $request = $request->withAttribute(
                 $attribute,
                 Middleware::getAttribute($request, $middleware)

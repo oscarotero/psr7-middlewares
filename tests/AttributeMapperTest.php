@@ -1,7 +1,7 @@
 <?php
 use Psr7Middlewares\Middleware;
 
-class AttributeRouterTest extends Base
+class AttributeMapperTest extends Base
 {
     public function testUsernameMiddlewareRouting()
     {
@@ -9,7 +9,7 @@ class AttributeRouterTest extends Base
             [
                 Middleware::BasicAuthentication(['username' => 'password'])->realm('My realm'),
 
-                Middleware::attributeRouter([
+                Middleware::attributeMapper([
                     Middleware\BasicAuthentication::KEY => 'auth:username'
                 ]),
 
