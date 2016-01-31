@@ -123,6 +123,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 ## Available middlewares
 
 * [AccessLog](#accesslog)
+* [AttributeMapper](#attributemapper)
 * [AuraRouter](#aurarouter)
 * [AuraSession](#aurasession)
 * [BasePath](#basepath)
@@ -190,6 +191,36 @@ $dispatcher = $relay->getInstance([
 
     Middleware::AccessLog($logger) //Instance of Psr\Log\LoggerInterface
         ->combined(true)           //(optional) To use the Combined Log Format instead the Common Log Format
+]);
+```
+
+
+### AttributeMapper
+
+Maps middleware specific attribute to regural request attribute under desired name:
+
+```php
+use Psr7Middlewares\Middleware;
+
+$dispatcher = $relay->getInstance([
+
+    Middleware::BasicAuthentication([
+            'username1' => 'password1',
+            'username2' => 'password2'
+        ])
+        ->realm('My realm'), //(optional) change the realm value
+    
+    Middleware::attributeMapper([
+        Middleware\BasicAuthentication::KEY => 'auth:username'
+    ]),
+        
+    function ($request, $response, $next) {
+        $username = BasicAuthentication::getUsername($request);
+    
+        assert($username === $request->getAttribute('auth:username'));
+
+        return $next($request, $response);
+    }
 ]);
 ```
 
@@ -294,7 +325,13 @@ $dispatcher = $relay->getInstance([
             'username1' => 'password1',
             'username2' => 'password2'
         ])
-        ->realm('My realm') //(optional) change the realm value
+        ->realm('My realm'), //(optional) change the realm value
+        
+    function ($request, $response, $next) {
+        $username = BasicAuthentication::getUsername($request);
+
+        return $next($request, $response);
+    }
 ]);
 ```
 
@@ -510,7 +547,13 @@ $dispatcher = $relay->getInstance([
             'username2' => 'password2'
         ])
         ->realm('My realm') //(optional) custom realm value
-        ->nonce(uniqid())   //(optional) custom nonce value
+        ->nonce(uniqid()),   //(optional) custom nonce value
+        
+    function ($request, $response, $next) {
+        $username = DigestAuthentication::getUsername($request);
+
+        return $next($request, $response);
+    }
 ]);
 ```
 
