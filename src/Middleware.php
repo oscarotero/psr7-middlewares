@@ -2,10 +2,10 @@
 
 namespace Psr7Middlewares;
 
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use RuntimeException;
 
 class Middleware
@@ -50,7 +50,7 @@ class Middleware
      */
     public static function __callStatic($name, $args)
     {
-        $class = __NAMESPACE__.'\\Middleware\\'.ucfirst($name);
+        $class = __NAMESPACE__ . '\\Middleware\\' . ucfirst($name);
 
         if (class_exists($class)) {
             switch (count($args)) {
@@ -69,15 +69,19 @@ class Middleware
     }
 
     /**
-     * Create a middleware callable that acts as a "proxy" to a real middleware that must be returned by the given callback.
+     * Create a middleware callable that acts as a "proxy" to a real middleware that must be
+     * returned by the given callback.
      *
      * @param callable $factory Takes no argument and MUST return a middleware callable or false
-     * 
+     *
      * @return callable
      */
     public static function create(callable $factory)
     {
-        return function (RequestInterface $request, ResponseInterface $response, callable $next) use ($factory) {
+        return function (RequestInterface $request, ResponseInterface $response, callable $next) use
+        (
+            $factory
+        ) {
             $middleware = $factory($request, $response);
 
             if ($middleware === false) {
@@ -85,7 +89,8 @@ class Middleware
             }
 
             if (!is_callable($middleware)) {
-                throw new RuntimeException(sprintf('Factory returned "%s" instead of a callable or FALSE.', gettype($middleware)));
+                throw new RuntimeException(sprintf('Factory returned "%s" instead of a callable or FALSE.',
+                    gettype($middleware)));
             }
 
             return $middleware($request, $response, $next);

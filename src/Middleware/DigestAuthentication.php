@@ -2,21 +2,38 @@
 
 namespace Psr7Middlewares\Middleware;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
  * Middleware to create a digest http authentication.
+ *
+ * @see https://tools.ietf.org/html/rfc2069#page-10
  */
 class DigestAuthentication
 {
     use Utils\AuthenticationTrait;
 
+    const KEY = 'USERNAME';
+
     /**
      * @var string|null The nonce value
      */
     private $nonce;
+
+    /**
+     * Returns the username.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return string|null
+     */
+    public static function getUsername(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Set the nonce value.
@@ -35,16 +52,19 @@ class DigestAuthentication
     /**
      * Execute the middleware.
      *
-     * @param RequestInterface  $request
-     * @param ResponseInterface $response
-     * @param callable          $next
+     * @param ServerRequestInterface  $request
+     * @param ResponseInterface       $response
+     * @param callable                $next
      *
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ($this->login($request)) {
-            return $next($request, $response);
+        if ($this->login($request, $username)) {
+            return $next(
+                Middleware::setAttribute($request, self::KEY, $username),
+                $response
+            );
         }
 
         return $response
@@ -55,11 +75,12 @@ class DigestAuthentication
     /**
      * Login or check the user credentials.
      *
-     * @param RequestInterface $request
+     * @param ServerRequestInterface $request
+     * @param string|null            $username
      *
      * @return bool
      */
-    private function login(RequestInterface $request)
+    private function login(ServerRequestInterface $request, &$username)
     {
         //Check header
         $authorization = self::parseAuthorizationHeader($request->getHeaderLine('Authorization'));
@@ -73,8 +94,10 @@ class DigestAuthentication
             return false;
         }
 
+        $username = $authorization['username'];
+
         //Check authentication
-        return $this->checkAuthentication($authorization, $request->getMethod(), $this->users[$authorization['username']]);
+        return $this->checkAuthentication($authorization, $request->getMethod(), $this->users[$username]);
     }
 
     /**

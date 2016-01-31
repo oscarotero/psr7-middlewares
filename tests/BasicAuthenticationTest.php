@@ -22,7 +22,7 @@ class BasicAuthenticationTest extends Base
             [
                 Middleware::BasicAuthentication(['username' => 'password'])->realm('My realm'),
                 function ($request, $response, $next) {
-                    $response->getBody()->write($request->getAttribute('username'));
+                    $response->getBody()->write(Middleware\BasicAuthentication::getUsername($request));
 
                     return $response;
                 }
