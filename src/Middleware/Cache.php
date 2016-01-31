@@ -102,12 +102,7 @@ class Cache
         //Save in the cache
         if ($this->cacheUtil->isCacheable($response)) {
             $item->set($response->getHeaders());
-
-            $time = $this->cacheUtil->getLifetime($response);
-
-            if ($time) {
-                $item->expiresAt(time() + $time);
-            }
+            $item->expiresAfter($this->cacheUtil->getLifetime($response));
 
             $this->cache->save($item);
         }
