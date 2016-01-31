@@ -77,10 +77,10 @@ class LanguageNegotiator
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $language = null;
+        $uri = $request->getUri();
 
         //Use path
         if ($this->usePath) {
-            $uri = $request->getUri();
             $path = ltrim($this->getPath($uri->getPath()), '/');
 
             $dirs = explode('/', $path, 2);
