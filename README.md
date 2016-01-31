@@ -297,7 +297,6 @@ $dispatcher = $relay->getInstance([
         ->realm('My realm'), //(optional) change the realm value
         
     function ($request, $response, $next) {
-        //Get username
         $username = BasicAuthentication::getUsername($request);
 
         return $next($request, $response);
@@ -520,7 +519,6 @@ $dispatcher = $relay->getInstance([
         ->nonce(uniqid()),   //(optional) custom nonce value
         
     function ($request, $response, $next) {
-        //Get username
         $username = DigestAuthentication::getUsername($request);
 
         return $next($request, $response);
