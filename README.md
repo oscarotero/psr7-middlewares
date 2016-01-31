@@ -294,7 +294,14 @@ $dispatcher = $relay->getInstance([
             'username1' => 'password1',
             'username2' => 'password2'
         ])
-        ->realm('My realm') //(optional) change the realm value
+        ->realm('My realm'), //(optional) change the realm value
+        
+    function ($request, $response, $next) {
+        //Get username
+        $username = BasicAuthentication::getUsername($request);
+
+        return $next($request, $response);
+    }
 ]);
 ```
 
@@ -510,7 +517,14 @@ $dispatcher = $relay->getInstance([
             'username2' => 'password2'
         ])
         ->realm('My realm') //(optional) custom realm value
-        ->nonce(uniqid())   //(optional) custom nonce value
+        ->nonce(uniqid()),   //(optional) custom nonce value
+        
+    function ($request, $response, $next) {
+        //Get username
+        $username = DigestAuthentication::getUsername($request);
+
+        return $next($request, $response);
+    }
 ]);
 ```
 
