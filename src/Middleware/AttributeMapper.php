@@ -1,4 +1,5 @@
 <?php
+
 namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
@@ -18,7 +19,7 @@ class AttributeMapper
     private $mapping = [];
 
     /**
-     * Example:
+     * Example:.
      *
      * [
      *      BasicAuthentication::KEY => 'basic.username'

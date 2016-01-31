@@ -13,7 +13,7 @@ class DigestAuthenticationTest extends Base
         );
 
         $this->assertSame(401, $response->getStatusCode());
-        $this->assertSame('Digest realm="My realm",qop="auth",nonce="xxx",opaque="' . md5('My realm') . '"',
+        $this->assertSame('Digest realm="My realm",qop="auth",nonce="xxx",opaque="'.md5('My realm').'"',
             $response->getHeaderLine('WWW-Authenticate'));
     }
 
@@ -28,26 +28,28 @@ class DigestAuthenticationTest extends Base
                     $response->getBody()->write(Middleware\DigestAuthentication::getUsername($request));
 
                     return $response;
-                }
+                },
             ],
             '',
             [
-                'Authorization' => $this->authHeader('username', 'password', 'My Realm', $nonce)
+                'Authorization' => $this->authHeader('username', 'password', 'My Realm', $nonce),
             ]
         );
 
         $this->assertSame(200, $response->getStatusCode());
-        $this->assertSame('username', (string)$response->getBody());
+        $this->assertSame('username', (string) $response->getBody());
     }
 
     /**
      * @see https://tools.ietf.org/html/rfc2069#page-10
+     *
      * @param string $username
      * @param string $password
      * @param string $realm
      * @param string $nonce
      * @param string $method
      * @param string $uri
+     *
      * @return string
      */
     private function authHeader($username, $password, $realm, $nonce, $method = 'GET', $uri = '/')
@@ -78,6 +80,6 @@ class DigestAuthenticationTest extends Base
             $header[] = "{$name}=\"{$value}\"";
         }
 
-        return 'Digest ' . join(', ', $header);
+        return 'Digest '.implode(', ', $header);
     }
 }
