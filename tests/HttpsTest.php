@@ -29,4 +29,18 @@ class HttpsTest extends Base
         $this->assertEquals($location, $response->getHeaderLine('Location'));
         $this->assertEquals($hsts, $response->getHeaderLine('Strict-Transport-Security'));
     }
+    public function testRedirectSchemeMatchesPort()
+    {
+        $url = 'http://domain.com:80';
+
+        $response = $this->execute(
+            [
+                Middleware::Https()->includeSubdomains(false),
+            ],
+            $url
+        );
+        $expectedLocation = 'https://domain.com';
+        $location = $response->getHeaderLine('Location');
+        $this->assertEquals($expectedLocation,$location);
+    }
 }
