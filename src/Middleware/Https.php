@@ -75,7 +75,7 @@ class Https
         $uri = $request->getUri();
 
         if (strtolower($uri->getScheme()) !== 'https') {
-            $uri = $uri->withScheme('https')->withPort('443');
+            $uri = $uri->withScheme('https')->withPort(443);
 
             if ($this->redirectStatus) {
                 return self::getRedirectResponse($this->redirectStatus, $uri, $response);
