@@ -236,7 +236,7 @@ use Aura\Router\RouterContainer;
 //Create the router
 $router = new RouterContainer();
 
-$map = $routerContainer->getMap();
+$map = $router->getMap();
 
 $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
 
