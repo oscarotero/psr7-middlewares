@@ -1,6 +1,7 @@
 <?php
 
 use Psr7Middlewares\Middleware;
+use Psr\Http\Message\ServerRequestInterface;
 
 class MethodOverrideTest extends Base
 {
@@ -28,5 +29,59 @@ class MethodOverrideTest extends Base
         );
 
         $this->assertEquals($status, $response->getStatusCode());
+    }
+
+    public function getRequestProvider()
+    {
+        return [
+            [
+                $this->request('hello'),
+                'GET', 200
+            ],
+            [
+                $this->request('hello')->withQueryParams(['method' => 'head']),
+                'HEAD', 200
+            ],
+            [
+                $this->request('hello')->withQueryParams(['method' => 'PUT']),
+                '', 405
+            ],
+            [
+                $this->request('hello')->withMethod('POST')->withQueryParams(['method' => 'PUT']),
+                'POST', 200
+            ],
+            [
+                $this->request('hello')->withMethod('POST')->withParsedBody(['method' => 'PUT']),
+                'PUT', 200
+            ],
+            [
+                $this->request('hello')->withMethod('POST')->withParsedBody(['method' => 'GET']),
+                '', 405
+            ]
+        ];
+    }
+
+    /**
+     * @dataProvider getRequestProvider
+     */
+    public function testParams(ServerRequestInterface $request, $body, $status)
+    {
+        $response = $this->dispatch(
+            [
+                Middleware::MethodOverride()
+                    ->parameter('method'),
+
+                function ($request, $response, $next) {
+                    $response->getBody()->write($request->getMethod());
+
+                    return $next($request, $response);
+                }
+            ],
+            $request,
+            $this->response()
+        );
+
+        $this->assertEquals($status, $response->getStatusCode());
+        $this->assertEquals($body, (string) $response->getBody());
     }
 }

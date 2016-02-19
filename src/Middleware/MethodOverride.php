@@ -24,6 +24,17 @@ class MethodOverride
     private $post = ['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'];
 
     /**
+     * @var null|string The POST parameter name
+     */
+    private $postParam;
+
+    /**
+     * @var null|string The GET parameter name
+     */
+    private $getParam;
+
+
+    /**
      * Set allowed method for GET.
      *
      * @return self
@@ -43,6 +54,25 @@ class MethodOverride
     public function post(array $methods)
     {
         $this->post = $methods;
+
+        return $this;
+    }
+
+    /**
+     * Configure the parameters.
+     * 
+     * @param string $name
+     * @param bool   $get
+     *
+     * @return self
+     */
+    public function parameter($name, $get = true)
+    {
+        $this->postParam = $name;
+
+        if ($get) {
+            $this->getParam = $name;
+        }
 
         return $this;
     }
@@ -84,6 +114,22 @@ class MethodOverride
      */
     private function getOverrideMethod(RequestInterface $request)
     {
+        if ($request->getMethod() === 'POST' && $this->postParam !== null) {
+            $params = $request->getParsedBody();
+
+            if (isset($params[$this->postParam])) {
+                return strtoupper($params[$this->postParam]);
+            }
+        }
+
+        if ($request->getMethod() === 'GET' && $this->getParam !== null) {
+            $params = $request->getQueryParams();
+
+            if (isset($params[$this->getParam])) {
+                return strtoupper($params[$this->getParam]);
+            }
+        }
+
         $method = $request->getHeaderLine(self::HEADER);
 
         if (!empty($method) && ($method !== $request->getMethod())) {
