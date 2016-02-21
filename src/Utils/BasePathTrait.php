@@ -36,26 +36,10 @@ trait BasePathTrait
      */
     private function getPath($path)
     {
-        if ($this->testBasePath($path)) {
+        if ($this->basePath === '' || strpos($path, $this->basePath) === 0) {
             $path = substr($path, strlen($this->basePath)) ?: '';
         }
 
         return $path === '' ? '/' : $path;
-    }
-
-    /**
-     * Tests the basepath and returns whether the path matches.
-     *
-     * @param string $path
-     *
-     * @return bool
-     */
-    private function testBasePath($path)
-    {
-        if ($path === '') {
-            $path = '/';
-        }
-
-        return $this->basePath === '' || strpos($path, $this->basePath) === 0;
     }
 }
