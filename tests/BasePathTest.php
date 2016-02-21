@@ -8,17 +8,22 @@ class BasePathTest extends Base
     {
         return [
             [
-                'http://localhost/project-name/public',
+                'http://example.com/project-name/public',
                 '/project-name/public',
-                'http://localhost',
-            ], [
-                'http://localhost/project-name/public',
+                '/',
+                '/project-name/public/',
+            ],
+            [
+                'http://example.com/project-name/public',
                 '/other/path',
-                'http://localhost/project-name/public',
-            ], [
                 '/project-name/public',
+                '/other/path/project-name/public',
+            ],
+            [
+                'http://example.com/project-name/public',
                 '/project-name',
                 '/public',
+                '/project-name/public',
             ],
         ];
     }
@@ -26,20 +31,30 @@ class BasePathTest extends Base
     /**
      * @dataProvider pathProvider
      */
-    public function testBasePath($url, $basepath, $result)
+    public function testBasePath($uri, $base, $stripped, $full)
     {
         $response = $this->execute(
             [
-                Middleware::BasePath($basepath),
+                Middleware::BasePath($base),
                 function ($request, $response, $next) {
-                    $response->getBody()->write((string) $request->getUri());
+                    $builder = Middleware\BasePath::getBuilder($request);
+
+                    $response->getBody()->write(json_encode([
+                        'base' => Middleware\BasePath::getBasePath($request),
+                        'stripped' => (string) $request->getUri()->getPath(),
+                        'full' => $builder($request->getUri()->getPath()),
+                    ]));
 
                     return $response;
                 },
             ],
-            $url
+            $uri
         );
 
-        $this->assertEquals($result, (string) $response->getBody());
+        $body = json_decode((string) $response->getBody(), true);
+
+        $this->assertEquals($base, $body['base']);
+        $this->assertEquals($stripped, $body['stripped']);
+        $this->assertEquals($full, $body['full']);
     }
 }
