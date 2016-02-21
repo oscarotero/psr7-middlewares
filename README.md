@@ -31,7 +31,7 @@ So, you can use these midlewares with:
 * [Spiral](http://spiral-framework.com)
 * etc...
 
-## Instalation
+## Installation
 
 This package is installable and autoloadable via Composer as [oscarotero/psr7-middlewares](https://packagist.org/packages/oscarotero/psr7-middlewares).
 
