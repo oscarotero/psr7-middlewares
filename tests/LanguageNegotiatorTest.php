@@ -68,28 +68,48 @@ class LanguageNegotiatorTest extends Base
                 ['gl'],
                 '/gl/',
                 '',
-            ], [
+            ],
+            [
+                '',
+                '',
+                'gl-es, es;q=0.8, en;q=0.7',
+                ['gl'],
+                '/gl/',
+                '',
+            ],
+            [
                 '/web',
-                '/web/es',
+                '/web/ES',
                 'gl-es, es;q=0.8, en;q=0.7',
                 ['gl', 'es'],
                 '',
+                'es /',
+            ],
+            [
+                '',
                 'es',
-            ], [
+                'gl-es, es;q=0.8, en;q=0.7',
+                ['gl', 'es'],
+                '',
+                'es /',
+            ],
+            [
                 '',
                 '/es/ola',
                 'gl-es, es;q=0.8, en;q=0.7',
                 ['gl', 'es'],
                 '',
                 'es /ola',
-            ], [
+            ],
+            [
                 '',
                 '/mola/ola',
                 'gl-es, es;q=0.8, en;q=0.7',
                 ['gl', 'es'],
                 '/es/mola/ola',
                 '',
-            ], [
+            ],
+            [
                 '/mola',
                 '/mola/ola',
                 'gl-es, es;q=0.8, en;q=0.7',
@@ -107,10 +127,12 @@ class LanguageNegotiatorTest extends Base
     {
         $response = $this->execute(
             [
+                Middleware::basePath($basePath),
+
                 Middleware::LanguageNegotiator($languages)
-                    ->basePath($basePath)
                     ->usePath()
                     ->redirect(),
+
                 function ($request, $response, $next) {
                     $response->getBody()->write(LanguageNegotiator::getLanguage($request).' '.$request->getUri()->getPath());
 
@@ -121,7 +143,7 @@ class LanguageNegotiatorTest extends Base
             ['Accept-Language' => $acceptLanguage]
         );
 
-        //$this->assertEquals($body, (string) $response->getBody());
+        $this->assertEquals($body, (string) $response->getBody());
 
         if (empty($location)) {
             $this->assertEquals(200, $response->getStatusCode());

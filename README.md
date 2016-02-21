@@ -308,10 +308,10 @@ $dispatcher = $relay->getInstance([
         //Get the stripped off prefix
         $basePath = BasePath::getBasePath($request);
 
-        //Get a callable to generate urls with the base path added
-        $generator = BasePath::getPathGenerator($request);
+        //Get a callable to build urls with the base path
+        $builder = BasePath::getBuilder($request);
 
-        $generator('/other/path'); // /web/public/other/path
+        $builder('/other/path'); // /web/public/other/path
 
         return $response;
     }
@@ -840,7 +840,6 @@ $dispatcher = $relay->getInstance([
     Middleware::LanguageNegotiator(['gl', 'en']) //Available languages
         ->usePath(true)                          //(optional) To search the language in the path: /gl/, /en/
         ->redirect()                             //(optional) To return a redirection if the language is not in the path
-        ->basePath('/web')                       //(optional) Basepath used to search the language
 
     function ($request, $response, $next) {
         //Get the preferred language

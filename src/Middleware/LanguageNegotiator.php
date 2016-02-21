@@ -14,7 +14,6 @@ use Psr\Http\Message\ResponseInterface;
 class LanguageNegotiator
 {
     use Utils\NegotiateTrait;
-    use Utils\BasePathTrait;
     use Utils\RedirectTrait;
 
     const KEY = 'LANGUAGE';
@@ -81,10 +80,9 @@ class LanguageNegotiator
 
         //Use path
         if ($this->usePath) {
-            $path = ltrim($this->getPath($uri->getPath()), '/');
-
+            $path = ltrim($uri->getPath(), '/');
             $dirs = explode('/', $path, 2);
-            $first = array_shift($dirs);
+            $first = strtolower(array_shift($dirs));
 
             if (!empty($first) && in_array($first, $this->languages, true)) {
                 $language = $first;
@@ -103,10 +101,10 @@ class LanguageNegotiator
             }
 
             //Redirect to a path with the language
-            if ($this->redirectStatus && $this->usePath) {
-                $path = Utils\Helpers::joinPath($this->basePath, $language, $this->getPath($uri->getPath()));
+            if ($this->redirectStatus !== false && $this->usePath) {
+                $path = Utils\Helpers::joinPath($language, $uri->getPath());
 
-                return self::getRedirectResponse($this->redirectStatus, $uri->withPath($path), $response);
+                return $this->getRedirectResponse($request, $uri->withPath($path), $response);
             }
         }
 
