@@ -26,11 +26,23 @@ class BasePath
      *
      * @param ServerRequestInterface $request
      *
-     * @return string|null
+     * @return string
      */
     public static function getBasePath(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return Middleware::getAttribute($request, self::KEY)[0];
+    }
+
+    /**
+     * Returns a callable to build a full path.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return callable
+     */
+    public static function getPathBuilder(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY)[1];
     }
 
     /**
@@ -78,7 +90,12 @@ class BasePath
         $path = $this->getPath($uri->getPath());
         $request = $request->withUri($uri->withPath($path));
 
-        $request = Middleware::setAttribute($request, self::KEY, $this->basePath);
+        $request = Middleware::setAttribute($request, self::KEY, [
+            $this->basePath,
+            function ($path) {
+                return Utils\Helpers::joinPath($this->basePath, $path);
+            }
+        ]);
 
         return $next($request, $response);
     }

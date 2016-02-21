@@ -293,7 +293,7 @@ $dispatcher = $relay->getInstance([
 
 ### BasePath
 
-Strip off the prefix from the uri path of the request. This is useful to combine with routers if the root of the website is in a subdirectory. For example, if the root of your website is `/web/public`, a request with the uri `/web/public/post/34` will be converted to `/post/34`. You can provide the basePath to remove or let the middleware autodetect it.
+Removes the prefix from the uri path of the request. This is useful to combine with routers if the root of the website is in a subdirectory. For example, if the root of your website is `/web/public`, a request with the uri `/web/public/post/34` will be converted to `/post/34`. You can provide the basePath to remove or let the middleware autodetect it. In the router you can retrieve the piece removed and even a callable to generate more urls with the base path.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -307,6 +307,11 @@ $dispatcher = $relay->getInstance([
     function ($request, $response, $next) {
         //Get the stripped off prefix
         $basePath = BasePath::getBasePath($request);
+
+        //Get a callable to generate urls with the base path added
+        $generator = BasePath::getPathGenerator($request);
+
+        $generator('/other/path'); // /web/public/other/path
 
         return $response;
     }
