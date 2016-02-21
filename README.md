@@ -300,12 +300,11 @@ use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\BasePath;
 
 $dispatcher = $relay->getInstance([
-    Middleware::BasePath()
-        ->basePath('/web/public') // (optional) The path to remove...
-        ->autodetect(true),       // (optional) ...or autodetect the base path
+    Middleware::BasePath('/web/public') // (optional) The path to remove...
+        ->autodetect(true),             // (optional) ...or autodetect the base path
 
     function ($request, $response, $next) {
-        //Get the stripped off prefix
+        //Get the removed prefix
         $basePath = BasePath::getBasePath($request);
 
         //Get a callable to build full paths
@@ -882,6 +881,8 @@ $dispatcher = $relay->getInstance([
     Middleware::MethodOverride()
         ->get(['HEAD', 'CONNECT', 'TRACE', 'OPTIONS']), //(optional) to customize the allowed GET overrided methods
         ->post(['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK']), //(optional) to customize the allowed POST overrided methods
+        ->parameter('method-override') //(optional) to use a parsed body and uri query parameter in addition to the header
+        ->parameter('method-override', false) //(optional) to use only the parsed body (but not the uri query)
 ]);
 ```
 
@@ -974,7 +975,6 @@ $dispatcher = $relay->getInstance([
 
     Middleware::ReadResponse('path/to/files') // Path where the files are stored
         ->appendQuery(true)                   // (optional) to use the uri query in the filename
-        ->basePath('public')                  // (optional) basepath ignored from the request uri
 ]);
 ```
 
@@ -1064,7 +1064,6 @@ $dispatcher = $relay->getInstance([
 
     Middleware::SaveResponse('path/to/files') //Path directory where save the responses
         ->appendQuery(true)                   // (optional) to append the uri query to the filename
-        ->basePath('public')                  //(optional) basepath ignored from the request uri
 ]);
 ```
 
@@ -1097,7 +1096,6 @@ $dispatcher = $relay->getInstance([
 
     Middleware::TrailingSlash(true) //(optional) set true to add the trailing slash instead remove
         ->redirect(301)             //(optional) to return a 301 (seo friendly) or 302 response to the new path
-        ->basePath('public')        //(optional) basepath
 ]);
 ```
 
