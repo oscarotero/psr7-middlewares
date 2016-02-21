@@ -50,7 +50,7 @@ trait RedirectTrait
     {
         //Fix the basePath if exists
         if (Middleware::hasAttribute($request, BasePath::KEY)) {
-            $builder = BasePath::getBuilder($request);
+            $builder = BasePath::getPathBuilder($request);
             $uri = $uri->withPath($builder($uri->getPath()));
         }
 

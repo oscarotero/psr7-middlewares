@@ -308,8 +308,8 @@ $dispatcher = $relay->getInstance([
         //Get the stripped off prefix
         $basePath = BasePath::getBasePath($request);
 
-        //Get a callable to build urls with the base path
-        $builder = BasePath::getBuilder($request);
+        //Get a callable to build full paths
+        $builder = BasePath::getPathBuilder($request);
 
         $builder('/other/path'); // /web/public/other/path
 

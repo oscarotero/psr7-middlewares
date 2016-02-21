@@ -37,7 +37,7 @@ class BasePathTest extends Base
             [
                 Middleware::BasePath($base),
                 function ($request, $response, $next) {
-                    $builder = Middleware\BasePath::getBuilder($request);
+                    $builder = Middleware\BasePath::getPathBuilder($request);
 
                     $response->getBody()->write(json_encode([
                         'base' => Middleware\BasePath::getBasePath($request),

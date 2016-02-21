@@ -40,7 +40,7 @@ class BasePath
      *
      * @return callable
      */
-    public static function getBuilder(ServerRequestInterface $request)
+    public static function getPathBuilder(ServerRequestInterface $request)
     {
         return Middleware::getAttribute($request, self::KEY)[1];
     }

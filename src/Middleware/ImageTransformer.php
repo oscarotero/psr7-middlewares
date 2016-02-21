@@ -17,6 +17,8 @@ class ImageTransformer
 {
     use Utils\CacheMessageTrait;
 
+    const KEY = 'IMAGE_TRANSFORMER';
+
     /**
      * @var array|false Enable client hints
      */
@@ -26,6 +28,18 @@ class ImageTransformer
      * @var array Available sizes
      */
     private $sizes = [];
+
+    /**
+     * Returns a callable to generate urls.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return callable|null
+     */
+    public static function getPathBuilder(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY);
+    }
 
     /**
      * Define the available sizes, for example:
@@ -39,7 +53,20 @@ class ImageTransformer
      */
     public function __construct(array $sizes)
     {
-        $this->sizes = $sizes;
+        foreach ($sizes as $prefix => $transform) {
+            if (strpos($prefix, '/') === false) {
+                $path = '';
+            } else {
+                $path = pathinfo($prefix, PATHINFO_DIRNAME);
+                $prefix = pathinfo($prefix, PATHINFO_BASENAME);
+            }
+
+            if (!isset($this->sizes[$prefix])) {
+                $this->sizes[$prefix] = [$path => $transform];
+            } else {
+                $this->sizes[$prefix][$path] = $transform;
+            }
+        }
     }
 
     /**
@@ -105,10 +132,9 @@ class ImageTransformer
                     break;
                 }
 
-                //Removes the transform from the path
+                //Removes the transform info in the path
                 list($path, $transform) = $info;
                 $request = $request->withUri($request->getUri()->withPath($path));
-
                 $response = $next($request, $response);
 
                 //Transform
@@ -120,15 +146,29 @@ class ImageTransformer
                 }
 
                 return $response;
+
+            case 'html':
+                $pathBuilder = function ($path, $transform) use ($request) {
+                    $info = pathinfo($path);
+
+                    if (!isset($this->sizes[$transform])) {
+                        throw new \InvalidArgumentException(sprintf('The image size "%s" is not valid', $transform));
+                    }
+
+                    return Utils\Helpers::joinPath($info['dirname'], $transform.$info['basename']);
+                };
+
+                $request = Middleware::setAttribute($request, self::KEY, $pathBuilder);
+                $response = $next($request, $response);
+
+                if (!empty($this->clientHints)) {
+                    return $response->withHeader('Accept-CH', implode(',', $this->clientHints));
+                }
+
+                return $response;
         }
 
-        $response = $next($request, $response);
-
-        if ($format === 'html' && !empty($this->clientHints)) {
-            return $response->withHeader('Accept-CH', implode(',', $this->clientHints));
-        }
-
-        return $response;
+        return $next($request, $response);
     }
 
     /**
@@ -172,20 +212,20 @@ class ImageTransformer
     private function parsePath($path)
     {
         $info = pathinfo($path);
-        $file = $info['basename'];
-        $path = $info['dirname'];
+        $basename = $info['basename'];
+        $dirname = $info['dirname'];
 
-        foreach ($this->sizes as $pattern => $transform) {
-            if (strpos($pattern, '/') === false) {
-                $patternFile = $pattern;
-                $patternPath = '';
-            } else {
-                $patternFile = pathinfo($pattern, PATHINFO_BASENAME);
-                $patternPath = pathinfo($pattern, PATHINFO_DIRNAME);
+        foreach ($this->sizes as $prefix => $paths) {
+            if (strpos($basename, $prefix) !== 0) {
+                continue;
             }
 
-            if (substr($file, 0, strlen($patternFile)) === $patternFile && ($patternPath === '' || substr($path, -strlen($patternPath)) === $patternPath)) {
-                return [Utils\Helpers::joinPath($path, substr($file, strlen($patternFile))), $transform];
+            foreach ($paths as $path => $transform) {
+                $needle = $path === '' ? '' : substr($dirname, -strlen($path));
+
+                if ($path === $needle) {
+                    return [Utils\Helpers::joinPath($dirname, substr($basename, strlen($prefix))), $transform];
+                }
             }
         }
 
