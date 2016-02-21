@@ -7,23 +7,21 @@ class TrailingSlashTest extends Base
     public function removeTrailingSlashProvider()
     {
         return [
-            ['/foo/bar', '/foo/bar', ''],
-            ['/foo/bar/', '/foo/bar', '/'],
-            ['/', '/', '/'],
-            ['', '/', '/'],
-            ['/www/public', '/www/public/', '/www/public'],
+            ['/foo/bar', '/foo/bar'],
+            ['/foo/bar/', '/foo/bar'],
+            ['/', '/'],
+            ['', '/'],
         ];
     }
 
     /**
      * @dataProvider removeTrailingSlashProvider
      */
-    public function testRemoveTrailingSlash($url, $result, $basePath)
+    public function testRemoveTrailingSlash($url, $result)
     {
         $response = $this->execute(
             [
-                Middleware::trailingSlash(false)
-                    ->basePath($basePath),
+                Middleware::trailingSlash(false),
 
                 function ($request, $response, $next) {
                     $response->getBody()->write((string) $request->getUri());

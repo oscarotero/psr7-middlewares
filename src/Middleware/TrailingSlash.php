@@ -11,7 +11,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class TrailingSlash
 {
-    use Utils\BasePathTrait;
     use Utils\RedirectTrait;
 
     /**
@@ -43,11 +42,6 @@ class TrailingSlash
         $uri = $request->getUri();
         $path = $uri->getPath();
 
-        //Test basePath
-        if (!$this->testBasePath($path)) {
-            return $next($request, $response);
-        }
-
         //Add/remove slash
         if ($this->addSlash) {
             if (strlen($path) > 1 && substr($path, -1) !== '/' && !pathinfo($path, PATHINFO_EXTENSION)) {
@@ -60,13 +54,13 @@ class TrailingSlash
         }
 
         //Ensure the path has one "/"
-        if (empty($path) || $path === $this->basePath) {
-            $path .= '/';
+        if ($path === '') {
+            $path = '/';
         }
 
         //redirect
-        if (is_int($this->redirectStatus) && ($uri->getPath() !== $path)) {
-            return self::getRedirectResponse($this->redirectStatus, $uri->withPath($path), $response);
+        if ($this->redirectStatus !== false && ($uri->getPath() !== $path)) {
+            return $this->getRedirectResponse($request, $uri->withPath($path), $response);
         }
 
         return $next($request->withUri($uri->withPath($path)), $response);
