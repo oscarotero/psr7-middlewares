@@ -26,11 +26,6 @@ class ReadResponse
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        //If basePath does not match
-        if (!$this->testBasePath($request->getUri()->getPath())) {
-            return $next($request, $response);
-        }
-
         //If the method is not allowed
         if ($request->getMethod() !== 'GET') {
             return $response->withStatus(405);

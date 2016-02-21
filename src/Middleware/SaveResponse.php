@@ -60,10 +60,6 @@ class SaveResponse
             return false;
         }
 
-        if (!$this->testBasePath($request->getUri()->getPath())) {
-            return false;
-        }
-
         if (!$this->appendQuery && !empty($request->getUri()->getQuery())) {
             return false;
         }

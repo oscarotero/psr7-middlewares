@@ -9,8 +9,6 @@ use Psr\Http\Message\RequestInterface;
  */
 trait FileTrait
 {
-    use BasePathTrait;
-
     /**
      * @var string
      */
@@ -55,9 +53,7 @@ trait FileTrait
      */
     private function getFilename(RequestInterface $request, $indexExt = 'html')
     {
-        $path = $this->getPath($request->getUri()->getPath());
-
-        $parts = pathinfo($path);
+        $parts = pathinfo($request->getUri()->getPath());
         $path = isset($parts['dirname']) ? $parts['dirname'] : '';
         $filename = isset($parts['basename']) ? $parts['basename'] : '';
 
