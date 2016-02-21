@@ -52,8 +52,8 @@ class Www
         }
 
         //redirect
-        if (is_int($this->redirectStatus) && ($uri->getHost() !== $host)) {
-            return self::getRedirectResponse($this->redirectStatus, $uri->withHost($host), $response);
+        if ($this->redirectStatus !== false && ($uri->getHost() !== $host)) {
+            return $this->getRedirectResponse($request, $uri->withHost($host), $response);
         }
 
         return $next($request->withUri($uri->withHost($host)), $response);
