@@ -38,4 +38,22 @@ class DebugBarTest extends Base
             $this->assertFalse($response->hasHeader('phpdebugbar'));
         }
     }
+
+    public function testAssets()
+    {
+        $file = '/vendor/maximebf/debugbar/src/DebugBar/Resources/vendor/highlightjs/styles/github.css';
+
+        $response = $this->execute(
+            [
+                Middleware::basePath('/basepath'),
+                Middleware::FormatNegotiator(),
+                Middleware::DebugBar(),
+            ],
+            '/basepath'.$file
+        );
+
+        $content = file_get_contents(dirname(__DIR__).$file);
+
+        $this->assertEquals($content, (string) $response->getBody());
+    }
 }

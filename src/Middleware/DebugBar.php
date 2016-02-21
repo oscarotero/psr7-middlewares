@@ -86,8 +86,11 @@ class DebugBar
         $response = $next($request, $response);
 
         //Fix the render baseUrl
-        $renderPath = Utils\Helpers::joinPath(BasePath::getBasePath($request), $renderer->getBaseUrl());
-        $renderer->setBaseUrl($renderPath);
+        $builder = BasePath::getPathBuilder($request);
+
+        if ($builder) {
+            $renderer->setBaseUrl($builder($renderer->getBaseUrl()));
+        }
 
         $ajax = Utils\Helpers::isAjax($request);
 
