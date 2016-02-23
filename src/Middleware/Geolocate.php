@@ -109,7 +109,7 @@ class Geolocate
     /**
      * Returns the geolocation from the session storage
      * 
-     * @param ResponseInterface      $response
+     * @param ServerRequestInterface      $request
      * @param string $ip
      * 
      * @return AddressCollection|null
@@ -127,7 +127,7 @@ class Geolocate
     /**
      * Saves the geolocation in the session storage
      * 
-     * @param ResponseInterface      $response
+     * @param ServerRequestInterface      $request
      * @param string $ip
      * @param AddressCollection $address
      */

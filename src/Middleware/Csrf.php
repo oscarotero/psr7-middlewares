@@ -82,7 +82,11 @@ class Csrf
             return $response->withStatus(403);
         }
 
-        $generator = function ($action) use ($request, &$tokens) {
+        $generator = function ($action = null) use ($request, &$tokens) {
+            if (empty($action)) {
+                $action = $request->getUri()->getPath();
+            }
+
             return $this->generateTokens($request, $action, $tokens);
         };
 
@@ -91,9 +95,7 @@ class Csrf
         $response = $this->insertIntoPostForms($response, function ($match) use ($generator) {
             preg_match('/action=["\']?([^"\'\s]+)["\']?/i', $match[0], $matches);
 
-            $action = empty($matches[1]) ? $request->getUri()->getPath() : $matches[1];
-
-            return $match[0].$generator($action);
+            return $match[0].$generator(isset($matches[1]) ? $matches[1] : null);
         });
 
         $storage->set(self::KEY, $tokens);

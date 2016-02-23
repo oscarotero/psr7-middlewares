@@ -80,7 +80,7 @@ trait CryptTrait
             $key = $this->secureRandomKey();
             $message = 'No binary key provided to encrypt/decrypt data.';
 
-            if ($key) {
+            if ($key !== null) {
                 $message .= sprintf(" For example: base64_decode('%s')", base64_encode($key));
             }
 
