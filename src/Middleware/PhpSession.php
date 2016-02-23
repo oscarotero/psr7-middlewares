@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Storage\PhpSession as Storage;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -12,6 +13,8 @@ use RuntimeException;
  */
 class PhpSession
 {
+    const KEY = 'PHP_SESSION';
+
     /**
      * @var string|null
      */
@@ -101,6 +104,8 @@ class PhpSession
         }
 
         session_start();
+
+        $request = Middleware::setAttribute($request, Middleware::STORAGE_KEY, new Storage($_SESSION));
 
         $response = $next($request, $response);
 

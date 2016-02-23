@@ -11,6 +11,7 @@ use RuntimeException;
 class Middleware
 {
     const KEY = 'Psr7Middlewares\\Middleware';
+    const STORAGE_KEY = 'STORAGE_KEY';
 
     private static $streamFactory;
 

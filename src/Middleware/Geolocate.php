@@ -25,6 +25,11 @@ class Geolocate
     private $geocoder;
 
     /**
+     * @var bool
+     */
+    private $saveInSession = false;
+
+    /**
      * Returns the client location.
      *
      * @param ServerRequestInterface $request
@@ -52,6 +57,20 @@ class Geolocate
     }
 
     /**
+     * Wheter or not save the geolocation in a session variable
+     * 
+     * @param bool $save
+     * 
+     * @return self
+     */
+    public function saveInSession($save = true)
+    {
+        $this->saveInSession = $save;
+
+        return $this;
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -66,12 +85,57 @@ class Geolocate
             throw new RuntimeException('Geolocate middleware needs ClientIp executed before');
         }
 
+        if ($this->saveInSession && !Middleware::hasAttribute($request, Middleware::STORAGE_KEY)) {
+            throw new RuntimeException('Csrf middleware needs a storage defined');
+        }
+
         $ip = ClientIp::getIp($request);
 
         if ($ip !== null) {
-            $request = Middleware::setAttribute($request, self::KEY, $this->geocoder->geocode($ip));
+            if (!$this->saveInSession || ($address = self::fromSession($request, $ip)) === null) {
+                $address = $this->geocoder->geocode($ip);
+            }
+
+            $request = Middleware::setAttribute($request, self::KEY, $address);
+
+            if ($this->saveInSession) {
+                self::toSession($request, $ip, $address);
+            }
         }
 
         return $next($request, $response);
+    }
+
+    /**
+     * Returns the geolocation from the session storage
+     * 
+     * @param ResponseInterface      $response
+     * @param string $ip
+     * 
+     * @return AddressCollection|null
+     */
+    static private function fromSession(ServerRequestInterface $request, $ip)
+    {
+        $storage = Middleware::getAttribute($request, Middleware::STORAGE_KEY);
+        $ips = $storage->get(self::KEY);
+
+        if (isset($ips[$ip])) {
+            return new AddressCollection($ips[$ip]);
+        }
+    }
+
+    /**
+     * Saves the geolocation in the session storage
+     * 
+     * @param ResponseInterface      $response
+     * @param string $ip
+     * @param AddressCollection $address
+     */
+    static private function toSession(ServerRequestInterface $request, $ip, AddressCollection $address)
+    {
+        $storage = Middleware::getAttribute($request, Middleware::STORAGE_KEY);
+        $ips = $storage->get(self::KEY) ?: [];
+        $ips[$ip] = $address->all();
+        $storage->set(self::KEY, $ips);
     }
 }

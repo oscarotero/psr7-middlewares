@@ -458,8 +458,10 @@ To add a protection layer agains CSRF (Cross Site Request Forgety). The middlewa
 
 $dispatcher = $relay->getInstance([
 
-    //(optional) Used to open a PHP session before
-    Middleware::phpSession(),
+    //required to save the tokens in the user session
+    Middleware::AuraSession(),
+    //or
+    Middleware::PhpSession(),
 
     //required to get the format of the request (only executed in html requests)
     Middleware::FormatNegotiator(),
@@ -467,7 +469,7 @@ $dispatcher = $relay->getInstance([
     //required to get the user ip
     Middleware::ClientIp(),
 
-    Middleware::Csrf($storage)  //(optional) array or ArrayAccess used to store the CSRF tokens. If it's not defined use $_SESSION.
+    Middleware::Csrf()
 ]);
 ```
 
@@ -710,10 +712,17 @@ use Psr7Middlewares\Middleware\Geolocate;
 
 $dispatcher = $relay->getInstance([
     
+    //(optional) only if you want to save the result in the user session
+    Middleware::PhpSession(),
+    //or
+    Middleware::AuraSession(),
+
+
     //required to capture the user ips before
     Middleware::ClientIp(),
 
-    Middleware::Geolocate($geocoder), //(optional) To provide a custom Geocoder instance
+    Middleware::Geolocate($geocoder) //(optional) To provide a custom Geocoder instance
+        ->saveInSession(),           //(optional) To save the result to reuse in the future requests (required a session middleware before)
 
     function ($request, $response, $next) {
         //get the location

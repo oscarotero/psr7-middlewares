@@ -3,6 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Storage\AuraSession as Storage;
 use Aura\Session\SessionFactory;
 use Aura\Session\Session;
 use Psr\Http\Message\ServerRequestInterface;
@@ -76,6 +77,7 @@ class AuraSession
         }
 
         $request = Middleware::setAttribute($request, self::KEY, $session);
+        $request = Middleware::setAttribute($request, Middleware::STORAGE_KEY, new Storage($session));
 
         return $next($request, $response);
     }
