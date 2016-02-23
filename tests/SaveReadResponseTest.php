@@ -69,4 +69,22 @@ class SaveReadResponseTest extends Base
         $this->assertEquals(206, $response->getStatusCode());
         $this->assertEquals('bytes 300-171158/171159', $response->getHeaderLine('Content-Range'));
     }
+
+    public function testContinueOnError()
+    {
+        $storage = __DIR__.'/assets';
+
+        $response = $this->execute([
+                Middleware::readResponse($storage)->continueOnError(),
+                function ($request, $response, $next) {
+                    $response->getBody()->write('hello');
+                    return $next($request, $response);
+                }
+            ],
+            'notfound.png'
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals('hello', (string) $response->getBody());
+    }
 }

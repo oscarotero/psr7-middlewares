@@ -724,7 +724,7 @@ $dispatcher = $relay->getInstance([
         //Use the generator (you must pass the action url)
         $response->getBody()->write(
             '<form action="/action.php" method="POST">'.
-            $generator('/action.php').
+            $generator().
             '<input type="submit">'.
             '</form>'
         );
@@ -826,7 +826,7 @@ $dispatcher = $relay->getInstance([
         //Use the generator (you must pass the action url)
         $response->getBody()->write(
             '<form action="/action.php" method="POST">'.
-            $generator('/action.php').
+            $generator().
             '<input type="submit">'.
             '</form>'
         );
@@ -1029,7 +1029,7 @@ $dispatcher = $relay->getInstance([
 
 ### ReadResponse
 
-Read the response content from a file. It's the opposite of [SaveResponse](#saveresponse)
+Read the response content from a file. It's the opposite of [SaveResponse](#saveresponse). The option `continueOnError` changes the behaviour of the middleware to continue with the next middleware if the response file is NOT found and returns directly the response if the file is found. This is useful to use the middleware as a file based cache and add a router middleware (or other readResponses) next in the queue.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -1038,6 +1038,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::ReadResponse('path/to/files') // Path where the files are stored
         ->appendQuery(true)                   // (optional) to use the uri query in the filename
+        ->continueOnError(true)               // (optional) to continue with the next middleware on error or not
 ]);
 ```
 

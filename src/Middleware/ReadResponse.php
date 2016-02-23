@@ -15,6 +15,22 @@ class ReadResponse
 {
     use Utils\FileTrait;
 
+    private $continueOnError = false;
+
+    /**
+     * Configure if continue to the next middleware if the response has not found
+     * 
+     * @param bool $continueOnError
+     * 
+     * @return self
+     */
+    public function continueOnError($continueOnError = true)
+    {
+        $this->continueOnError = $continueOnError;
+
+        return $this;
+    }
+
     /**
      * Execute the middleware.
      *
@@ -28,6 +44,10 @@ class ReadResponse
     {
         //If the method is not allowed
         if ($request->getMethod() !== 'GET') {
+            if ($this->continueOnError) {
+                return $next($request, $response);
+            }
+
             return $response->withStatus(405);
         }
 
@@ -40,6 +60,10 @@ class ReadResponse
             $file .= '.gz';
 
             if (EncodingNegotiator::getEncoding($request) !== 'gzip' || !is_file($file)) {
+                if ($this->continueOnError) {
+                    return $next($request, $response);
+                }
+
                 return $response->withStatus(404);
             }
 
@@ -48,10 +72,12 @@ class ReadResponse
 
         self::readFile($file, $body);
 
-        $response = $response->withBody($body);
-
         //Handle range header
-        $response = $this->range($request, $response);
+        $response = $this->range($request, $response->withBody($body));
+
+        if ($this->continueOnError) {
+            return $response;
+        }
 
         return $next($request, $response);
     }
