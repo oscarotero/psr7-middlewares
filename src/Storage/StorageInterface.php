@@ -8,7 +8,7 @@ namespace Psr7Middlewares\Storage;
 interface StorageInterface
 {
     /**
-     * Returns the value of a segment
+     * Returns the value
      * 
      * @param string $key
      * 
@@ -17,7 +17,7 @@ interface StorageInterface
     public function get($key);
 
     /**
-     * Add or modify a value in a segment
+     * Add or modify a value
      * 
      * @param string $key
      * @param string $value
