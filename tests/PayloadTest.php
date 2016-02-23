@@ -8,6 +8,7 @@ class PayloadTest extends Base
     {
         return [
             ['application/json', '{"bar":"foo"}', ['bar' => 'foo']],
+            ['application/json', '', []],
             ['application/x-www-form-urlencoded', 'bar=foo', ['bar' => 'foo']],
             ['application/x-www-form-urlencoded', '', []],
             ['text/csv', "one,two\nthree,four", [['one', 'two'], ['three', 'four']]],
@@ -29,5 +30,18 @@ class PayloadTest extends Base
                 $this->assertEquals($result, $request->getParsedBody());
             },
         ], $request, $this->response());
+    }
+
+    public function testError()
+    {
+        $request = $this->request('', ['Content-Type' => 'application/json'])
+            ->withMethod('POST')
+            ->withBody($this->stream('{invalid:"json"}'));
+
+        $response = $this->dispatch([
+            Middleware::Payload(),
+        ], $request, $this->response());
+
+        $this->assertEquals(400, $response->getStatusCode());
     }
 }

@@ -3,17 +3,13 @@
 namespace Psr7Middlewares\Transformers;
 
 use Psr\Http\Message\ServerRequestInterface;
+use DomainException;
 
 /**
  * Generic resolver to parse the body content.
  */
 class BodyParser extends Resolver
 {
-    /**
-     * @var bool Whether convert the object into associative arrays
-     */
-    private $associative = true;
-
     public function __construct()
     {
         $this->add('application/json', [$this, 'json']);
@@ -44,7 +40,11 @@ class BodyParser extends Resolver
      */
     public function json(ServerRequestInterface $request)
     {
-        $data = json_decode((string) $request->getBody(), $this->associative);
+        $data = json_decode((string) $request->getBody(), true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new DomainException(json_last_error_msg());
+        }
 
         return $request->withParsedBody($data);
     }

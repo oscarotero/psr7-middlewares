@@ -31,7 +31,11 @@ class Payload
             $transformer = $resolver->resolve(trim($request->getHeaderLine('Content-Type')));
 
             if ($transformer) {
-                $request = $transformer($request);
+                try {
+                    $request = $transformer($request);
+                } catch (\Exception $exception) {
+                    return $response->withStatus(400);
+                }
             }
         }
 
