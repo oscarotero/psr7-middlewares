@@ -18,7 +18,7 @@ class ReadResponse
     private $continueOnError = false;
 
     /**
-     * Configure if continue to the next middleware if the response has not found
+     * Configure if continue to the next middleware if the response has not found.
      * 
      * @param bool $continueOnError
      * 

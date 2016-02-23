@@ -36,28 +36,28 @@ class MethodOverrideTest extends Base
         return [
             [
                 $this->request('hello'),
-                'GET', 200
+                'GET', 200,
             ],
             [
                 $this->request('hello')->withQueryParams(['method' => 'head']),
-                'HEAD', 200
+                'HEAD', 200,
             ],
             [
                 $this->request('hello')->withQueryParams(['method' => 'PUT']),
-                '', 405
+                '', 405,
             ],
             [
                 $this->request('hello')->withMethod('POST')->withQueryParams(['method' => 'PUT']),
-                'POST', 200
+                'POST', 200,
             ],
             [
                 $this->request('hello')->withMethod('POST')->withParsedBody(['method' => 'PUT']),
-                'PUT', 200
+                'PUT', 200,
             ],
             [
                 $this->request('hello')->withMethod('POST')->withParsedBody(['method' => 'GET']),
-                '', 405
-            ]
+                '', 405,
+            ],
         ];
     }
 
@@ -75,7 +75,7 @@ class MethodOverrideTest extends Base
                     $response->getBody()->write($request->getMethod());
 
                     return $next($request, $response);
-                }
+                },
             ],
             $request,
             $this->response()

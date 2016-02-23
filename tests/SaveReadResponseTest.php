@@ -78,8 +78,9 @@ class SaveReadResponseTest extends Base
                 Middleware::readResponse($storage)->continueOnError(),
                 function ($request, $response, $next) {
                     $response->getBody()->write('hello');
+
                     return $next($request, $response);
-                }
+                },
             ],
             'notfound.png'
         );

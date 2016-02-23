@@ -33,7 +33,6 @@ class MethodOverride
      */
     private $getParam;
 
-
     /**
      * Set allowed method for GET.
      *
@@ -80,9 +79,9 @@ class MethodOverride
     /**
      * Execute the middleware.
      *
-     * @param ServerRequestInterface  $request
-     * @param ResponseInterface $response
-     * @param callable          $next
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param callable               $next
      *
      * @return ResponseInterface
      */

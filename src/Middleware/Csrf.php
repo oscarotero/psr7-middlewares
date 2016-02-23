@@ -6,9 +6,7 @@ use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use InvalidArgumentException;
 use RuntimeException;
-use ArrayAccess;
 
 /**
  * Middleware for CSRF protection
@@ -108,7 +106,7 @@ class Csrf
      * 
      * @param ServerRequestInterface $request
      * @param string                 $lockTo
-     * @param array                 $tokens
+     * @param array                  $tokens
      *
      * @return string
      */
@@ -136,7 +134,7 @@ class Csrf
      * Validate the request.
      * 
      * @param ServerRequestInterface $request
-     * @param array &$tokens
+     * @param array                  &$tokens
      *
      * @return bool
      */

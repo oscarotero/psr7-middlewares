@@ -13,7 +13,7 @@ trait FormTrait
     private $autoInsert = false;
 
     /**
-     * Configure if autoinsert or not the inputs automatically
+     * Configure if autoinsert or not the inputs automatically.
      * 
      * @param bool $autoInsert
      * 

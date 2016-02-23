@@ -67,7 +67,7 @@ class ImageTransformerTest extends Base
         }
     }
 
-    public function urlsProvider ()
+    public function urlsProvider()
     {
         return [
             ['images/picture1.jpg', 'small.', 'public/images/small.picture1.jpg'],
@@ -80,7 +80,7 @@ class ImageTransformerTest extends Base
     /**
      * @dataProvider urlsProvider
      */
-    public function _testUrlGenerator ($path, $transform, $result)
+    public function _testUrlGenerator($path, $transform, $result)
     {
         try {
             $response = $this->execute([
@@ -97,7 +97,7 @@ class ImageTransformerTest extends Base
                     $response->getBody()->write($generator($path, $transform));
 
                     return $next($request, $response);
-                }
+                },
             ]);
         } catch (\Exception $error) {
             $response = false;
@@ -109,6 +109,5 @@ class ImageTransformerTest extends Base
             $this->assertNotFalse($response);
             $this->assertEquals($result, (string) $response->getbody());
         }
-
     }
 }

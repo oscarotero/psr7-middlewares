@@ -5,7 +5,7 @@ namespace Psr7Middlewares\Storage;
 use Psr7Middlewares\Middleware;
 
 /**
- * Wrapper for PHP sessions
+ * Wrapper for PHP sessions.
  */
 class PhpSession implements StorageInterface
 {
@@ -17,7 +17,7 @@ class PhpSession implements StorageInterface
             $storage[Middleware::KEY] = [];
         }
 
-        $this->storage =& $storage[Middleware::KEY];
+        $this->storage = &$storage[Middleware::KEY];
     }
 
     /**

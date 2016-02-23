@@ -3,12 +3,12 @@
 namespace Psr7Middlewares\Storage;
 
 /**
- * Interface used by all storage implementations
+ * Interface used by all storage implementations.
  */
 interface StorageInterface
 {
     /**
-     * Returns the value
+     * Returns the value.
      * 
      * @param string $key
      * 
@@ -17,7 +17,7 @@ interface StorageInterface
     public function get($key);
 
     /**
-     * Add or modify a value
+     * Add or modify a value.
      * 
      * @param string $key
      * @param string $value

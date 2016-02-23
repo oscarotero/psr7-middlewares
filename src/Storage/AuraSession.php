@@ -6,7 +6,7 @@ use Aura\Session\Session;
 use Psr7Middlewares\Middleware;
 
 /**
- * Wrapper for Aura.Session
+ * Wrapper for Aura.Session.
  */
 class AuraSession implements StorageInterface
 {

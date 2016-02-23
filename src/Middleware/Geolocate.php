@@ -57,7 +57,7 @@ class Geolocate
     }
 
     /**
-     * Wheter or not save the geolocation in a session variable
+     * Wheter or not save the geolocation in a session variable.
      * 
      * @param bool $save
      * 
@@ -107,14 +107,14 @@ class Geolocate
     }
 
     /**
-     * Returns the geolocation from the session storage
+     * Returns the geolocation from the session storage.
      * 
-     * @param ServerRequestInterface      $request
-     * @param string $ip
+     * @param ServerRequestInterface $request
+     * @param string                 $ip
      * 
      * @return AddressCollection|null
      */
-    static private function fromSession(ServerRequestInterface $request, $ip)
+    private static function fromSession(ServerRequestInterface $request, $ip)
     {
         $storage = Middleware::getAttribute($request, Middleware::STORAGE_KEY);
         $ips = $storage->get(self::KEY);
@@ -125,13 +125,13 @@ class Geolocate
     }
 
     /**
-     * Saves the geolocation in the session storage
+     * Saves the geolocation in the session storage.
      * 
-     * @param ServerRequestInterface      $request
-     * @param string $ip
-     * @param AddressCollection $address
+     * @param ServerRequestInterface $request
+     * @param string                 $ip
+     * @param AddressCollection      $address
      */
-    static private function toSession(ServerRequestInterface $request, $ip, AddressCollection $address)
+    private static function toSession(ServerRequestInterface $request, $ip, AddressCollection $address)
     {
         $storage = Middleware::getAttribute($request, Middleware::STORAGE_KEY);
         $ips = $storage->get(self::KEY) ?: [];

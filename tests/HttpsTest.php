@@ -41,6 +41,6 @@ class HttpsTest extends Base
         );
         $expectedLocation = 'https://domain.com';
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals($expectedLocation,$location);
+        $this->assertEquals($expectedLocation, $location);
     }
 }
