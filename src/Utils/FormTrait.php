@@ -6,10 +6,26 @@ use Psr\Http\Message\ResponseInterface;
 use Psr7Middlewares\Middleware;
 
 /**
- * Utilities used by middlewares that manipulates forms.
+ * Utilities used by middlewares that manipulate forms.
  */
 trait FormTrait
 {
+    private $autoInsert = false;
+
+    /**
+     * Configure if autoinsert or not the inputs automatically
+     * 
+     * @param bool $autoInsert
+     * 
+     * @return self
+     */
+    public function autoInsert($autoInsert = true)
+    {
+        $this->autoInsert = $autoInsert;
+
+        return $this;
+    }
+
     /**
      * Insert content into all POST forms.
      * 

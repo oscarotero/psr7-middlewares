@@ -307,10 +307,10 @@ $dispatcher = $relay->getInstance([
         //Get the removed prefix
         $basePath = BasePath::getBasePath($request);
 
-        //Get a callable to build full paths
-        $builder = BasePath::getPathBuilder($request);
+        //Get a callable to generate full paths
+        $generator = BasePath::getGenerator($request);
 
-        $builder('/other/path'); // /web/public/other/path
+        $generator('/other/path'); // /web/public/other/path
 
         return $response;
     }
@@ -452,7 +452,7 @@ $dispatcher = $relay->getInstance([
 
 ### Csrf
 
-To add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not.
+To add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not. Use `->autoInsert()` to insert automatically the token or, if you prefer, use the generator callable:
 
 ```php
 
@@ -470,6 +470,22 @@ $dispatcher = $relay->getInstance([
     Middleware::ClientIp(),
 
     Middleware::Csrf()
+        ->autoInsert(), //(optional) To insert automatically the tokens in all POST forms
+
+    function ($request, $response, $next) {
+        //Get a callable to generate tokens (only if autoInsert() is disabled)
+        $generator = Middleware\Csrf::getGenerator($request);
+
+        //Use the generator (you must pass the action url)
+        $response->getBody()->write(
+            '<form action="/action.php" method="POST">'.
+            $generator('/action.php').
+            '<input type="submit">'.
+            '</form>'
+        );
+        
+        return $next($request, $response);
+    }
 ]);
 ```
 
@@ -699,6 +715,22 @@ $dispatcher = $relay->getInstance([
         ->min(5)                  //(optional) Minimum seconds needed to validate the request (default: 3)
         ->max(3600)               //(optional) Life of the form in second. Default is 0 (no limit)
         ->inputName('time-token') //(optional) Name of the input (default: hpt_time)
+        ->autoInsert(),           //(optional) To insert automatically the inputs in all POST forms
+
+    function ($request, $response, $next) {
+        //Get a callable to generate the inputs (only if autoInsert() is disabled)
+        $generator = Middleware\FormTimestamp::getGenerator($request);
+
+        //Use the generator (you must pass the action url)
+        $response->getBody()->write(
+            '<form action="/action.php" method="POST">'.
+            $generator('/action.php').
+            '<input type="submit">'.
+            '</form>'
+        );
+        
+        return $next($request, $response);
+    }
 ]);
 ```
 
@@ -785,6 +817,22 @@ $dispatcher = $relay->getInstance([
     Middleware::Honeypot()
         ->inputName('my_name') //(optional) The name of the input field (by default "hpt_name")
         ->inputClass('hidden') //(optional) The class of the input field (by default "hpt_input")
+        ->autoInsert(),        //(optional) To insert automatically the inputs in all POST forms
+
+    function ($request, $response, $next) {
+        //Get a callable to generate the inputs (only if autoInsert() is disabled)
+        $generator = Middleware\Honeypot::getGenerator($request);
+
+        //Use the generator (you must pass the action url)
+        $response->getBody()->write(
+            '<form action="/action.php" method="POST">'.
+            $generator('/action.php').
+            '<input type="submit">'.
+            '</form>'
+        );
+        
+        return $next($request, $response);
+    }
 ]);
 ```
 
@@ -829,9 +877,15 @@ $dispatcher = $relay->getInstance([
         ->clientHints()              // (optional) To enable the client hints headers
         ->cache(new Psr6CachePool()) // (optional) To save the transformed images in the cache
 
-    //Used to read the image files and returns the response with them
-    Middleware::readResponse()
-        ->storage('/path/to/images'),
+    function ($request, $response, $next) {
+        //Get the generator to generate urls
+        $generator = Middleware\ImageTransformer::getGenerator($request);
+
+        //Use the generator
+        $response->getBody()->write('<img src="'.$generator('images/picture.jpg', 'small.').'">');
+
+        return $next($request, $response);
+    }
 ]);
 ```
 

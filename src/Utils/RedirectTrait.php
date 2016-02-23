@@ -48,10 +48,11 @@ trait RedirectTrait
      */
     private function getRedirectResponse(ServerRequestInterface $request, UriInterface $uri, ResponseInterface $response)
     {
-        //Fix the basePath if exists
-        if (Middleware::hasAttribute($request, BasePath::KEY)) {
-            $builder = BasePath::getPathBuilder($request);
-            $uri = $uri->withPath($builder($uri->getPath()));
+        //Fix the basePath
+        $generator = BasePath::getGenerator($request);
+
+        if ($generator !== null) {
+            $uri = $uri->withPath($generator($uri->getPath()));
         }
 
         return $response

@@ -92,9 +92,9 @@ class ImageTransformerTest extends Base
                     'avatar/normal.' => 'resizeCrop,32,32',
                 ]),
                 function ($request, $response, $next) use ($path, $transform) {
-                    $urlGenerator = Middleware\ImageTransformer::getPathBuilder($request);
+                    $generator = Middleware\ImageTransformer::getGenerator($request);
 
-                    $response->getBody()->write($urlGenerator($path, $transform));
+                    $response->getBody()->write($generator($path, $transform));
 
                     return $next($request, $response);
                 }

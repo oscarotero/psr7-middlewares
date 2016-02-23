@@ -8,8 +8,6 @@ use Psr7Middlewares\Middleware;
 
 /**
  * Provides ability to route Psr7Middlewares specific attributes into scalar attributes.
- *
- * @todo Raise an exception if no attribute found?
  */
 class AttributeMapper
 {

@@ -19,6 +19,7 @@ class Csrf
     use Utils\FormTrait;
 
     const KEY = 'CSRF';
+    const KEY_GENERATOR = 'CSRF_GENERATOR';
 
     /**
      * @var int Max number of CSRF tokens
@@ -34,6 +35,18 @@ class Csrf
      * @var string field name with the CSRF token
      */
     private $formToken = '_CSRF_TOKEN';
+
+    /**
+     * Returns a callable to generate the inputs.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return callable|null
+     */
+    public static function getGenerator(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY_GENERATOR);
+    }
 
     /**
      * Execute the middleware.
@@ -69,14 +82,18 @@ class Csrf
             return $response->withStatus(403);
         }
 
+        $generator = function ($action) use ($request, &$tokens) {
+            return $this->generateTokens($request, $action, $tokens);
+        };
+
         $response = $next($request, $response);
 
-        $response = $this->insertIntoPostForms($response, function ($match) use ($request, &$tokens) {
+        $response = $this->insertIntoPostForms($response, function ($match) use ($generator) {
             preg_match('/action=["\']?([^"\'\s]+)["\']?/i', $match[0], $matches);
 
             $action = empty($matches[1]) ? $request->getUri()->getPath() : $matches[1];
 
-            return $match[0].$this->generateTokens($request, $action, $tokens);
+            return $match[0].$generator($action);
         });
 
         $storage->set(self::KEY, $tokens);

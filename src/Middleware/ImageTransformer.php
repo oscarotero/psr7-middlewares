@@ -17,7 +17,7 @@ class ImageTransformer
 {
     use Utils\CacheMessageTrait;
 
-    const KEY = 'IMAGE_TRANSFORMER';
+    const KEY_GENERATOR = 'IMAGE_TRANSFORMER';
 
     /**
      * @var array|false Enable client hints
@@ -36,9 +36,9 @@ class ImageTransformer
      *
      * @return callable|null
      */
-    public static function getPathBuilder(ServerRequestInterface $request)
+    public static function getGenerator(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return Middleware::getAttribute($request, self::KEY_GENERATOR);
     }
 
     /**
@@ -148,7 +148,7 @@ class ImageTransformer
                 return $response;
 
             case 'html':
-                $pathBuilder = function ($path, $transform) use ($request) {
+                $generator = function ($path, $transform) use ($request) {
                     $info = pathinfo($path);
 
                     if (!isset($this->sizes[$transform])) {
@@ -158,7 +158,7 @@ class ImageTransformer
                     return Utils\Helpers::joinPath($info['dirname'], $transform.$info['basename']);
                 };
 
-                $request = Middleware::setAttribute($request, self::KEY, $pathBuilder);
+                $request = Middleware::setAttribute($request, self::KEY_GENERATOR, $generator);
                 $response = $next($request, $response);
 
                 if (!empty($this->clientHints)) {

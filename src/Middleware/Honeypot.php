@@ -15,6 +15,8 @@ class Honeypot
 {
     use Utils\FormTrait;
 
+    const KEY_GENERATOR = 'HONEYPOT_GENERATOR';
+
     /**
      * @var string The honeypot input name
      */
@@ -24,6 +26,18 @@ class Honeypot
      * @var string The honeypot class name
      */
     private $inputClass = 'hpt_input';
+
+    /**
+     * Returns a callable to generate the inputs.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return callable|null
+     */
+    public static function getGenerator(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY_GENERATOR);
+    }
 
     /**
      * Set the field name.
@@ -76,10 +90,14 @@ class Honeypot
             return $response->withStatus(403);
         }
 
+        $generator = function () {
+            return '<input type="text" name="'.$this->inputName.'" class="'.$this->inputClass.'">';
+        };
+
         $response = $next($request, $response);
 
-        return $this->insertIntoPostForms($response, function ($match) {
-            return $match[0].'<input type="text" name="'.$this->inputName.'" class="'.$this->inputClass.'">';
+        return $this->insertIntoPostForms($response, function ($match) use ($generator) {
+            return $match[0].$generator();
         });
     }
 

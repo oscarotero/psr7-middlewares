@@ -13,6 +13,7 @@ use Psr\Http\Message\ResponseInterface;
 class BasePath
 {
     const KEY = 'BASE_PATH';
+    const KEY_GENERATOR = 'BASE_PATH_GENERATOR';
 
     use Utils\BasePathTrait;
 
@@ -30,9 +31,7 @@ class BasePath
      */
     public static function getBasePath(ServerRequestInterface $request)
     {
-        $attr = Middleware::getAttribute($request, self::KEY);
-
-        return isset($attr[0]) ? $attr[0] : null;
+        return Middleware::getAttribute($request, self::KEY);
     }
 
     /**
@@ -42,11 +41,9 @@ class BasePath
      *
      * @return callable|null
      */
-    public static function getPathBuilder(ServerRequestInterface $request)
+    public static function getGenerator(ServerRequestInterface $request)
     {
-        $attr = Middleware::getAttribute($request, self::KEY);
-
-        return isset($attr[1]) ? $attr[1] : null;
+        return Middleware::getAttribute($request, self::KEY_GENERATOR);
     }
 
     /**
@@ -94,12 +91,12 @@ class BasePath
         $path = $this->getPath($uri->getPath());
         $request = $request->withUri($uri->withPath($path));
 
-        $request = Middleware::setAttribute($request, self::KEY, [
-            $this->basePath,
-            function ($path) {
-                return Utils\Helpers::joinPath($this->basePath, $path);
-            }
-        ]);
+        $generator = function ($path) {
+            return Utils\Helpers::joinPath($this->basePath, $path);
+        };
+
+        $request = Middleware::setAttribute($request, self::KEY, $this->basePath);
+        $request = Middleware::setAttribute($request, self::KEY_GENERATOR, $generator);
 
         return $next($request, $response);
     }

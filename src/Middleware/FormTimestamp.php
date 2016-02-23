@@ -17,6 +17,8 @@ class FormTimestamp
     use Utils\FormTrait;
     use Utils\CryptTrait;
 
+    const KEY_GENERATOR = 'FORM_TIMESTAMP_GENERATOR';
+
     /**
      * @var string The honeypot input name
      */
@@ -31,6 +33,18 @@ class FormTimestamp
      * @var int Max seconds to expire the form. Zero to do not expire
      */
     private $max = 0;
+
+    /**
+     * Returns a callable to generate the inputs.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return callable|null
+     */
+    public static function getGenerator(ServerRequestInterface $request)
+    {
+        return Middleware::getAttribute($request, self::KEY_GENERATOR);
+    }
 
     /**
      * Set the field name.
@@ -97,12 +111,16 @@ class FormTimestamp
             return $response->withStatus(403);
         }
 
-        $response = $next($request, $response);
-
         $value = $this->encrypt(time());
 
-        return $this->insertIntoPostForms($response, function ($match) use ($value) {
-            return $match[0].'<input type="hidden" name="'.$this->inputName.'" value="'.$value.'">';
+        $generator = function () use ($value) {
+            return '<input type="hidden" name="'.$this->inputName.'" value="'.$value.'">';
+        };
+
+        $response = $next($request, $response);
+
+        return $this->insertIntoPostForms($response, function ($match) use ($generator) {
+            return $match[0].$generator();
         });
     }
 
