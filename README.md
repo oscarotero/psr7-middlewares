@@ -293,7 +293,7 @@ $dispatcher = $relay->getInstance([
 
 ### BasePath
 
-Removes the prefix from the uri path of the request. This is useful to combine with routers if the root of the website is in a subdirectory. For example, if the root of your website is `/web/public`, a request with the uri `/web/public/post/34` will be converted to `/post/34`. You can provide the basePath to remove or let the middleware autodetect it. In the router you can retrieve the piece removed and even a callable to generate more urls with the base path.
+Removes the prefix from the uri path of the request. This is useful to combine with routers if the root of the website is in a subdirectory. For example, if the root of your website is `/web/public`, a request with the uri `/web/public/post/34` will be converted to `/post/34`. You can provide the prefix to remove or let the middleware autodetect it. In the router you can retrieve the prefix removed or a callable to generate more urls with the base path.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -301,7 +301,7 @@ use Psr7Middlewares\Middleware\BasePath;
 
 $dispatcher = $relay->getInstance([
     Middleware::BasePath('/web/public') // (optional) The path to remove...
-        ->autodetect(true),             // (optional) ...or autodetect the base path
+        ->autodetect(true),             // (optional) ...or/and autodetect the base path
 
     function ($request, $response, $next) {
         //Get the removed prefix
@@ -355,7 +355,7 @@ $dispatcher = $relay->getInstance([
 
 ### Cache
 
-Uses [micheh/psr7-cache](https://github.com/micheh/psr7-cache). Saves the responses' headers in cache and returns a 304 response (Not modified) if the request is cached. It also adds `Cache-Control` and `Last-Modified` headers to the response. You need a cache library compatible with psr-6.
+Requires [micheh/psr7-cache](https://github.com/micheh/psr7-cache). Saves the responses' headers in cache and returns a 304 response (Not modified) if the request is cached. It also adds `Cache-Control` and `Last-Modified` headers to the response. You need a cache library compatible with psr-6.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -491,7 +491,7 @@ $dispatcher = $relay->getInstance([
 
 ### DebugBar
 
-Inserts the [PHP debug bar 2.x](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses. 
+Inserts the [PHP debug bar 1.x](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses. 
 
 Because this middleware serves also the debugbar assets (css, js and fonts), it must be added before the router to avoid 404 responses.
 
@@ -505,7 +505,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiator(),
 
-    Middleware::DebugBar($debugBar) //(optional) Own instance of debugbar
+    Middleware::DebugBar($debugBar) //(optional) Instance of debugbar
         ->captureAjax(true)         //(optional) To send data in headers in ajax
 ]);
 ```
@@ -635,7 +635,7 @@ $dispatcher = $relay->getInstance([
 ```
 
 ### FastRoute
-To use [FastRoute](https://github.com/nikic/FastRoute) as a middleware.
+To use [FastRoute](https://github.com/nikic/FastRoute) as middleware.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -656,7 +656,7 @@ $dispatcher = $relay->getInstance([
 
 ### Firewall
 
-Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide a IP filtering. This middleware deppends of **ClientIp** (to extract the ips from the headers).
+Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide an IP filtering. This middleware deppends of **ClientIp** (to extract the ips from the headers).
 
 [See the ip formats allowed](https://github.com/M6Web/Firewall#entries-formats) for trusted/untrusted options:
 

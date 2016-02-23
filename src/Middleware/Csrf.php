@@ -68,7 +68,7 @@ class Csrf
         }
 
         if (!Middleware::hasAttribute($request, Middleware::STORAGE_KEY)) {
-            throw new RuntimeException('Csrf middleware needs a storage defined');
+            throw new RuntimeException('Csrf middleware needs a session initialized');
         }
 
         if (FormatNegotiator::getFormat($request) !== 'html') {
