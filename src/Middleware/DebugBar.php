@@ -16,6 +16,7 @@ use RuntimeException;
 class DebugBar
 {
     use Utils\HtmlInjectorTrait;
+    use Utils\AttributeTrait;
 
     /**
      * @var Bar|null The debugbar
@@ -62,7 +63,7 @@ class DebugBar
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('This middleware needs FormatNegotiator executed before');
         }
 

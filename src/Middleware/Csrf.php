@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -15,6 +14,7 @@ use RuntimeException;
 class Csrf
 {
     use Utils\FormTrait;
+    use Utils\AttributeTrait;
 
     const KEY = 'CSRF';
     const KEY_GENERATOR = 'CSRF_GENERATOR';
@@ -43,7 +43,7 @@ class Csrf
      */
     public static function getGenerator(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY_GENERATOR);
+        return self::getAttribute($request, self::KEY_GENERATOR);
     }
 
     /**
@@ -57,24 +57,19 @@ class Csrf
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('Csrf middleware needs FormatNegotiator executed before');
         }
 
-        if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
+        if (!self::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('Csrf middleware needs ClientIp executed before');
-        }
-
-        if (!Middleware::hasAttribute($request, Middleware::STORAGE_KEY)) {
-            throw new RuntimeException('Csrf middleware needs a session initialized');
         }
 
         if (FormatNegotiator::getFormat($request) !== 'html') {
             return $next($request, $response);
         }
 
-        $storage = Middleware::getAttribute($request, Middleware::STORAGE_KEY);
-        $tokens = $storage->get(self::KEY) ?: [];
+        $tokens = self::getStorage($request, self::KEY) ?: [];
 
         if (Utils\Helpers::isPost($request) && !$this->validateRequest($request, $tokens)) {
             return $response->withStatus(403);
@@ -96,9 +91,7 @@ class Csrf
             return $match[0].$generator(isset($matches[1]) ? $matches[1] : null);
         });
 
-        $storage->set(self::KEY, $tokens);
-
-        return $response;
+        return self::setStorage($request, self::KEY, $tokens);
     }
 
     /**

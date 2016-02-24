@@ -2,8 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Storage\PhpSession as Storage;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -13,7 +12,9 @@ use RuntimeException;
  */
 class PhpSession
 {
-    const KEY = 'PHP_SESSION';
+    use Utils\StorageTrait;
+
+    const STORAGE_KEY = 'PHP_SESSION_STORAGE';
 
     /**
      * @var string|null
@@ -105,11 +106,11 @@ class PhpSession
 
         session_start();
 
-        $request = Middleware::setAttribute($request, Middleware::STORAGE_KEY, new Storage($_SESSION));
-
+        $request = self::initStorage($request, isset($_SESSION[self::STORAGE_KEY]) ? $_SESSION[self::STORAGE_KEY] : []);
         $response = $next($request, $response);
 
         if ((session_status() === PHP_SESSION_ACTIVE) && (session_name() === $name)) {
+            $_SESSION[self::STORAGE_KEY] = self::getStorage($request);
             session_write_close();
         }
 

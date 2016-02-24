@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -14,6 +13,7 @@ use Negotiation\Negotiator;
 class FormatNegotiator
 {
     use Utils\NegotiateTrait;
+    use Utils\AttributeTrait;
 
     const KEY = 'FORMAT';
 
@@ -62,7 +62,7 @@ class FormatNegotiator
      */
     public static function getFormat(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -108,7 +108,7 @@ class FormatNegotiator
         $format = $this->getFromExtension($request) ?: $this->getFromHeader($request) ?: $this->default;
 
         if ($format) {
-            $request = Middleware::setAttribute($request, self::KEY, $format);
+            $request = self::setAttribute($request, self::KEY, $format);
         }
 
         $response = $next($request, $response);

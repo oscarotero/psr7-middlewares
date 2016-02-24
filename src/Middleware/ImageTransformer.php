@@ -16,6 +16,7 @@ use RuntimeException;
 class ImageTransformer
 {
     use Utils\CacheMessageTrait;
+    use Utils\AttributeTrait;
 
     const KEY_GENERATOR = 'IMAGE_TRANSFORMER';
 
@@ -38,7 +39,7 @@ class ImageTransformer
      */
     public static function getGenerator(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY_GENERATOR);
+        return self::getAttribute($request, self::KEY_GENERATOR);
     }
 
     /**
@@ -108,7 +109,7 @@ class ImageTransformer
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');
         }
 
@@ -158,7 +159,7 @@ class ImageTransformer
                     return Utils\Helpers::joinPath($info['dirname'], $transform.$info['basename']);
                 };
 
-                $request = Middleware::setAttribute($request, self::KEY_GENERATOR, $generator);
+                $request = self::setAttribute($request, self::KEY_GENERATOR, $generator);
                 $response = $next($request, $response);
 
                 if (!empty($this->clientHints)) {

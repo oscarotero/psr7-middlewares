@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr7Middlewares\Utils;
@@ -11,6 +10,7 @@ use RuntimeException;
 class GoogleAnalytics
 {
     use Utils\HtmlInjectorTrait;
+    use Utils\AttributeTrait;
 
     /**
      * @var string The site's ID
@@ -38,7 +38,7 @@ class GoogleAnalytics
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('The GoogleAnalytics middleware needs FormatNegotiator executed before');
         }
 

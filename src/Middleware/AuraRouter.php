@@ -3,7 +3,6 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
 use Aura\Router\RouterContainer;
 use Aura\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,6 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 class AuraRouter
 {
     use Utils\CallableTrait;
+    use Utils\AttributeTrait;
 
     const KEY = 'AURA_ROUTE';
 
@@ -29,7 +29,7 @@ class AuraRouter
      */
     public static function getRoute(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -71,7 +71,7 @@ class AuraRouter
             }
         }
 
-        $request = Middleware::setAttribute($request, self::KEY, $route);
+        $request = self::setAttribute($request, self::KEY, $route);
 
         foreach ($route->attributes as $name => $value) {
             $request = $request->withAttribute($name, $value);

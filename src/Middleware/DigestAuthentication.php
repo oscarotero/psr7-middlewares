@@ -3,7 +3,6 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
-use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ResponseInterface;
 
@@ -15,6 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 class DigestAuthentication
 {
     use Utils\AuthenticationTrait;
+    use Utils\AttributeTrait;
 
     const KEY = 'USERNAME';
 
@@ -32,7 +32,7 @@ class DigestAuthentication
      */
     public static function getUsername(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -62,7 +62,7 @@ class DigestAuthentication
     {
         if ($this->login($request, $username)) {
             return $next(
-                Middleware::setAttribute($request, self::KEY, $username),
+                self::setAttribute($request, self::KEY, $username),
                 $response
             );
         }

@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Negotiation\LanguageNegotiator as Negotiator;
 use Psr\Http\Message\ServerRequestInterface;
@@ -15,6 +14,7 @@ class LanguageNegotiator
 {
     use Utils\NegotiateTrait;
     use Utils\RedirectTrait;
+    use Utils\AttributeTrait;
 
     const KEY = 'LANGUAGE';
 
@@ -37,7 +37,7 @@ class LanguageNegotiator
      */
     public static function getLanguage(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -108,7 +108,7 @@ class LanguageNegotiator
             }
         }
 
-        $request = Middleware::setAttribute($request, self::KEY, $language);
+        $request = self::setAttribute($request, self::KEY, $language);
 
         if ($language !== null) {
             $response = $response->withHeader('Content-Language', $language);

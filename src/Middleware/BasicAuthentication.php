@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -13,6 +12,7 @@ use Psr\Http\Message\ResponseInterface;
 class BasicAuthentication
 {
     use Utils\AuthenticationTrait;
+    use Utils\AttributeTrait;
 
     const KEY = 'USERNAME';
 
@@ -25,7 +25,7 @@ class BasicAuthentication
      */
     public static function getUsername(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -43,7 +43,7 @@ class BasicAuthentication
 
         if ($authorization && $this->checkUserPassword($authorization['username'], $authorization['password'])) {
             return $next(
-                Middleware::setAttribute($request, self::KEY, $authorization['username']),
+                self::setAttribute($request, self::KEY, $authorization['username']),
                 $response
             );
         }

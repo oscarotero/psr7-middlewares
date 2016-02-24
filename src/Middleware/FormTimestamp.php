@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -16,6 +15,7 @@ class FormTimestamp
 {
     use Utils\FormTrait;
     use Utils\CryptTrait;
+    use Utils\AttributeTrait;
 
     const KEY_GENERATOR = 'FORM_TIMESTAMP_GENERATOR';
 
@@ -43,7 +43,7 @@ class FormTimestamp
      */
     public static function getGenerator(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY_GENERATOR);
+        return self::getAttribute($request, self::KEY_GENERATOR);
     }
 
     /**
@@ -99,7 +99,7 @@ class FormTimestamp
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('FormTimestamp middleware needs FormatNegotiator executed before');
         }
 

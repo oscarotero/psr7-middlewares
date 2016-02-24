@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -10,6 +10,8 @@ use RuntimeException;
 
 class AccessLog
 {
+    use Utils\AttributeTrait;
+
     /**
      * @var LoggerInterface The router container
      */
@@ -55,7 +57,7 @@ class AccessLog
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
+        if (!self::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('AccessLog middleware needs ClientIp executed before');
         }
 

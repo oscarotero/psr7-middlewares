@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -11,6 +11,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class ClientIp
 {
+    use Utils\AttributeTrait;
+
     const KEY = 'CLIENT_IPS';
 
     /**
@@ -39,7 +41,7 @@ class ClientIp
      */
     public static function getIps(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -108,7 +110,7 @@ class ClientIp
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $request = Middleware::setAttribute($request, self::KEY, $this->scanIps($request));
+        $request = self::setAttribute($request, self::KEY, $this->scanIps($request));
 
         return $next($request, $response);
     }

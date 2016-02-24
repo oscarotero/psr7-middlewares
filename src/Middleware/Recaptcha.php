@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -14,6 +13,8 @@ use ReCaptcha\ReCaptcha as GoogleRecaptcha;
  */
 class Recaptcha
 {
+    use Utils\AttributeTrait;
+
     private $secret;
 
     /**
@@ -37,7 +38,7 @@ class Recaptcha
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
+        if (!self::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('Recaptcha middleware needs ClientIp executed before');
         }
 

@@ -3,7 +3,7 @@
 namespace Psr7Middlewares\Middleware;
 
 use RuntimeException;
-use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use M6Web\Component\Firewall\Firewall as IpFirewall;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -13,6 +13,8 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Firewall
 {
+    use Utils\AttributeTrait;
+
     /**
      * @var array|null Trusted ips
      */
@@ -70,7 +72,7 @@ class Firewall
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, ClientIp::KEY)) {
+        if (!self::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('Firewall middleware needs ClientIp executed before');
         }
 

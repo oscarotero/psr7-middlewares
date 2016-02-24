@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr7Middlewares\Utils;
@@ -11,6 +10,7 @@ use RuntimeException;
 class Piwik
 {
     use Utils\HtmlInjectorTrait;
+    use Utils\AttributeTrait;
 
     private $options = [
         ['trackPageView'],
@@ -97,7 +97,7 @@ class Piwik
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!Middleware::hasAttribute($request, FormatNegotiator::KEY)) {
+        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
             throw new RuntimeException('The Piwik middleware needs FormatNegotiator executed before');
         }
 

@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Mobile_Detect;
@@ -12,6 +12,8 @@ use Mobile_Detect;
  */
 class DetectDevice
 {
+    use Utils\AttributeTrait;
+
     const KEY = 'DEVICE';
 
     /**
@@ -23,7 +25,7 @@ class DetectDevice
      */
     public static function getDevice(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -39,6 +41,6 @@ class DetectDevice
     {
         $device = new Mobile_Detect($request->getServerParams());
 
-        return $next(Middleware::setAttribute($request, self::KEY, $device), $response);
+        return $next(self::setAttribute($request, self::KEY, $device), $response);
     }
 }

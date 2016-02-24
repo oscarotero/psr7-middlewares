@@ -3,7 +3,6 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -16,6 +15,7 @@ class BasePath
     const KEY_GENERATOR = 'BASE_PATH_GENERATOR';
 
     use Utils\BasePathTrait;
+    use Utils\AttributeTrait;
 
     /**
      * @var bool
@@ -31,7 +31,7 @@ class BasePath
      */
     public static function getBasePath(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -43,7 +43,7 @@ class BasePath
      */
     public static function getGenerator(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY_GENERATOR);
+        return self::getAttribute($request, self::KEY_GENERATOR);
     }
 
     /**
@@ -95,8 +95,8 @@ class BasePath
             return Utils\Helpers::joinPath($this->basePath, $path);
         };
 
-        $request = Middleware::setAttribute($request, self::KEY, $this->basePath);
-        $request = Middleware::setAttribute($request, self::KEY_GENERATOR, $generator);
+        $request = self::setAttribute($request, self::KEY, $this->basePath);
+        $request = self::setAttribute($request, self::KEY_GENERATOR, $generator);
 
         return $next($request, $response);
     }

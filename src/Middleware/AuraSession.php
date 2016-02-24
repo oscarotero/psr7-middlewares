@@ -2,8 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Storage\AuraSession as Storage;
+use Psr7Middlewares\Utils;
 use Aura\Session\SessionFactory;
 use Aura\Session\Session;
 use Psr\Http\Message\ServerRequestInterface;
@@ -11,7 +10,10 @@ use Psr\Http\Message\ResponseInterface;
 
 class AuraSession
 {
+    use Utils\StorageTrait;
+
     const KEY = 'AURA_SESSION';
+    const STORAGE_KEY = 'AURA_SESSION_STORAGE';
 
     /**
      * @var SessionFactory
@@ -32,7 +34,7 @@ class AuraSession
      */
     public static function getSession(ServerRequestInterface $request)
     {
-        return Middleware::getAttribute($request, self::KEY);
+        return self::getAttribute($request, self::KEY);
     }
 
     /**
@@ -76,9 +78,15 @@ class AuraSession
             $session->setName($this->name);
         }
 
-        $request = Middleware::setAttribute($request, self::KEY, $session);
-        $request = Middleware::setAttribute($request, Middleware::STORAGE_KEY, new Storage($session));
+        $fragment = $session->getSegment(self::STORAGE_KEY);
 
-        return $next($request, $response);
+        $request = self::setAttribute($request, self::KEY, $session);
+        $request = self::initStorage($request, $fragment->get(self::STORAGE_KEY) ?: []);
+
+        $response = $next($request, $response);
+
+        $fragment->set(self::STORAGE_KEY, self::getStorage($request));
+
+        return $response;
     }
 }
