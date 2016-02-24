@@ -148,7 +148,7 @@ class ImageTransformer
                 return $response;
 
             case 'html':
-                $generator = function ($path, $transform) use ($request) {
+                $generator = function ($path, $transform) {
                     $info = pathinfo($path);
 
                     if (!isset($this->sizes[$transform])) {
