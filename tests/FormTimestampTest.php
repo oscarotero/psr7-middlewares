@@ -51,7 +51,9 @@ class FormTimestampTest extends Base
         $response = $this->dispatch(
             [
                 Middleware::formatNegotiator(),
-                Middleware::formTimestamp()->key(hex2bin('000102030405060708090a0b0c0d0e0f')),
+                Middleware::formTimestamp()
+                    ->autoInsert()
+                    ->key(hex2bin('000102030405060708090a0b0c0d0e0f')),
                 function ($request, $response, $next) {
 $html = <<<EOT
     <html>

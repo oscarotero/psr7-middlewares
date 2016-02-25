@@ -40,7 +40,7 @@ class HoneypotTest extends Base
         $response = $this->execute(
             [
                 Middleware::FormatNegotiator(),
-                Middleware::Honeypot(),
+                Middleware::Honeypot()->autoInsert(),
                 function ($request, $response, $next) use ($html) {
                     $response->getBody()->write($html);
 

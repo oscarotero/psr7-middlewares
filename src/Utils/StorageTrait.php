@@ -21,9 +21,24 @@ trait StorageTrait
      * 
      * @return ServerRequestInterface
      */
-    private static function initStorage(ServerRequestInterface $request, array $storage)
+    private static function startStorage(ServerRequestInterface $request, array $storage)
     {
-        return self::setAttribute($request, Middleware::STORAGE_KEY, $storage);
+        return self::setAttribute($request, Middleware::STORAGE_KEY, (object) $storage);
+    }
+
+    /**
+     * Stop the storage.
+     *
+     * @param ServerRequestInterface $request
+     * 
+     * @return array
+     */
+    private static function stopStorage(ServerRequestInterface $request)
+    {
+        $storage = self::getAttribute($request, Middleware::STORAGE_KEY);
+        self::setAttribute($request, Middleware::STORAGE_KEY, null);
+
+        return (array) $storage;
     }
 
     /**
@@ -32,9 +47,9 @@ trait StorageTrait
      * @param ServerRequestInterface $request
      * @param string|null            $key
      * 
-     * @return mixed
+     * @return array
      */
-    private static function getStorage(ServerRequestInterface $request, $key = null)
+    private static function &getStorage(ServerRequestInterface $request, $key = null)
     {
         if (!self::hasAttribute($request, Middleware::STORAGE_KEY)) {
             throw new RuntimeException('No session storage initialized');
@@ -42,31 +57,10 @@ trait StorageTrait
 
         $storage = self::getAttribute($request, Middleware::STORAGE_KEY);
 
-        if ($key === null) {
-            return $storage;
+        if (!isset($storage->$key)) {
+            $storage->$key = [];
         }
 
-        return isset($storage[$key]) ? $storage[$key] : null;
-    }
-
-    /**
-     * Returns the value of a storage array.
-     *
-     * @param ServerRequestInterface $request
-     * @param string                 $key
-     * @param mixed                  $value
-     * 
-     * @return ServerRequestInterface
-     */
-    private static function setStorage(ServerRequestInterface $request, $key, $value)
-    {
-        if (!self::hasAttribute($request, Middleware::STORAGE_KEY)) {
-            throw new RuntimeException('No session storage initialized');
-        }
-
-        $storage = self::getAttribute($request, Middleware::STORAGE_KEY);
-        $storage[$key] = $value;
-
-        return self::setAttribute($request, Middleware::STORAGE_KEY, $storage);
+        return $storage->$key;
     }
 }

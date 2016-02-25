@@ -106,11 +106,11 @@ class PhpSession
 
         session_start();
 
-        $request = self::initStorage($request, isset($_SESSION[self::STORAGE_KEY]) ? $_SESSION[self::STORAGE_KEY] : []);
+        $request = self::startStorage($request, isset($_SESSION[self::STORAGE_KEY]) ? $_SESSION[self::STORAGE_KEY] : []);
         $response = $next($request, $response);
 
         if ((session_status() === PHP_SESSION_ACTIVE) && (session_name() === $name)) {
-            $_SESSION[self::STORAGE_KEY] = self::getStorage($request);
+            $_SESSION[self::STORAGE_KEY] = self::stopStorage($request);
             session_write_close();
         }
 

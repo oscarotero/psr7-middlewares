@@ -81,11 +81,11 @@ class AuraSession
         $fragment = $session->getSegment(self::STORAGE_KEY);
 
         $request = self::setAttribute($request, self::KEY, $session);
-        $request = self::initStorage($request, $fragment->get(self::STORAGE_KEY) ?: []);
+        $request = self::startStorage($request, $fragment->get(self::STORAGE_KEY) ?: []);
 
         $response = $next($request, $response);
 
-        $fragment->set(self::STORAGE_KEY, self::getStorage($request));
+        $fragment->set(self::STORAGE_KEY, self::stopStorage($request));
 
         return $response;
     }

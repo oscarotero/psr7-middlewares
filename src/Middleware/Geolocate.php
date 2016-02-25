@@ -91,14 +91,13 @@ class Geolocate
 
         if ($ip !== null) {
             if ($this->saveInSession) {
-                $ips = self::getStorage($request, self::KEY) ?: [];
+                $ips =& self::getStorage($request, self::KEY);
 
                 if (isset($ips[$ip])) {
                     $address = new AddressCollection($ips[$ip]);
                 } else {
                     $address = $this->geocoder->geocode($ip);
                     $ips[$ip] = $address->all();
-                    $request = self::setStorage($request, self::KEY, $ips);
                 }
             } else {
                 $address = $this->geocoder->geocode($ip);

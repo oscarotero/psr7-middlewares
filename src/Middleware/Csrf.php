@@ -70,7 +70,7 @@ class Csrf
             return $next($request, $response);
         }
 
-        $tokens = self::getStorage($request, self::KEY) ?: [];
+        $tokens =& self::getStorage($request, self::KEY);
 
         if (Utils\Helpers::isPost($request) && !$this->validateRequest($request, $tokens)) {
             return $response->withStatus(403);
@@ -86,18 +86,16 @@ class Csrf
 
         if (!$this->autoInsert) {
             $request = self::setAttribute($request, self::KEY_GENERATOR, $generator);
-            $response = $next($request, $response);
-        } else {
-            $response = $next($request, $response);
-
-            $response = $this->insertIntoPostForms($response, function ($match) use ($generator) {
-                preg_match('/action=["\']?([^"\'\s]+)["\']?/i', $match[0], $matches);
-
-                return $match[0].$generator(isset($matches[1]) ? $matches[1] : null);
-            });
+            return $next($request, $response);
         }
 
-        return self::setStorage($request, self::KEY, $tokens);
+        $response = $next($request, $response);
+
+        $response = $this->insertIntoPostForms($response, function ($match) use ($generator) {
+            preg_match('/action=["\']?([^"\'\s]+)["\']?/i', $match[0], $matches);
+
+            return $match[0].$generator(isset($matches[1]) ? $matches[1] : null);
+        });
     }
 
     /**
