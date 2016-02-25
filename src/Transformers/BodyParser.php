@@ -58,7 +58,7 @@ class BodyParser extends Resolver
      */
     public function urlencode(StreamInterface $body)
     {
-        parse_str((string) $request->getBody(), $data);
+        parse_str((string) $body, $data);
 
         return $data ?: [];
     }
@@ -72,8 +72,6 @@ class BodyParser extends Resolver
      */
     public function csv(StreamInterface $body)
     {
-        $body = $request->getBody();
-
         if ($body->isSeekable()) {
             $body->rewind();
         }

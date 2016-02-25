@@ -94,6 +94,11 @@ class Honeypot
             return '<input type="text" name="'.$this->inputName.'" class="'.$this->inputClass.'">';
         };
 
+        if (!$this->autoInsert) {
+            $request = self::setAttribute($request, self::KEY_GENERATOR, $generator);
+            return $next($request, $response);
+        }
+
         $response = $next($request, $response);
 
         return $this->insertIntoPostForms($response, function ($match) use ($generator) {

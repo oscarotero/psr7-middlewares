@@ -98,7 +98,7 @@ class Geolocate
                 } else {
                     $address = $this->geocoder->geocode($ip);
                     $ips[$ip] = $address->all();
-                    $request = self::setStorage(self::KEY, $ips);
+                    $request = self::setStorage($request, self::KEY, $ips);
                 }
             } else {
                 $address = $this->geocoder->geocode($ip);

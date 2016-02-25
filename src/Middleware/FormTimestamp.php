@@ -117,6 +117,11 @@ class FormTimestamp
             return '<input type="hidden" name="'.$this->inputName.'" value="'.$value.'">';
         };
 
+        if (!$this->autoInsert) {
+            $request = self::setAttribute($request, self::KEY_GENERATOR, $generator);
+            return $next($request, $response);
+        }
+
         $response = $next($request, $response);
 
         return $this->insertIntoPostForms($response, function ($match) use ($generator) {
