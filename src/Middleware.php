@@ -12,7 +12,7 @@ class Middleware
     const STORAGE_KEY = 'STORAGE_KEY';
 
     private static $streamFactory;
-    private static $namespaces = [__NAMESPACE__.'\\Middleware\\'];
+    private static $namespaces = ['Psr7Middlewares\\Middleware\\'];
 
     /**
      * Register a new namespace.
