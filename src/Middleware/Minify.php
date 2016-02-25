@@ -12,6 +12,7 @@ class Minify
 {
     use Utils\ResolverTrait;
     use Utils\AttributeTrait;
+    use Utils\StreamTrait;
 
     /**
      * Execute the middleware.
@@ -34,7 +35,7 @@ class Minify
         $transformer = $resolver->resolve(FormatNegotiator::getFormat($request));
 
         if ($transformer) {
-            $response = $transformer($response);
+            return $response->withBody($transformer($response->getBody(), self::createStream()));
         }
 
         return $response;

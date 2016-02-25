@@ -3,13 +3,14 @@
 namespace Psr7Middlewares\Utils;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr7Middlewares\Middleware;
 
 /**
  * Utilities used by middlewares that inject html code in the responses.
  */
 trait HtmlInjectorTrait
 {
+    use StreamTrait;
+
     /**
      * Inject some code just before any tag.
      * 
@@ -30,7 +31,7 @@ trait HtmlInjectorTrait
             return $response;
         }
 
-        $body = Middleware::createStream();
+        $body = self::createStream();
         $body->write(substr($html, 0, $pos).$code.substr($html, $pos));
 
         return $response->withBody($body);

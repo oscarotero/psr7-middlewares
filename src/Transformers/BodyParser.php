@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Transformers;
 
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\StreamInterface;
 use DomainException;
 
 /**
@@ -34,43 +34,43 @@ class BodyParser extends Resolver
     /**
      * JSON parser.
      * 
-     * @param ServerRequestInterface $request
+     * @param StreamInterface $body
      * 
-     * @return ServerRequestInterface
+     * @return array
      */
-    public function json(ServerRequestInterface $request)
+    public function json(StreamInterface $body)
     {
-        $data = json_decode((string) $request->getBody(), true);
+        $data = json_decode((string) $body, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new DomainException(json_last_error_msg());
         }
 
-        return $request->withParsedBody($data);
+        return $data ?: [];
     }
 
     /**
      * Parses url-encoded strings.
      * 
-     * @param ServerRequestInterface $request
+     * @param StreamInterface $body
      * 
-     * @return ServerRequestInterface
+     * @return array
      */
-    public function urlencode(ServerRequestInterface $request)
+    public function urlencode(StreamInterface $body)
     {
         parse_str((string) $request->getBody(), $data);
 
-        return $request->withParsedBody($data ?: []);
+        return $data ?: [];
     }
 
     /**
      * Parses csv strings.
      * 
-     * @param ServerRequestInterface $request
+     * @param StreamInterface $body
      * 
-     * @return ServerRequestInterface
+     * @return array
      */
-    public function csv(ServerRequestInterface $request)
+    public function csv(StreamInterface $body)
     {
         $body = $request->getBody();
 
@@ -87,6 +87,6 @@ class BodyParser extends Resolver
 
         fclose($stream);
 
-        return $request->withParsedBody($data);
+        return $data;
     }
 }

@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr7Middlewares\Middleware;
 
 /**
- * Trait to save middleware related things as request attributes
+ * Trait to save middleware related things as request attributes.
  */
 trait AttributeTrait
 {

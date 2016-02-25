@@ -2,8 +2,7 @@
 
 namespace Psr7Middlewares\Transformers;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr7Middlewares\Middleware;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Generic resolver to encode responses.
@@ -18,34 +17,30 @@ class Encoder extends Resolver
     /**
      * Gzip minifier using gzencode().
      * 
-     * @param ResponseInterface $response
+     * @param StreamInterface $input
+     * @param StreamInterface $output
      * 
      * @return ResponseInterface
      */
-    public static function gzip(ResponseInterface $response)
+    public static function gzip(StreamInterface $input, StreamInterface $output)
     {
-        $stream = Middleware::createStream();
-        $stream->write(gzencode((string) $response->getBody()));
+        $output->write(gzencode((string) $input));
 
-        return $response
-            ->withHeader('Content-Encoding', 'gzip')
-            ->withBody($stream);
+        return $output;
     }
 
     /**
      * Gzip minifier using gzdeflate().
      * 
-     * @param ResponseInterface $response
+     * @param StreamInterface $input
+     * @param StreamInterface $output
      * 
      * @return ResponseInterface
      */
-    public static function deflate(ResponseInterface $response)
+    public static function deflate(StreamInterface $input, StreamInterface $output)
     {
-        $stream = Middleware::createStream();
-        $stream->write(gzdeflate((string) $response->getBody()));
+        $output->write(gzdeflate((string) $input));
 
-        return $response
-            ->withHeader('Content-Encoding', 'deflate')
-            ->withBody($stream);
+        return $output;
     }
 }

@@ -41,7 +41,8 @@ class AttributeMapper
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
         foreach ($this->mapping as $middleware => $attribute) {
             $request = $request->withAttribute(
                 $attribute,

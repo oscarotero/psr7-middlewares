@@ -7,17 +7,17 @@ use Psr7Middlewares\Middleware;
 use RuntimeException;
 
 /**
- * Trait to save middleware related things in the current session
+ * Trait to save middleware related things in the current session.
  */
 trait StorageTrait
 {
     use AttributeTrait;
 
     /**
-     * Init the storage array
+     * Init the storage array.
      *
      * @param ServerRequestInterface $request
-     * @param array $storage
+     * @param array                  $storage
      * 
      * @return ServerRequestInterface
      */
@@ -27,10 +27,10 @@ trait StorageTrait
     }
 
     /**
-     * Returns the value of a storage array
+     * Returns the value of a storage array.
      *
      * @param ServerRequestInterface $request
-     * @param string|null $key
+     * @param string|null            $key
      * 
      * @return mixed
      */
@@ -50,11 +50,11 @@ trait StorageTrait
     }
 
     /**
-     * Returns the value of a storage array
+     * Returns the value of a storage array.
      *
      * @param ServerRequestInterface $request
-     * @param string $key
-     * @param mixed $value
+     * @param string                 $key
+     * @param mixed                  $value
      * 
      * @return ServerRequestInterface
      */

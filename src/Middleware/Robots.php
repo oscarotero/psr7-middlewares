@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
@@ -37,21 +36,23 @@ class Robots
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($request->getUri()->getPath() === '/robots.txt') {
-            $body = Middleware::createStream();
-
             if ($this->allow) {
-                $body->write("User-Agent: *\nAllow: /");
-            } else {
-                $body->write("User-Agent: *\nDisallow: /");
+                $response->getBody()->write("User-Agent: *\nAllow: /");
+
+                return $response;
             }
 
-            return $next($request, $response->withBody($body));
+            $response->getBody()->write("User-Agent: *\nDisallow: /");
+
+            return $response;
         }
+
+        $response = $next($request, $response);
 
         if ($this->allow) {
-            return $next($request, $response->withHeader(self::HEADER, 'index, follow'));
+            return $response->withHeader(self::HEADER, 'index, follow');
         }
 
-        return $next($request, $response->withHeader(self::HEADER, 'noindex, nofollow, noarchive'));
+        return $response->withHeader(self::HEADER, 'noindex, nofollow, noarchive');
     }
 }

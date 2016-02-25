@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Utils;
 
-use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\BasePath;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -57,7 +56,6 @@ trait RedirectTrait
 
         return $response
             ->withStatus($this->redirectStatus)
-            ->withHeader('Location', (string) $uri)
-            ->withBody(Middleware::createStream());
+            ->withHeader('Location', (string) $uri);
     }
 }

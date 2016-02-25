@@ -3,13 +3,14 @@
 namespace Psr7Middlewares\Utils;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr7Middlewares\Middleware;
 
 /**
  * Utilities used by middlewares that manipulate forms.
  */
 trait FormTrait
 {
+    use StreamTrait;
+
     private $autoInsert = false;
 
     /**
@@ -40,7 +41,7 @@ trait FormTrait
         $html = preg_replace_callback('/(<form\s[^>]*method=["\']?POST["\']?[^>]*>)/i', $replace, $html, -1, $count);
 
         if (!empty($count)) {
-            $body = Middleware::createStream();
+            $body = self::createStream();
             $body->write($html);
 
             return $response->withBody($body);

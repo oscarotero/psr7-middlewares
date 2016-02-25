@@ -3,7 +3,6 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
@@ -14,6 +13,7 @@ use Psr\Http\Message\StreamInterface;
 class ReadResponse
 {
     use Utils\FileTrait;
+    use Utils\StreamTrait;
 
     private $continueOnError = false;
 
@@ -51,7 +51,7 @@ class ReadResponse
             return $response->withStatus(405);
         }
 
-        $body = Middleware::createStream();
+        $body = self::createStream();
 
         $file = $this->getFilename($request);
 

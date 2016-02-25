@@ -15,6 +15,7 @@ class Gzip
 {
     use Utils\ResolverTrait;
     use Utils\AttributeTrait;
+    use Utils\StreamTrait;
 
     /**
      * Execute the middleware.
@@ -34,10 +35,13 @@ class Gzip
         $response = $next($request, $response);
 
         $resolver = $this->resolver ?: new Transformers\Encoder();
-        $transformer = $resolver->resolve(EncodingNegotiator::getEncoding($request));
+        $encoding = EncodingNegotiator::getEncoding($request);
+        $transformer = $resolver->resolve($encoding);
 
         if ($transformer) {
-            $response = $transformer($response);
+            return $response
+                ->withHeader('Content-Encoding', $encoding)
+                ->withBody($transformer($response->getBody(), self::createStream()));
         }
 
         return $response;

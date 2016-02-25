@@ -3,7 +3,6 @@
 namespace Psr7Middlewares\Middleware;
 
 use Psr7Middlewares\Utils;
-use Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -17,6 +16,7 @@ class ImageTransformer
 {
     use Utils\CacheMessageTrait;
     use Utils\AttributeTrait;
+    use Utils\StreamTrait;
 
     const KEY_GENERATOR = 'IMAGE_TRANSFORMER';
 
@@ -193,7 +193,7 @@ class ImageTransformer
 
         $image->transform($transform);
 
-        $body = Middleware::createStream();
+        $body = self::createStream();
         $body->write($image->getString());
 
         return $response

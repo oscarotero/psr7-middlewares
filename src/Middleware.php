@@ -2,9 +2,7 @@
 
 namespace Psr7Middlewares;
 
-use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 
@@ -14,6 +12,17 @@ class Middleware
     const STORAGE_KEY = 'STORAGE_KEY';
 
     private static $streamFactory;
+    private static $namespaces = [__NAMESPACE__.'\\Middleware\\'];
+
+    /**
+     * Register a new namespace.
+     *
+     * @param string $namespace
+     */
+    public static function registerNamespace($namespace)
+    {
+        self::$namespaces[] = $namespace;
+    }
 
     /**
      * Set the stream factory used by some middlewares.
@@ -26,21 +35,13 @@ class Middleware
     }
 
     /**
-     * Get the stream factory.
+     * Set the stream factory used by some middlewares.
      *
-     * @return StreamInterface
+     * @param callable|null
      */
-    public static function createStream($file = 'php://temp', $mode = 'r+')
+    public static function getStreamFactory()
     {
-        if (empty(self::$streamFactory)) {
-            if (class_exists('Zend\\Diactoros\\Stream')) {
-                return new \Zend\Diactoros\Stream($file, $mode);
-            }
-
-            throw new \RuntimeException('Unable to create a stream. No stream factory defined');
-        }
-
-        return call_user_func(self::$streamFactory, $file, $mode);
+        return self::$streamFactory;
     }
 
     /**
@@ -51,18 +52,20 @@ class Middleware
      */
     public static function __callStatic($name, $args)
     {
-        $class = __NAMESPACE__.'\\Middleware\\'.ucfirst($name);
+        foreach (self::$namespaces as $namespace) {
+            $class = $namespace.ucfirst($name);
 
-        if (class_exists($class)) {
-            switch (count($args)) {
-                case 0:
-                    return new $class();
+            if (class_exists($class)) {
+                switch (count($args)) {
+                    case 0:
+                        return new $class();
 
-                case 1:
-                    return new $class($args[0]);
+                    case 1:
+                        return new $class($args[0]);
 
-                default:
-                    return (new \ReflectionClass($class))->newInstanceArgs($args);
+                    default:
+                        return (new \ReflectionClass($class))->newInstanceArgs($args);
+                }
             }
         }
 

@@ -31,7 +31,7 @@ class Payload
 
             if ($transformer) {
                 try {
-                    $request = $transformer($request);
+                    $request = $request->withParsedBody($transformer($request->getBody()));
                 } catch (\Exception $exception) {
                     return $response->withStatus(400);
                 }

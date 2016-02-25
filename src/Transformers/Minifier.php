@@ -2,8 +2,7 @@
 
 namespace Psr7Middlewares\Transformers;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr7Middlewares\Middleware;
+use Psr\Http\Message\StreamInterface;
 use JSMinPlus;
 use CSSmin;
 use Minify_HTML;
@@ -22,45 +21,45 @@ class Minifier extends Resolver
     /**
      * Javascript minifier.
      * 
-     * @param ResponseInterface $response
+     * @param StreamInterface $input
+     * @param StreamInterface $output
      * 
-     * @return ResponseInterface
+     * @return StreamInterface
      */
-    public static function js(ResponseInterface $response)
+    public static function js(StreamInterface $input, StreamInterface $output)
     {
-        $stream = Middleware::createStream();
-        $stream->write(JSMinPlus::minify((string) $response->getBody()));
+        $output->write(JSMinPlus::minify((string) $input));
 
-        return $response->withBody($stream);
+        return $output;
     }
 
     /**
      * CSS minifier.
      * 
-     * @param ResponseInterface $response
+     * @param StreamInterface $input
+     * @param StreamInterface $output
      * 
-     * @return ResponseInterface
+     * @return StreamInterface
      */
-    public static function css(ResponseInterface $response)
+    public static function css(StreamInterface $input, StreamInterface $output)
     {
-        $stream = Middleware::createStream();
-        $stream->write((new CSSmin())->run((string) $response->getBody()));
+        $output->write((new CSSmin())->run((string) $input));
 
-        return $response->withBody($stream);
+        return $output;
     }
 
     /**
      * HTML minifier.
      * 
-     * @param ResponseInterface $response
+     * @param StreamInterface $input
+     * @param StreamInterface $output
      * 
-     * @return ResponseInterface
+     * @return StreamInterface
      */
-    public static function html(ResponseInterface $response)
+    public static function html(StreamInterface $input, StreamInterface $output)
     {
-        $stream = Middleware::createStream();
-        $stream->write(Minify_HTML::minify((string) $response->getBody(), ['jsCleanComments' => true]));
+        $output->write(Minify_HTML::minify((string) $input, ['jsCleanComments' => true]));
 
-        return $response->withBody($stream);
+        return $output;
     }
 }

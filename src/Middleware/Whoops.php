@@ -2,7 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Whoops\Run;
@@ -16,6 +16,8 @@ use Whoops\Handler\XmlResponseHandler;
  */
 class Whoops
 {
+    use Utils\StreamTrait;
+
     /**
      * @var Run|null To handle errors using whoops
      */
@@ -77,7 +79,7 @@ class Whoops
             $whoops->writeToOutput(false);
             $whoops->sendHttpCode(false);
 
-            $body = Middleware::createStream();
+            $body = self::createStream();
             $body->write($whoops->$method($exception));
 
             $response = $response->withStatus(500)->withBody($body);
