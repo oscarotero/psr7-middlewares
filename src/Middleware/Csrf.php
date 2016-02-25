@@ -91,7 +91,7 @@ class Csrf
 
         $response = $next($request, $response);
 
-        $response = $this->insertIntoPostForms($response, function ($match) use ($generator) {
+        return $this->insertIntoPostForms($response, function ($match) use ($generator) {
             preg_match('/action=["\']?([^"\'\s]+)["\']?/i', $match[0], $matches);
 
             return $match[0].$generator(isset($matches[1]) ? $matches[1] : null);
