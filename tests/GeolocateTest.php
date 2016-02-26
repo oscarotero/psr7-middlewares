@@ -7,7 +7,6 @@ class GeolocateTest extends Base
 {
     public function testLocation()
     {
-        return; //http://freegeoip.net/json/123.9.34.23 is failing
         $request = $this->request('', [
             'Client-Ip' => '123.9.34.23',
         ]);
