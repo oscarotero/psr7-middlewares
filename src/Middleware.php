@@ -5,6 +5,7 @@ namespace Psr7Middlewares;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
+use InvalidArgumentException;
 
 class Middleware
 {
@@ -75,14 +76,28 @@ class Middleware
     /**
      * Create a middleware callable that acts as a "proxy" to a real middleware that must be returned by the given callback.
      *
-     * @param callable $factory Takes no argument and MUST return a middleware callable or false
+     * @param callable|string $basePath The base path in which the middleware is created (optional)
+     * @param callable        $factory  Takes no argument and MUST return a middleware callable or false
      * 
      * @return callable
      */
-    public static function create(callable $factory)
+    public static function create($basePath, callable $factory = null)
     {
-        return function (RequestInterface $request, ResponseInterface $response, callable $next) use ($factory) {
-            $middleware = $factory($request, $response);
+        if ($factory === null) {
+            $factory = $basePath;
+            $basePath = '';
+        }
+
+        if (!is_callable($factory)) {
+            throw new InvalidArgumentException('Invalid callable provided');
+        }
+
+        return function (RequestInterface $request, ResponseInterface $response, callable $next) use ($basePath, $factory) {
+            if (strlen($basePath) > 0 && strpos($request->getUri()->getPath(), $basePath) !== 0) {
+                $middleware = false;
+            } else {
+                $middleware = $factory($request, $response);
+            }
 
             if ($middleware === false) {
                 return $next($request, $response);

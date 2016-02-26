@@ -1235,6 +1235,7 @@ You may want to create middleware in a lazy way under some circunstances:
 
 * The middleware is needed only in a specific context (for example in development environments)
 * The middleware creation is expensive and is not needed always (because a previous middleware returns a cached response)
+* The middleware is needed only in a specific path
 
 To handle with this, you can use the `Middleware::create()` method that must return a callable or false. Example:
 
@@ -1264,15 +1265,29 @@ $dispatcher = $relay->getInstance([
         }
 
         return false;
-    })
+    }),
+
+    //This middleware is needed only in a specific basePath
+    Middleware::create('/admin', function () {
+        return Middleware::DigestAuthentication(['user' => 'pass']);
+    }),
+
+    //This middleware is needed in some cases under a specific basePath
+    Middleware::create('/actions', function ($request, $response) {
+        if ($request->hasHeader('Foo')) {
+            return Middleware::responseTime();
+        }
+
+        return false;
+    }),
 ]);
 ```
 
 ## Extending middlewares
 
-Some middlewares use different functions to change the http messages, depending of some circunstances. For example, [Payload](#payload) parses the raw body content, and the method used depends of the type of the content: it can be json, urlencoded, csv, etc. Other example is the [Minify](#minify) middleware that needs a different minifier for each format (html, css, js, etc), or the [Gzip](#gzip) that depending of the `Accept-Encoding` header, use a different method to compress the response body.
+Some middleware pieces use different functions to change the http messages, depending of some circunstances. For example, [Payload](#payload) parses the raw body content, and the method used depends of the type of the content: it can be json, urlencoded, csv, etc. Other example is the [Minify](#minify) middleware that needs a different minifier for each format (html, css, js, etc), or the [Gzip](#gzip) that depending of the `Accept-Encoding` header, use a different method to compress the response body.
 
-The interface `Psr7Middlewares\Transformers\ResolverInterface` provides a way to resolve and returns the apropiate "transformer" in each case. The transformer is just a callable that accepts a http message (request or response) and returns the transformed message again. You can create custom resolvers or extend the included in this package to add your owns. Let's see an example:
+The interface `Psr7Middlewares\Transformers\ResolverInterface` provides a way to resolve and returns the apropiate "transformer" in each case. The transformer is just a callable with a specific signature. You can create custom resolvers or extend the included in this package to add your owns. Let's see an example:
 
 ```php
 use Psr7Middlewares\Transformers\BodyParser;
