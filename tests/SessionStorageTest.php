@@ -17,6 +17,19 @@ class SessionStorageTest extends Base
 
         $this->assertEquals('Hello', (string) $response->getBody());
     }
+
+    public function testAuraSessionStorage()
+    {
+        $response = $this->execute(
+            [
+                Middleware::AuraSession(),
+                new Middleware1(),
+                new Middleware2(),
+            ]
+        );
+
+        $this->assertEquals('Hello', (string) $response->getBody());
+    }
 }
 
 class Middleware1 {
