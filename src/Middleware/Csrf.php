@@ -14,7 +14,6 @@ use RuntimeException;
 class Csrf
 {
     use Utils\FormTrait;
-    use Utils\AttributeTrait;
     use Utils\StorageTrait;
 
     const KEY = 'CSRF';
@@ -113,13 +112,14 @@ class Csrf
         $token = self::encode(random_bytes(32));
 
         $tokens[$index] = [
-            'created' => intval(date('YmdHis')),
             'uri' => $request->getUri()->getPath(),
             'token' => $token,
             'lockTo' => $lockTo,
         ];
 
-        $this->recycleTokens($tokens);
+        if ($this->maxTokens > 0 && ($total = count($tokens)) > $this->maxTokens) {
+            array_splice($tokens, 0, $total - $this->maxTokens);
+        }
 
         $token = self::encode(hash_hmac('sha256', ClientIp::getIp($request), base64_decode($token), true));
 
@@ -162,27 +162,6 @@ class Csrf
         $expected = self::encode(hash_hmac('sha256', ClientIp::getIp($request), base64_decode($stored['token']), true));
 
         return Utils\Helpers::hashEquals($token, $expected);
-    }
-
-    /**
-     * Enforce an upper limit on the number of tokens stored in session state
-     * by removing the oldest tokens first.
-     * 
-     * @param array &$tokens
-     */
-    private function recycleTokens(array &$tokens)
-    {
-        if (!$this->maxTokens || count($tokens) <= $this->maxTokens) {
-            return;
-        }
-
-        uasort($tokens, function ($a, $b) {
-            return $a['created'] - $b['created'];
-        });
-
-        while (count($tokens) > $this->maxTokens) {
-            array_shift($tokens);
-        }
     }
 
     /**
