@@ -83,6 +83,8 @@ class Whoops
             $body->write($whoops->$method($exception));
 
             $response = $response->withStatus(500)->withBody($body);
+
+            while (ob_get_level()) ob_end_clean();
         }
 
         if ($this->catchErrors) {
@@ -94,7 +96,7 @@ class Whoops
 
     /**
      * Returns the whoops instance or create one.
-     * 
+     *
      * @param ServerRequestInterface $request
      *
      * @return Run
