@@ -78,6 +78,13 @@ class ErrorHandler
 
         try {
             $response = $next($request, $response);
+        } catch (\Throwable $exception) {
+            if (!$this->catchExceptions) {
+                throw $exception;
+            }
+
+            $request = self::setAttribute($request, self::KEY, $exception);
+            $response = $response->withStatus(500);
         } catch (\Exception $exception) {
             if (!$this->catchExceptions) {
                 throw $exception;
@@ -98,10 +105,14 @@ class ErrorHandler
 
     public static function defaultHandler(ServerRequestInterface $request, ResponseInterface $response)
     {
+        $statusCode = $response->getStatusCode();
         $exception = self::getException($request);
 
-        $message = $exception ? $exception->getMessage() : $response->getReasonPhrase();
-        $statusCode = $response->getStatusCode();
+        if ($exception) {
+            $message = sprintf('<p>%s</p><pre>%s (%s)</pre>', $exception->getMessage(), $exception->getFile(), $exception->getLine());
+        } else {
+            $message = '';
+        }
 
         return <<<EOT
 <!DOCTYPE html>
@@ -109,11 +120,12 @@ class ErrorHandler
 <head>
     <meta charset="utf-8">
     <title>Error {$statusCode}</title>
+    <style>html{font-family: sans-serif;}</style>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
     <h1>Error {$statusCode}</h1>
-    <p>{$message}</p>
+    {$message}
 </body>
 </html>
 EOT;
