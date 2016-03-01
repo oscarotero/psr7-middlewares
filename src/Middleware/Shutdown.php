@@ -52,6 +52,7 @@ class Shutdown
 <head>
     <meta charset="utf-8">
     <title>503. Site under maintenance</title>
+    <style>html{font-family: sans-serif;}</style>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
