@@ -32,7 +32,8 @@ class SessionStorageTest extends Base
     }
 }
 
-class Middleware1 {
+class Middleware1
+{
     use Utils\StorageTrait;
 
     public function __invoke($request, $response, $next)
@@ -46,14 +47,15 @@ class Middleware1 {
     }
 }
 
-class Middleware2 {
+class Middleware2
+{
     use Utils\StorageTrait;
 
     public function __invoke($request, $response, $next)
     {
-        $storage =& self::getStorage($request, 'test');
+        $storage = &self::getStorage($request, 'test');
         $storage['value'] = 'Hello';
-        
+
         return $next($request, $response);
     }
 }

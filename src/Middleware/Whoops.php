@@ -19,7 +19,7 @@ class Whoops
     use Utils\StreamTrait;
 
     /**
-     * @var Run|null To handle errors using whoops
+     * @var Run|null The provided instance of Whoops
      */
     private $whoops;
 
@@ -61,43 +61,43 @@ class Whoops
      *
      * @return ResponseInterface
      */
-     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-     {
-         ob_start();
-         $level = ob_get_level();
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
+        ob_start();
+        $level = ob_get_level();
 
-         $method = Run::EXCEPTION_HANDLER;
-         $whoops = $this->getWhoopsInstance($request);
+        $method = Run::EXCEPTION_HANDLER;
+        $whoops = $this->getWhoopsInstance($request);
 
-         $whoops->allowQuit(false);
-         $whoops->writeToOutput(false);
-         $whoops->sendHttpCode(false);
+        $whoops->allowQuit(false);
+        $whoops->writeToOutput(false);
+        $whoops->sendHttpCode(false);
 
-         //Catch errors means register whoops globally
-         if ($this->catchErrors) {
-             $whoops->register();
-         }
+        //Catch errors means register whoops globally
+        if ($this->catchErrors) {
+            $whoops->register();
+        }
 
-         try {
-             $response = $next($request, $response);
-         } catch (\Throwable $exception) {
-             $body = self::createStream();
-             $body->write($whoops->$method($exception));
-             $response = $response->withStatus(500)->withBody($body);
+        try {
+            $response = $next($request, $response);
+        } catch (\Throwable $exception) {
+            $body = self::createStream();
+            $body->write($whoops->$method($exception));
+            $response = $response->withStatus(500)->withBody($body);
         } catch (\Exception $exception) {
-             $body = self::createStream();
-             $body->write($whoops->$method($exception));
-             $response = $response->withStatus(500)->withBody($body);
-         } finally {
-             Utils\Helpers::getOutput($level);
-         }
+            $body = self::createStream();
+            $body->write($whoops->$method($exception));
+            $response = $response->withStatus(500)->withBody($body);
+        } finally {
+            Utils\Helpers::getOutput($level);
+        }
 
-         if ($this->catchErrors) {
-             $whoops->unregister();
-         }
+        if ($this->catchErrors) {
+            $whoops->unregister();
+        }
 
-         return $response;
-     }
+        return $response;
+    }
 
     /**
      * Returns the whoops instance or create one.

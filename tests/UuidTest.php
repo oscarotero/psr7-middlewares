@@ -14,6 +14,7 @@ class UuidTest extends Base
                 Middleware::Uuid(),
                 function ($request, $response, $next) {
                     $response->getBody()->write($request->getHeaderLine('X-Uuid'));
+
                     return $next($request, $response);
                 },
             ]
@@ -30,6 +31,7 @@ class UuidTest extends Base
                 Middleware::Uuid(3, Uuid::NAMESPACE_DNS, 'oscarotero.com'),
                 function ($request, $response, $next) {
                     $response->getBody()->write($request->getHeaderLine('X-Uuid'));
+
                     return $next($request, $response);
                 },
             ]
@@ -46,6 +48,7 @@ class UuidTest extends Base
                 Middleware::Uuid(4),
                 function ($request, $response, $next) {
                     $response->getBody()->write($request->getHeaderLine('X-Uuid'));
+
                     return $next($request, $response);
                 },
             ]
@@ -62,6 +65,7 @@ class UuidTest extends Base
                 Middleware::Uuid(5, Uuid::NAMESPACE_DNS, 'oscarotero.com'),
                 function ($request, $response, $next) {
                     $response->getBody()->write($request->getHeaderLine('X-Uuid'));
+
                     return $next($request, $response);
                 },
             ]

@@ -89,7 +89,7 @@ class LazyLoadTest extends Base
         );
 
         $this->assertEquals($url, (string) $response->getBody());
-        
+
         if ($passed) {
             $this->assertTrue($response->hasHeader('X-Response-Time'));
         } else {

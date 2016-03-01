@@ -96,6 +96,7 @@ class Honeypot
 
         if (!$this->autoInsert) {
             $request = self::setAttribute($request, self::KEY_GENERATOR, $generator);
+
             return $next($request, $response);
         }
 

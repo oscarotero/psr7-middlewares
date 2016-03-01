@@ -69,7 +69,7 @@ class Csrf
             return $next($request, $response);
         }
 
-        $tokens =& self::getStorage($request, self::KEY);
+        $tokens = &self::getStorage($request, self::KEY);
 
         if (Utils\Helpers::isPost($request) && !$this->validateRequest($request, $tokens)) {
             return $response->withStatus(403);
@@ -85,6 +85,7 @@ class Csrf
 
         if (!$this->autoInsert) {
             $request = self::setAttribute($request, self::KEY_GENERATOR, $generator);
+
             return $next($request, $response);
         }
 
