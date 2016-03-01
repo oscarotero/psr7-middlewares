@@ -97,11 +97,13 @@ class Uuid
 
         $request = self::setAttribute($request, self::KEY, $uuid);
 
-        if (!empty($this->header)) {
-            $request = $request->withHeader($this->header, (string) $uuid);
+        if (empty($this->header)) {
+            return $next($request, $response);
         }
 
-        return $next($request, $response);
+        $request = $request->withHeader($this->header, (string) $uuid);
+
+        return $next($request, $response)->withHeader($this->header, (string) $uuid);
     }
 
     /**
