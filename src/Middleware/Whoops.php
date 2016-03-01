@@ -61,40 +61,45 @@ class Whoops
      *
      * @return ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-    {
-        $whoops = $this->getWhoopsInstance($request);
+     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+     {
+         ob_start();
+         $level = ob_get_level();
 
-        //Catch errors means register whoops globally
-        if ($this->catchErrors) {
-            $whoops->register();
-        }
+         $whoops = $this->getWhoopsInstance($request);
 
-        try {
-            $response = $next($request, $response);
-        } catch (\Exception $exception) {
-            $method = Run::EXCEPTION_HANDLER;
+         //Catch errors means register whoops globally
+         if ($this->catchErrors) {
+             $whoops->register();
+         }
 
-            $whoops->allowQuit(false);
-            $whoops->writeToOutput(false);
-            $whoops->sendHttpCode(false);
+         try {
+             $response = $next($request, $response);
+         } catch (\Exception $exception) {
+             $method = Run::EXCEPTION_HANDLER;
 
-            $body = self::createStream();
-            $body->write($whoops->$method($exception));
+             $whoops->allowQuit(false);
+             $whoops->writeToOutput(false);
+             $whoops->sendHttpCode(false);
 
-            $response = $response->withStatus(500)->withBody($body);
-        }
+             $body = self::createStream();
+             $body->write($whoops->$method($exception));
 
-        if ($this->catchErrors) {
-            $whoops->unregister();
-        }
+             $response = $response->withStatus(500)->withBody($body);
+         } finally {
+             Utils\Helpers::getOutput($level);
+         }
 
-        return $response;
-    }
+         if ($this->catchErrors) {
+             $whoops->unregister();
+         }
+
+         return $response;
+     }
 
     /**
      * Returns the whoops instance or create one.
-     * 
+     *
      * @param ServerRequestInterface $request
      *
      * @return Run
