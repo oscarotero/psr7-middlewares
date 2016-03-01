@@ -66,7 +66,12 @@ class Whoops
          ob_start();
          $level = ob_get_level();
 
+         $method = Run::EXCEPTION_HANDLER;
          $whoops = $this->getWhoopsInstance($request);
+
+         $whoops->allowQuit(false);
+         $whoops->writeToOutput(false);
+         $whoops->sendHttpCode(false);
 
          //Catch errors means register whoops globally
          if ($this->catchErrors) {
@@ -75,16 +80,13 @@ class Whoops
 
          try {
              $response = $next($request, $response);
-         } catch (\Exception $exception) {
-             $method = Run::EXCEPTION_HANDLER;
-
-             $whoops->allowQuit(false);
-             $whoops->writeToOutput(false);
-             $whoops->sendHttpCode(false);
-
+         } catch (\Throwable $exception) {
              $body = self::createStream();
              $body->write($whoops->$method($exception));
-
+             $response = $response->withStatus(500)->withBody($body);
+        } catch (\Exception $exception) {
+             $body = self::createStream();
+             $body->write($whoops->$method($exception));
              $response = $response->withStatus(500)->withBody($body);
          } finally {
              Utils\Helpers::getOutput($level);
