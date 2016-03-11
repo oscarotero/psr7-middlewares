@@ -53,7 +53,8 @@ trait FileTrait
      */
     private function getFilename(RequestInterface $request, $indexExt = 'html')
     {
-        $parts = pathinfo($request->getUri()->getPath());
+        $path = urldecode($request->getUri()->getPath());
+        $parts = pathinfo($path);
         $path = isset($parts['dirname']) ? $parts['dirname'] : '';
         $filename = isset($parts['basename']) ? $parts['basename'] : '';
 

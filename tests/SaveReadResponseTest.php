@@ -11,15 +11,23 @@ class SaveReadResponseTest extends Base
                 '/hello-world',
                 '/hello-world/index.html',
                 'Hello world',
-            ], [
+            ],
+            [
                 '/post',
                 '/post/index.html',
                 'This is a post',
-            ], [
+            ],
+            [
+                '/Os miúdos camiños',
+                '/Os miúdos camiños/index.html',
+                'This is a post with spaces and tildes',
+            ],
+            [
                 '/index.json',
                 '/index.json',
                 '{"hello": "world"}',
-            ], [
+            ],
+            [
                 '/',
                 '/index.html',
                 'Index',
