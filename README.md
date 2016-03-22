@@ -69,26 +69,11 @@ $dispatcher = $relay->newInstance([
     //Minify the result
     Middleware::minify(),
 
-    //Adds the php debug bar
-    Middleware::debugBar(),
-    
     //Handle errors
-    Middleware::errorHandler('error_handler_function')->catchExceptions(true),
+    Middleware::errorHandler()->catchExceptions(true),
 
     //Override the method using X-Http-Method-Override header
     Middleware::methodOverride(),
-
-    //Removes www subdomain
-    Middleware::www(false)->redirect(301),
-
-    //Block search engines robots indexing
-    Middleware::robots(),
-
-    //Geolocation
-    Middleware::geolocate(),
-
-    //Detect client device
-    Middleware::detectDevice(),
 
     //Parse the request payload
     Middleware::payload(),
@@ -113,6 +98,9 @@ $dispatcher = $relay->newInstance([
 
     //Detects the format
     Middleware::formatNegotiator(),
+
+    //Adds the php debug bar
+    Middleware::debugBar(),
 
     //Execute fast route
     Middleware::fastRoute($app->get('dispatcher')),
@@ -687,7 +675,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiator()
         ->defaultFormat('html') //(optional) default format if it's unable to detect. (by default is "html")
-        ->addFormat('pdf', ['application/pdf', 'application/x-download']), //(optional) add new formats and mimetypes
+        ->addFormat('tiff', ['tiff', 'tif'], ['image/tiff', 'image/x-tiff']), //(optional) add a new format associated with some extensions and mimetypes
 
     function ($request, $response, $next) {
         //get the format (for example: html)
