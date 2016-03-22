@@ -28,6 +28,14 @@ class FormatNegotiatorTest extends Base
                 '/',
                 'text/html, image/gif, image/jpeg, *; q=0.2, */*; q=0.2',
                 'html',
+            ], [
+                '/',
+                'text/test, */*; q=0.2',
+                'test',
+            ], [
+                '/test.tst',
+                '',
+                'test',
             ],
         ];
     }
@@ -39,7 +47,8 @@ class FormatNegotiatorTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::FormatNegotiator(),
+                Middleware::FormatNegotiator()
+                    ->addFormat('test', ['tst'], ['text/test']),
                 function ($request, $response, $next) use ($format) {
                     $this->assertEquals($format, FormatNegotiator::getFormat($request));
 
