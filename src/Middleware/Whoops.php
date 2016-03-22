@@ -135,6 +135,12 @@ class Whoops
                 $whoops->pushHandler(new XmlResponseHandler());
                 break;
 
+            case 'txt':
+            case 'css':
+            case 'js':
+                $whoops->pushHandler(new PlainTextHandler());
+                break;
+
             default:
                 if (empty($format)) {
                     $whoops->pushHandler(new PrettyPageHandler());
