@@ -48,6 +48,7 @@ class FormatNegotiator
         'svg' => [['svg', 'svgz'], ['image/svg+xml']],
         'psd' => [['psd'], ['image/vnd.adobe.photoshop']],
         'eps' => [['ai', 'eps', 'ps'], ['application/postscript']],
+        'ico' => [['ico'], ['image/x-icon', 'image/vnd.microsoft.icon']],
 
         //audio/video
         'mov' => [['mov', 'qt'], ['video/quicktime']],
