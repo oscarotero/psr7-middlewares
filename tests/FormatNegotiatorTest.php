@@ -48,7 +48,7 @@ class FormatNegotiatorTest extends Base
         $response = $this->execute(
             [
                 Middleware::FormatNegotiator()
-                    ->addFormat('test', ['tst'], ['text/test']),
+                    ->addFormat('test', ['text/test'], ['tst']),
                 function ($request, $response, $next) use ($format) {
                     $this->assertEquals($format, FormatNegotiator::getFormat($request));
 

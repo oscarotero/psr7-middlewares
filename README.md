@@ -675,7 +675,7 @@ $dispatcher = $relay->getInstance([
 
     Middleware::FormatNegotiator()
         ->defaultFormat('html') //(optional) default format if it's unable to detect. (by default is "html")
-        ->addFormat('tiff', ['tiff', 'tif'], ['image/tiff', 'image/x-tiff']), //(optional) add a new format associated with some extensions and mimetypes
+        ->addFormat('tiff', ['image/tiff', 'image/x-tiff']), //(optional) add a new format associated with mimetypes
 
     function ($request, $response, $next) {
         //get the format (for example: html)

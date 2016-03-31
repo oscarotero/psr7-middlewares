@@ -96,15 +96,15 @@ class FormatNegotiator
     /**
      * Add a new format.
      *
-     * @param string $format
-     * @param array  $extensions
-     * @param array  $mimeTypes
+     * @param string     $format
+     * @param array      $mimeTypes
+     * @param array|null $extensions
      *
      * @return self
      */
-    public function addFormat($format, array $extensions, array $mimeTypes)
+    public function addFormat($format, array $mimeTypes, array $extensions = null)
     {
-        $this->formats[$format] = [$extensions, $mimeTypes];
+        $this->formats[$format] = [is_null($extensions) ? [$format] : $extensions, $mimeTypes];
 
         return $this;
     }
