@@ -36,7 +36,7 @@
 		"maximebf/debugbar": "~1.11",
 		"mobiledetect/mobiledetectlib": "^2.8",
 		"willdurand/geocoder": "^3.2",
-		"league/route": "2.0.0-RC1",
+		"league/route": "^2.0",
 		"imagecow/imagecow": "^2.0",
 		"filp/whoops": "2.*",
 		"monolog/monolog": "^1.17",
