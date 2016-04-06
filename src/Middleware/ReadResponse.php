@@ -51,8 +51,6 @@ class ReadResponse
             return $response->withStatus(405);
         }
 
-        $body = self::createStream();
-
         $file = $this->getFilename($request);
 
         //If the file does not exists, check if is gzipped
@@ -70,39 +68,14 @@ class ReadResponse
             $response = $response->withHeader('Content-Encoding', 'gzip');
         }
 
-        self::readFile($file, $body);
-
         //Handle range header
-        $response = $this->range($request, $response->withBody($body));
+        $response = $this->range($request, $response->withBody(self::createStream($file, 'r')));
 
         if ($this->continueOnError) {
             return $response;
         }
 
         return $next($request, $response);
-    }
-
-    /**
-     * Reads a file and write in the body.
-     * 
-     * @param string          $file
-     * @param StreamInterface $body
-     */
-    private static function readFile($file, StreamInterface $body)
-    {
-        if (filesize($file) <= 4096) {
-            $body->write(file_get_contents($file));
-
-            return;
-        }
-
-        $stream = fopen($file, 'r');
-
-        while (!feof($stream)) {
-            $body->write(fread($stream, 4096));
-        }
-
-        fclose($stream);
     }
 
     /**
