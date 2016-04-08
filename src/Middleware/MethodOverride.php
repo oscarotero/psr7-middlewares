@@ -88,7 +88,7 @@ class MethodOverride
     {
         $method = $this->getOverrideMethod($request);
 
-        if (!empty($method)) {
+        if (!empty($method) && $method !== $request->getMethod()) {
             $allowed = $this->getAllowedOverrideMethods($request);
 
             if (!empty($allowed)) {
