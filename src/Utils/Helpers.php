@@ -108,6 +108,21 @@ class Helpers
     }
 
     /**
+     * Return the output buffer.
+     * 
+     * @param int $level
+     * 
+     * @return string
+     */
+    public static function getMimeType(ResponseInterface $response)
+    {
+        $mime = strtolower($response->getHeaderLine('Content-Type'));
+        $mime = explode(';', $mime, 2);
+
+        return trim($mime[0]);
+    }
+
+    /**
      * Very short timing attack safe string comparison for PHP < 5.6
      * http://php.net/manual/en/function.hash-equals.php#118384.
      * 
