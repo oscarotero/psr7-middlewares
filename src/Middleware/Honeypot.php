@@ -5,7 +5,6 @@ namespace Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 
 /**
  * Middleware to span protection using the honeypot technique.
@@ -78,11 +77,7 @@ class Honeypot
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
-            throw new RuntimeException('Honeypot middleware needs FormatNegotiator executed before');
-        }
-
-        if (FormatNegotiator::getFormat($request) !== 'html') {
+        if (Utils\Helpers::getMimeType($response) !== 'text/html') {
             return $next($request, $response);
         }
 

@@ -27,7 +27,6 @@ EOT;
                 Middleware::FormatNegotiator(),
                 Middleware::Minify(),
                 function ($request, $response, $next) use ($body) {
-                    $response = $this->response();
                     $response->getBody()->write($body);
 
                     return $next($request, $response);

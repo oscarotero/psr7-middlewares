@@ -57,15 +57,11 @@ class Csrf
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
-            throw new RuntimeException('Csrf middleware needs FormatNegotiator executed before');
-        }
-
         if (!self::hasAttribute($request, ClientIp::KEY)) {
             throw new RuntimeException('Csrf middleware needs ClientIp executed before');
         }
 
-        if (FormatNegotiator::getFormat($request) !== 'html') {
+        if (Utils\Helpers::getMimeType($response) !== 'text/html') {
             return $next($request, $response);
         }
 

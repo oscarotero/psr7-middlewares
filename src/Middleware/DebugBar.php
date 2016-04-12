@@ -101,7 +101,7 @@ class DebugBar
             }
 
         //Html response
-        } elseif (FormatNegotiator::getFormat($request) === 'html') {
+        } elseif (Utils\Helpers::getMimeType($response) === 'text/html') {
             if (!$ajax) {
                 $response = $this->inject($response, $renderer->renderHead(), 'head');
             }

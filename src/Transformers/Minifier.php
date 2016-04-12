@@ -13,9 +13,9 @@ use Minify_HTML;
 class Minifier extends Resolver
 {
     protected $transformers = [
-        'js' => [__CLASS__, 'js'],
-        'css' => [__CLASS__, 'css'],
-        'html' => [__CLASS__, 'html'],
+        'text/javascript' => [__CLASS__, 'js'],
+        'text/css' => [__CLASS__, 'css'],
+        'text/html' => [__CLASS__, 'html'],
     ];
 
     /**

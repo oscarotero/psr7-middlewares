@@ -6,7 +6,6 @@ use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr7Middlewares\Transformers;
-use RuntimeException;
 
 class Minify
 {
@@ -25,14 +24,10 @@ class Minify
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
-            throw new RuntimeException('Minify middleware needs FormatNegotiator executed before');
-        }
-
         $response = $next($request, $response);
 
         $resolver = $this->resolver ?: new Transformers\Minifier();
-        $transformer = $resolver->resolve(FormatNegotiator::getFormat($request));
+        $transformer = $resolver->resolve(Utils\Helpers::getMimeType($response));
 
         if ($transformer) {
             return $response->withBody($transformer($response->getBody(), self::createStream()));

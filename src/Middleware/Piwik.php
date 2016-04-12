@@ -5,7 +5,6 @@ namespace Psr7Middlewares\Middleware;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr7Middlewares\Utils;
-use RuntimeException;
 
 class Piwik
 {
@@ -97,13 +96,9 @@ class Piwik
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
-            throw new RuntimeException('The Piwik middleware needs FormatNegotiator executed before');
-        }
-
         $response = $next($request, $response);
 
-        if (FormatNegotiator::getFormat($request) === 'html' && !Utils\Helpers::isAjax($request)) {
+        if (Utils\Helpers::getMimeType($response) === 'text/html' && !Utils\Helpers::isAjax($request)) {
             return $this->inject($response, $this->getCode());
         }
 

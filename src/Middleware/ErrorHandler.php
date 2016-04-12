@@ -106,10 +106,10 @@ class ErrorHandler
     }
 
     /**
-     * Default handler
+     * Default handler.
      * 
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param ResponseInterface      $response
      * 
      * @return string
      */
@@ -149,9 +149,9 @@ class ErrorHandler
     }
 
     /**
-     * Print the error as plain text
+     * Print the error as plain text.
      * 
-     * @param int $statusCode
+     * @param int    $statusCode
      * @param string $message
      * 
      * @return string
@@ -162,9 +162,9 @@ class ErrorHandler
     }
 
     /**
-     * Print the error as svg image
+     * Print the error as svg image.
      * 
-     * @param int $statusCode
+     * @param int    $statusCode
      * @param string $message
      * 
      * @return string
@@ -181,9 +181,9 @@ EOT;
     }
 
     /**
-     * Print the error as html
+     * Print the error as html.
      * 
-     * @param int $statusCode
+     * @param int    $statusCode
      * @param string $message
      * 
      * @return string
@@ -208,9 +208,9 @@ EOT;
     }
 
     /**
-     * Print the error as image
+     * Print the error as image.
      * 
-     * @param int $statusCode
+     * @param int    $statusCode
      * @param string $message
      * @param string $output
      * 
@@ -229,13 +229,14 @@ EOT;
 
         ob_start();
         $output($image);
+
         return ob_get_clean();
     }
 
     /**
-     * Print the error as json
+     * Print the error as json.
      * 
-     * @param int $statusCode
+     * @param int    $statusCode
      * @param string $message
      * 
      * @return string
@@ -252,9 +253,9 @@ EOT;
     }
 
     /**
-     * Print the error as xml
+     * Print the error as xml.
      * 
-     * @param int $statusCode
+     * @param int    $statusCode
      * @param string $message
      * 
      * @return string

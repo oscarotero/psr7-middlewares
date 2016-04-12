@@ -7,7 +7,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Imagecow\Image;
-use RuntimeException;
 
 /**
  * Middleware to manipulate images on demand.
@@ -109,17 +108,10 @@ class ImageTransformer
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
-            throw new RuntimeException('ResponsiveImage middleware needs FormatNegotiator executed before');
-        }
-
-        $format = FormatNegotiator::getFormat($request);
-
-        switch ($format) {
-            case 'jpg':
-            case 'jpeg':
-            case 'gif':
-            case 'png':
+        switch (Utils\Helpers::getMimeType($response)) {
+            case 'image/jpeg':
+            case 'image/gif':
+            case 'image/png':
                 $key = $this->getCacheKey($request);
 
                 //Get from the cache
@@ -148,7 +140,7 @@ class ImageTransformer
 
                 return $response;
 
-            case 'html':
+            case 'text/html':
                 $generator = function ($path, $transform) {
                     $info = pathinfo($path);
 
