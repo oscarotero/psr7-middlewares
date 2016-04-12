@@ -108,7 +108,7 @@ class MethodOverride
      * 
      * @param ServerRequestInterface $request
      * 
-     * @return string|null
+     * @return string
      */
     private function getOverrideMethod(ServerRequestInterface $request)
     {
@@ -118,9 +118,7 @@ class MethodOverride
             if (isset($params[$this->postParam])) {
                 return strtoupper($params[$this->postParam]);
             }
-        }
-
-        if ($request->getMethod() === 'GET' && $this->getParam !== null) {
+        } elseif ($request->getMethod() === 'GET' && $this->getParam !== null) {
             $params = $request->getQueryParams();
 
             if (isset($params[$this->getParam])) {
@@ -128,11 +126,7 @@ class MethodOverride
             }
         }
 
-        $method = $request->getHeaderLine(self::HEADER);
-
-        if (!empty($method) && ($method !== $request->getMethod())) {
-            return strtoupper($method);
-        }
+        return strtoupper($request->getHeaderLine(self::HEADER));
     }
 
     /**
