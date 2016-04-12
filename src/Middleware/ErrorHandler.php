@@ -97,56 +97,99 @@ class ErrorHandler
         }
 
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
-            return $this->executeCallable($this->getHandler($response), $request, $response);
+            $callable = $this->handler ?: [$this, 'defaultHandler'];
+
+            return $this->executeCallable($callable, $request, $response);
         }
 
         return $response;
     }
 
-    private function getHandler(ResponseInterface $response)
-    {
-        if ($this->handler !== null) {
-            return $this->handler;
-        }
-
-        switch (Utils\Helpers::getMimeType($response)) {
-            case 'text/plain':
-            case 'text/css':
-            case 'text/javascript':
-                return self::CLASS.'::textHandler';
-
-            case 'image/jpeg':
-            case 'image/gif':
-            case 'image/png':
-                return self::CLASS.'::imgHandler';
-
-            case 'image/svg+xml':
-                return self::CLASS.'::svgHandler';
-
-            default:
-                return self::CLASS.'::htmlHandler';
-        }
-    }
-
     /**
-     * Returns the error as html
+     * Default handler
      * 
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * 
      * @return string
      */
-    public static function htmlHandler(ServerRequestInterface $request, ResponseInterface $response)
+    private function defaultHandler(ServerRequestInterface $request, ResponseInterface $response)
     {
         $statusCode = $response->getStatusCode();
         $exception = self::getException($request);
+        $message = $exception ? $exception->getMessage() : '';
 
-        if ($exception) {
-            $message = sprintf('<p>%s</p><pre>%s (%s)</pre>', $exception->getMessage(), $exception->getFile(), $exception->getLine());
-        } else {
-            $message = '';
+        switch (Utils\Helpers::getMimeType($response)) {
+            case 'text/plain':
+            case 'text/css':
+            case 'text/javascript':
+                return self::errorText($statusCode, $message);
+
+            case 'image/jpeg':
+                return self::errorImage($statusCode, $message, 'imagejpeg');
+
+            case 'image/gif':
+                return self::errorImage($statusCode, $message, 'imagegif');
+
+            case 'image/png':
+                return self::errorImage($statusCode, $message, 'imagepng');
+
+            case 'image/svg+xml':
+                return self::errorSvg($statusCode, $message);
+
+            case 'application/json':
+                return self::errorJson($statusCode, $message);
+
+            case 'text/xml':
+                return self::errorXml($statusCode, $message);
+
+            default:
+                return self::errorHtml($statusCode, $message);
         }
+    }
 
+    /**
+     * Print the error as plain text
+     * 
+     * @param int $statusCode
+     * @param string $message
+     * 
+     * @return string
+     */
+    private static function errorText($statusCode, $message)
+    {
+        return sprintf("Error %s\n%s", $statusCode, $message);
+    }
+
+    /**
+     * Print the error as svg image
+     * 
+     * @param int $statusCode
+     * @param string $message
+     * 
+     * @return string
+     */
+    private static function errorSvg($statusCode, $message)
+    {
+        return <<<EOT
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50">
+    <text x="20" y="30" font-family="sans-serif" title="{$message}">
+        Error {$statusCode}
+    </text>
+</svg>
+EOT;
+    }
+
+    /**
+     * Print the error as html
+     * 
+     * @param int $statusCode
+     * @param string $message
+     * 
+     * @return string
+     */
+    private static function errorHtml($statusCode, $message)
+    {
         return <<<EOT
 <!DOCTYPE html>
 <html>
@@ -165,99 +208,65 @@ EOT;
     }
 
     /**
-     * Returns the error as plain text
+     * Print the error as image
      * 
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * 
-     * @return string
-     */
-    public static function textHandler(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        $message = "Error {$response->getStatusCode()}";
-        $exception = self::getException($request);
-
-        if ($exception) {
-            return $message.sprintf("\n%s\n%s (%s)", $exception->getMessage(), $exception->getFile(), $exception->getLine());
-        }
-
-        return $message;
-    }
-
-    /**
-     * Returns the error as image
-     * 
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param int $statusCode
+     * @param string $message
+     * @param string $output
      * 
      * @return string
      */
-    public static function imgHandler(ServerRequestInterface $request, ResponseInterface $response)
+    private static function errorImage($statusCode, $message, $output)
     {
-        $message = "Error {$response->getStatusCode()}";
-        $exception = self::getException($request);
-
-        if ($exception) {
-            $message .= sprintf("\n%s", $exception->getMessage());
-        }
-
         $size = 200;
-
         $image = imagecreatetruecolor($size, $size);
         $textColor = imagecolorallocate($image, 255, 255, 255);
+        imagestring($image, 5, 10, 10, "Error {$statusCode}", $textColor);
 
-        foreach(explode("\n", $message) as $n => $paragraph) {
-            foreach (str_split($paragraph, intval($size / 10)) as $line => $text) {
-                imagestring($image, 5, 10, (($line + 1) * 18 * $n) + 10, $text, $textColor);
-            }
+        foreach (str_split($message, intval($size / 10)) as $line => $text) {
+            imagestring($image, 5, 10, ($line * 18) + 28, $text, $textColor);
         }
 
         ob_start();
-
-        switch (Utils\Helpers::getMimeType($response)) {
-            case 'image/jpeg':
-                imagejpeg($image);
-                break;
-
-            case 'image/gif':
-                imagegif($image);
-                break;
-
-            case 'image/png':
-                imagepng($image);
-                break;
-        }
-
+        $output($image);
         return ob_get_clean();
     }
 
     /**
-     * Returns the error as svg
+     * Print the error as json
      * 
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param int $statusCode
+     * @param string $message
      * 
      * @return string
      */
-    public function svgHandler(ServerRequestInterface $request, ResponseInterface $response)
+    private static function errorJson($statusCode, $message)
     {
-        $error = "Error {$response->getStatusCode()}";
-        $title = '';
+        $output = ['error' => $statusCode];
 
-        $exception = self::getException($request);
-
-        if ($exception) {
-            $title = $exception->getMessage();
+        if (!empty($message)) {
+            $output['message'] = $message;
         }
 
-        $size = 100;
+        return json_encode($output);
+    }
 
+    /**
+     * Print the error as xml
+     * 
+     * @param int $statusCode
+     * @param string $message
+     * 
+     * @return string
+     */
+    private static function errorXml($statusCode, $message)
+    {
         return <<<EOT
-        <svg xmlns="http://www.w3.org/2000/svg" width="{$size}" height="{$size}" viewBox="0 0 $size $size">
-            <text x="20" y="20" font-family="sans-serif" title="{$title}">
-                {$error}
-            </text>
-        </svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<error>
+    <code>{$statusCode}</code>
+    <message>{$message}</message>
+</error>
 EOT;
     }
 }
