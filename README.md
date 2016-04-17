@@ -129,6 +129,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [DigestAuthentication](#digestauthentication)
 * [EncodingNegotiator](#encodingnegotiator)
 * [ErrorHandler](#errorhandler)
+* [Expire](#expire)
 * [FastRoute](#fastroute)
 * [FormTimestamp](#formtimestamp)
 * [Firewall](#firewall)
@@ -172,15 +173,14 @@ use Monolog\Handler\ErrorLogHandler;
 $logger = new Logger('access');
 $logger->pushHandler(new ErrorLogHandler());
 
-//Add to the dispatcher
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     //Required to get the Ip
     Middleware::ClientIp(),
 
     Middleware::AccessLog($logger) //Instance of Psr\Log\LoggerInterface
         ->combined(true)           //(optional) To use the Combined Log Format instead the Common Log Format
-]);
+];
 ```
 
 
@@ -191,7 +191,7 @@ Maps middleware specific attribute to regural request attribute under desired na
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::BasicAuthentication([
             'username1' => 'password1',
@@ -210,7 +210,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### AuraRouter
@@ -249,11 +249,11 @@ $map->get('hello', '/hello/{name}', function ($request, $response, $myApp) {
 });
 
 //Add to the dispatcher
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::AuraRouter($router) //Instance of Aura\Router\RouterContainer
         ->arguments($myApp)         //(optional) append more arguments to the controller
-]);
+];
 ```
 
 ### AuraSession
@@ -264,7 +264,7 @@ Creates a new [Aura.Session](https://github.com/auraphp/Aura.Session) instance w
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\AuraSession;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::AuraSession(),
         ->factory($sessionFactory) //(optional) Intance of Aura\Session\SessionFactory
@@ -276,7 +276,7 @@ $dispatcher = $relay->getInstance([
 
         return $response;
     }
-]);
+];
 ```
 
 ### BasePath
@@ -287,7 +287,8 @@ Removes the prefix from the uri path of the request. This is useful to combine w
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\BasePath;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
+
     Middleware::BasePath('/web/public') // (optional) The path to remove...
         ->autodetect(true),             // (optional) ...or/and autodetect the base path
 
@@ -302,7 +303,7 @@ $dispatcher = $relay->getInstance([
 
         return $response;
     }
-]);
+];
 ```
 
 ### BasicAuthentication
@@ -312,7 +313,7 @@ Implements the [basic http authentication](http://php.net/manual/en/features.htt
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::BasicAuthentication([
             'username1' => 'password1',
@@ -325,7 +326,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### BlockSpam
@@ -335,10 +336,10 @@ To block referral spam usin the [piwik/referrer-spam-blacklist](https://github.c
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::BlockSpam('spammers.txt'), //(optional) to set a custom spammers list instead the piwik's list
-]);
+];
 ```
 
 ### Cache
@@ -348,11 +349,11 @@ Requires [micheh/psr7-cache](https://github.com/micheh/psr7-cache). Saves the re
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::Cache(new Psr6CachePool()) //the PSR-6 cache implementation
         ->cacheControl('max-age=3600'),    //(optional) to add this Cache-Control header to all responses
-]);
+];
 ```
 
 ### ClientIp
@@ -363,7 +364,7 @@ Detects the client ip(s).
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\ClientIp;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::ClientIp()
         ->remote()  // (optional) Hack to get the ip from localhost environment
@@ -382,7 +383,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### Cors
@@ -392,7 +393,7 @@ To use the [neomerx/cors-psr7](https://github.com/neomerx/cors-psr7) library:
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::Cors($settings)                 //(optional) instance of Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface
         ->origin('http://example.com:123')      //(optional) the server origin
@@ -420,7 +421,7 @@ $dispatcher = $relay->getInstance([
         ->allowCredentials()                    //(optional) If access with credentials is supported by the resource.
         ->maxAge(0)                             //(optional) Set pre-flight cache max period in seconds.
         ->checkHost(true)                       //(optional) If request 'Host' header should be checked against server's origin.
-]);
+];
 ```
 
 ### Csp
@@ -429,13 +430,13 @@ To use the [paragonie/csp-builder](https://github.com/paragonie/csp-builder) lib
 
 ```php
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::csp($directives)                          //(optional) the array with the directives.
         ->addSource('img-src', 'https://ytimg.com')       //(optional) to add extra sources to whitelist
         ->addDirective('upgrade-insecure-requests', true) //(optional) to add new directives (if it doesn't already exist)
         ->supportOldBrowsers(false)                       //(optional) support old browsers (e.g. safari). True by default
-]);
+];
 ```
 
 ### Csrf
@@ -444,7 +445,7 @@ To add a protection layer agains CSRF (Cross Site Request Forgety). The middlewa
 
 ```php
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     //required to save the tokens in the user session
     Middleware::AuraSession(),
@@ -474,7 +475,7 @@ $dispatcher = $relay->getInstance([
         
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### DebugBar
@@ -489,13 +490,13 @@ use DebugBar\StandardDebugBar;
 
 $debugBar = new StandardDebugBar();
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::FormatNegotiator(),
 
     Middleware::DebugBar($debugBar) //(optional) Instance of debugbar
         ->captureAjax(true)         //(optional) To send data in headers in ajax
-]);
+];
 ```
 
 ### Delay
@@ -505,12 +506,12 @@ Delays the response to simulate slow bandwidth in local environments. You can us
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::delay(3.5),      //delay the response 3.5 seconds
 
     Middleware::delay([1, 2.5]), //delay the response between 1 and 1.5 seconds
-]);
+];
 ```
 
 ### DetectDevice
@@ -521,7 +522,7 @@ Uses [Mobile-Detect](https://github.com/serbanghita/Mobile-Detect) library to de
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\DetectDevice;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::DetectDevice(),
 
@@ -541,7 +542,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     },
-]);
+];
 ```
 
 ### DigestAuthentication
@@ -551,7 +552,7 @@ Implements the [digest http authentication](http://php.net/manual/en/features.ht
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::DigestAuthentication([
             'username1' => 'password1',
@@ -565,7 +566,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### EncodingNegotiator
@@ -576,7 +577,7 @@ Uses [willdurand/Negotiation (2.x)](https://github.com/willdurand/Negotiation) t
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\EncodingNegotiator;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::EncodingNegotiator()
         ->encodings(['gzip', 'deflate']), //(optional) configure the supported encoding types
@@ -587,7 +588,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### ErrorHandler
@@ -614,12 +615,27 @@ function handler($request, $response, $myApp) {
     }
 }
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::ErrorHandler('handler') //(optional) The error handler
         ->arguments($myApp)             //(optional) extra arguments to the handler
         ->catchExceptions()             //(optional) to catch exceptions
-]);
+];
+```
+
+### Expire
+Adds `Expires` and `max-age` directive of the `Cache-Control` header in the response. It's similar to the apache module [mod_expires](https://httpd.apache.org/docs/current/mod/mod_expires.html). By default uses the same configuration than [h5bp apache configuration](https://github.com/h5bp/server-configs-apache/blob/master/src/web_performance/expires_headers.conf). Useful for static files.
+
+```php
+use Psr7Middlewares\Middleware;
+
+$middlewares = [
+
+    Middleware::formatNegotiator(), //Useful to set the content-type header
+
+    Middleware::expires()
+        ->addExpire('text/css', '+1 week') //Add or edit the expire of some types
+];
 ```
 
 ### FastRoute
@@ -635,11 +651,11 @@ $router = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
     });
 });
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::FastRoute($router) //Instance of FastRoute\Dispatcher
         ->argument($myApp)         //(optional) arguments appended to the controller
-]);
+];
 ```
 
 ### Firewall
@@ -651,7 +667,7 @@ Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide an IP filter
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     //required to capture the user ips before
     Middleware::ClientIp(),
@@ -660,7 +676,7 @@ $dispatcher = $relay->getInstance([
     Middleware::Firewall()
         ->trusted(['123.0.0.*'])   //(optional) ips allowed
         ->untrusted(['123.0.0.1']) //(optional) ips not allowed
-]);
+];
 ```
 
 ### FormatNegotiator
@@ -671,7 +687,7 @@ Uses [willdurand/Negotiation (2.x)](https://github.com/willdurand/Negotiation) t
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\FormatNegotiator;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::FormatNegotiator()
         ->defaultFormat('html') //(optional) default format if it's unable to detect. (by default is "html")
@@ -683,7 +699,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### FormTimestamp
@@ -693,7 +709,7 @@ Simple spam protection based on injecting a hidden input in all post forms with 
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     //required to get the format of the request (only executed in html requests)
     Middleware::FormatNegotiator(),
@@ -719,7 +735,7 @@ $dispatcher = $relay->getInstance([
         
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### Geolocate
@@ -730,7 +746,7 @@ Uses [Geocoder library](https://github.com/geocoder-php/Geocoder) to geolocate t
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\Geolocate;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     //(optional) only if you want to save the result in the user session
     Middleware::PhpSession(),
@@ -755,7 +771,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### GoogleAnalytics
@@ -765,13 +781,13 @@ Inject the Google Analytics code in all html pages.
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     //required to get the format of the request
     Middleware::formatNegotiator(),
     
     Middleware::GoogleAnalytics('UA-XXXXX-X') //The site id
-]);
+];
 ```
 
 ### Gzip
@@ -781,13 +797,13 @@ Use gzip functions to compress the response body, inserting also the `Content-En
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     //required to get the preferred encoding type
     Middleware::EncodingNegotiator(),
 
     Middleware::Gzip()
-]);
+];
 ```
 
 ### Honeypot
@@ -797,7 +813,7 @@ Implements a honeypot spam prevention. This technique is based on creating a inp
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     //required to get the format of the request (only executed in html requests)
     Middleware::formatNegotiator(),
@@ -821,7 +837,7 @@ $dispatcher = $relay->getInstance([
         
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### Https
@@ -831,12 +847,12 @@ Returns a redirection to the https scheme if the request uri is http. It also ad
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::Https()
         ->maxAge(1000000)     //(optional) max-age directive for the Strict-Transport-Security header. By default is 31536000 (1 year)
         ->includeSubdomains() //(optional) To add the "includeSubDomains" attribute to the Strict-Transport-Security header.
-]);
+];
 ```
 
 ### ImageTransformer
@@ -852,7 +868,7 @@ If you want to save the transformed images in the cache, provide a library compa
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     //required to get the format of the request
     Middleware::formatNegotiator(),
@@ -874,7 +890,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### LanguageNegotiation
@@ -885,7 +901,7 @@ Uses [willdurand/Negotiation](https://github.com/willdurand/Negotiation) to dete
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\LanguageNegotiator;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::LanguageNegotiator(['gl', 'en']) //Available languages
         ->usePath(true)                          //(optional) To search the language in the path: /gl/, /en/
@@ -897,7 +913,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### LeagueRoute
@@ -914,10 +930,10 @@ $router->get('/blog/{id:[0-9]+}', function ($request, $response, $vars) {
     return 'This is the post number'.$vars['id'];
 });
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::LeagueRoute($router) //The RouteCollection instance
-]);
+];
 ```
 
 ### MethodOverride
@@ -927,14 +943,14 @@ Overrides the request method using the `X-Http-Method-Override` header. This is 
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::MethodOverride()
         ->get(['HEAD', 'CONNECT', 'TRACE', 'OPTIONS']), //(optional) to customize the allowed GET overrided methods
         ->post(['PATCH', 'PUT', 'DELETE', 'COPY', 'LOCK', 'UNLOCK']), //(optional) to customize the allowed POST overrided methods
         ->parameter('method-override') //(optional) to use a parsed body and uri query parameter in addition to the header
         ->parameter('method-override', false) //(optional) to use only the parsed body (but not the uri query)
-]);
+];
 ```
 
 ### Minify
@@ -944,13 +960,13 @@ Uses [mrclay/minify](https://github.com/mrclay/minify) to minify the html, css a
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     //required to get the format of the response
     Middleware::formatNegotiator(),
 
     Middleware::Minify()
-]);
+];
 ```
 
 ### Payload
@@ -960,7 +976,7 @@ Parses the body of the request if it's not parsed and the method is POST, PUT or
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     Middleware::Payload(),
 
@@ -970,7 +986,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### PhpSession
@@ -981,7 +997,7 @@ Initializes a [php session](http://php.net/manual/en/book.session.php) using the
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     Middleware::PhpSession()
         ->name('SessionId') //(optional) Name of the session
@@ -993,7 +1009,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### Piwik
@@ -1003,7 +1019,7 @@ To use the [Piwik](https://piwik.org/) analytics platform. Injects the javascrip
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     //required to get the format of the request
     Middleware::formatNegotiator(),
@@ -1012,7 +1028,7 @@ $dispatcher = $relay->getInstance([
         ->piwikUrl('//example.com/piwik')    // The url of the installed piwik
         ->siteId(1)                          // (optional) The site id (1 by default)
         ->addOption('setDoNotTrack', 'true') // (optional) Add more options to piwik API
-]);
+];
 ```
 
 ### ReadResponse
@@ -1022,12 +1038,12 @@ Read the response content from a file. It's the opposite of [SaveResponse](#save
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::ReadResponse('path/to/files') // Path where the files are stored
         ->appendQuery(true)                   // (optional) to use the uri query in the filename
         ->continueOnError(true)               // (optional) to continue with the next middleware on error or not
-]);
+];
 ```
 
 ### Recaptcha
@@ -1037,13 +1053,13 @@ To use the [google recaptcha](https://github.com/google/recaptcha) library for s
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
     
     //required to get the user IP
     Middleware::ClientIp(),
     
     Middleware::Recapcha('secret') //The secret key
-]);
+];
 ```
 
 ### Rename
@@ -1058,7 +1074,7 @@ Note that the original path wont be publicly accesible. On above examples, reque
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::Rename([
         '/admin' => '/admin-19640983',
@@ -1069,7 +1085,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### ResponseTime
@@ -1079,10 +1095,10 @@ Calculates the response time (in miliseconds) and saves it into `X-Response-Time
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::ResponseTime()
-]);
+];
 ```
 
 ### Robots
@@ -1092,10 +1108,10 @@ Disables the robots of the search engines for non-production environment. Adds a
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::Robots(false) //(optional) Set true to allow search engines instead disallow
-]);
+];
 ```
 
 ### SaveResponse
@@ -1112,11 +1128,11 @@ This is useful for cache purposes
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::SaveResponse('path/to/files') //Path directory where save the responses
         ->appendQuery(true)                   // (optional) to append the uri query to the filename
-]);
+];
 ```
 
 ### Shutdown
@@ -1130,11 +1146,11 @@ function shutdownHandler ($request, $response, $app) {
     $response->getBody()->write('Service unavailable');
 }
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::Shutdown('shutdownHandler') //(optional) Callable that generate the response
         ->arguments($app)                   //(optional) to add extra arguments to the handler
-]);
+];
 ```
 
 ### TrailingSlash
@@ -1144,11 +1160,11 @@ Removes (or adds) the trailing slash of the path. For example, `/post/23/` will 
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::TrailingSlash(true) //(optional) set true to add the trailing slash instead remove
         ->redirect(301)             //(optional) to return a 301 (seo friendly) or 302 response to the new path
-]);
+];
 ```
 
 ### Uuid
@@ -1159,7 +1175,7 @@ Uses [ramsey/uuid (3.x)](https://github.com/ramsey/uuid) to generate an Uuid (Un
 use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\Uuid;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::Uuid()
         ->version(4)     //(optional) version of the identifier (1 by default). Versions 3 and 5 need more arguments (see https://github.com/ramsey/uuid#examples)
@@ -1176,7 +1192,7 @@ $dispatcher = $relay->getInstance([
 
         return $next($request, $response);
     }
-]);
+];
 ```
 
 ### Whoops
@@ -1190,14 +1206,14 @@ use Whoops\Run;
 
 $whoops = new Run();
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     //(optional) this allows whoops to choose the best handler according with the expected format
     Middleware::formatNegotiator(),
 
     Middleware::Whoops($whoops) //(optional) provide a custom whoops instance
         ->catchErrors(false)    //(optional) to catch not only exceptions but also php errors (true by default)
-]);
+];
 ```
 
 ### Www
@@ -1210,11 +1226,11 @@ Adds or removes the `www` subdomain in the host uri and, optionally, returns a r
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     Middleware::Www(true) //(optional) Add www instead remove it
         ->redirect(301)   //(optional) to return a 301 (seo friendly), 302 response to the new host or false to don't redirect. (301 by default)
-]);
+];
 ```
 
 ## Lazy/conditional middleware creation
@@ -1230,7 +1246,7 @@ To handle with this, you can use the `Middleware::create()` method that must ret
 ```php
 use Psr7Middlewares\Middleware;
 
-$dispatcher = $relay->getInstance([
+$middlewares = [
 
     //This middleware can return a cached response
     //so the next middleware may not be executed
@@ -1268,7 +1284,7 @@ $dispatcher = $relay->getInstance([
 
         return false;
     }),
-]);
+];
 ```
 
 ## Extending middlewares
@@ -1295,9 +1311,9 @@ class MyBodyParser extends BodyParser
 }
 
 //Use the resolver
-$dispatcher = $relay->getInstance([
+$middlewares = [
     Middleware::Payload()->resolver(new MyBodyParser())
-]);
+];
 ```
 
 The following middlewares are using resolvers that you can customize:
