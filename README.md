@@ -149,7 +149,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [ReadResponse](#readresponse)
 * [Recaptcha](#recaptcha)
 * [Rename](#rename)
-* [ResponseTime](#responseTime)
+* [ResponseTime](#responsetime)
 * [Robots](#robots)
 * [SaveResponse](#saveresponse)
 * [Shutdown](#shutdown)

@@ -110,7 +110,7 @@ class Helpers
     /**
      * Return the output buffer.
      * 
-     * @param int $level
+     * @param ResponseInterface $response
      * 
      * @return string
      */
