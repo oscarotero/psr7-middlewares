@@ -186,26 +186,29 @@ $middlewares = [
 
 ### AttributeMapper
 
-Maps middleware specific attribute to regural request attribute under desired name:
+Maps middleware specific attribute to regular request attribute under desired name:
 
 ```php
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
 
+    //Example with authentication
     Middleware::BasicAuthentication([
-            'username1' => 'password1',
-            'username2' => 'password2'
-        ])
-        ->realm('My realm'), //(optional) change the realm value
+        'username1' => 'password1',
+        'username2' => 'password2'
+    ]),
     
+    //Map the key used by this middleware
     Middleware::attributeMapper([
         Middleware\BasicAuthentication::KEY => 'auth:username'
     ]),
         
     function ($request, $response, $next) {
+        //We can get the username as usual
         $username = BasicAuthentication::getUsername($request);
     
+        //But also using the "auth:username" attribute name.
         assert($username === $request->getAttribute('auth:username'));
 
         return $next($request, $response);
