@@ -37,5 +37,6 @@ class ExpireTest extends Base
         );
 
         $this->assertEquals($result, $response->getHeaderLine('Cache-Control'));
+        $this->assertTrue($response->hasHeader('Expires'));
     }
 }

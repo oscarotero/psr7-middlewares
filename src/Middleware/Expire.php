@@ -5,6 +5,7 @@ namespace Psr7Middlewares\Middleware;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use DateTimeImmutable;
 
 /**
  * Middleware to send Expire header.
@@ -79,12 +80,16 @@ class Expire
         $mime = Utils\Helpers::getMimeType($response);
 
         if (isset($this->expires[$mime])) {
-            $header = $response->getHeaderLine('Cache-Control') ?: '';
+            $cacheControl = $response->getHeaderLine('Cache-Control') ?: '';
 
-            if (stripos($header, 'max-age') === false) {
-                $header .= ' max-age='.(strtotime($this->expires[$mime]) - time());
+            if (stripos($cacheControl, 'max-age') === false) {
+                $expire = new DateTimeImmutable($this->expires[$mime]);
 
-                return $response->withHeader('Cache-Control', trim($header));
+                $cacheControl .= ' max-age='.($expire->getTimestamp() - time());
+
+                return $response
+                    ->withHeader('Cache-Control', trim($cacheControl))
+                    ->withHeader('Expires', $expire->format('D, d M Y H:i:s').' GMT');
             }
         }
 
