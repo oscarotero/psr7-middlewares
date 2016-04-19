@@ -2,7 +2,7 @@
 
 use Psr7Middlewares\Middleware;
 
-class ExpireTest extends Base
+class ExpiresTest extends Base
 {
     public function expiresProvider()
     {
@@ -28,7 +28,7 @@ class ExpireTest extends Base
         $response = $this->execute(
             [
                 Middleware::formatNegotiator(),
-                Middleware::expire(),
+                Middleware::expires(),
                 function ($request, $response, $next) use ($header) {
                     return $next($request, $response->withHeader('Cache-Control', $header));
                 },
