@@ -129,7 +129,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [DigestAuthentication](#digestauthentication)
 * [EncodingNegotiator](#encodingnegotiator)
 * [ErrorHandler](#errorhandler)
-* [Expire](#expire)
+* [Expires](#expires)
 * [FastRoute](#fastroute)
 * [FormTimestamp](#formtimestamp)
 * [Firewall](#firewall)
@@ -626,7 +626,7 @@ $middlewares = [
 ];
 ```
 
-### Expire
+### Expires
 Adds `Expires` and `max-age` directive of the `Cache-Control` header in the response. It's similar to the apache module [mod_expires](https://httpd.apache.org/docs/current/mod/mod_expires.html). By default uses the same configuration than [h5bp apache configuration](https://github.com/h5bp/server-configs-apache/blob/master/src/web_performance/expires_headers.conf). Useful for static files.
 
 ```php

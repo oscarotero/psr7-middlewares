@@ -8,10 +8,12 @@ use Psr\Http\Message\ResponseInterface;
 use DateTimeImmutable;
 
 /**
- * Middleware to send Expire header.
+ * Middleware to send Expires header.
  */
-class Expire
+class Expires
 {
+    private $expiresDefault = '+1 month';
+
     private $expires = [
         'text/css' => '+1 year',
         'application/atom+xml' => '+1 hour',
@@ -54,14 +56,14 @@ class Expire
     ];
 
     /**
-     * Add a new expire.
+     * Add a new expires header.
      *
      * @param string $mime
-     * @param string $expire
+     * @param string $expires
      */
-    public function addExpire($mime, $expire)
+    public function addExpires($mime, $expires)
     {
-        $this->expires[$mime] = $expire;
+        $this->expires[$mime] = $expires;
     }
 
     /**
@@ -77,20 +79,16 @@ class Expire
     {
         $response = $next($request, $response);
 
-        $mime = Utils\Helpers::getMimeType($response);
+        $cacheControl = $response->getHeaderLine('Cache-Control') ?: '';
 
-        if (isset($this->expires[$mime])) {
-            $cacheControl = $response->getHeaderLine('Cache-Control') ?: '';
+        if (stripos($cacheControl, 'max-age') === false) {
+            $mime = Utils\Helpers::getMimeType($response);
+            $expires = new DateTimeImmutable(isset($this->expires[$mime]) ? $this->expires[$mime] : $this->expiresDefault);
+            $cacheControl .= ' max-age='.($expires->getTimestamp() - time());
 
-            if (stripos($cacheControl, 'max-age') === false) {
-                $expire = new DateTimeImmutable($this->expires[$mime]);
-
-                $cacheControl .= ' max-age='.($expire->getTimestamp() - time());
-
-                return $response
-                    ->withHeader('Cache-Control', trim($cacheControl))
-                    ->withHeader('Expires', $expire->format('D, d M Y H:i:s').' GMT');
-            }
+            return $response
+                ->withHeader('Cache-Control', trim($cacheControl))
+                ->withHeader('Expires', $expires->format('D, d M Y H:i:s').' GMT');
         }
 
         return $response;
