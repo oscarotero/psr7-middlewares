@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Utils;
 
-use Psr\Http\Message\StreamInterface;
 use Psr7Middlewares\Middleware;
 
 /**
@@ -13,7 +12,7 @@ trait StreamTrait
     /**
      * Get the stream factory.
      *
-     * @return StreamInterface
+     * @return \Psr\Http\Message\StreamInterface
      */
     private static function createStream($file = 'php://temp', $mode = 'r+')
     {
