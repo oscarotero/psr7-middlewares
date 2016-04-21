@@ -485,8 +485,6 @@ $middlewares = [
 
 Inserts the [PHP debug bar 1.x](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses. 
 
-Because this middleware serves also the debugbar assets (css, js and fonts), it must be added before the router to avoid 404 responses.
-
 ```php
 use Psr7Middlewares\Middleware;
 use DebugBar\StandardDebugBar;
@@ -495,7 +493,7 @@ $debugBar = new StandardDebugBar();
 
 $middlewares = [
 
-    Middleware::FormatNegotiator(),
+    Middleware::FormatNegotiator(), //(recomended) to insert only in html responses
 
     Middleware::DebugBar($debugBar) //(optional) Instance of debugbar
         ->captureAjax(true)         //(optional) To send data in headers in ajax
@@ -634,7 +632,7 @@ use Psr7Middlewares\Middleware;
 
 $middlewares = [
 
-    Middleware::formatNegotiator(), //Useful to set the content-type header
+    Middleware::formatNegotiator(), //(recomended) to detect the content-type header
 
     Middleware::expires()
         ->addExpire('text/css', '+1 week') //Add or edit the expire of some types
@@ -714,7 +712,7 @@ use Psr7Middlewares\Middleware;
 
 $middlewares = [
 
-    //required to get the format of the request (only executed in html requests)
+    //(recomended) to detect html responses
     Middleware::FormatNegotiator(),
 
     Middleware::FormTimestamp()
@@ -786,7 +784,7 @@ use Psr7Middlewares\Middleware;
 
 $middlewares = [
     
-    //required to get the format of the request
+    //(recomended) to detect html responses
     Middleware::formatNegotiator(),
     
     Middleware::GoogleAnalytics('UA-XXXXX-X') //The site id
@@ -818,7 +816,7 @@ use Psr7Middlewares\Middleware;
 
 $middlewares = [
     
-    //required to get the format of the request (only executed in html requests)
+    //(recomended) to detect html responses
     Middleware::formatNegotiator(),
     
     Middleware::Honeypot()
@@ -873,7 +871,7 @@ use Psr7Middlewares\Middleware;
 
 $middlewares = [
     
-    //required to get the format of the request
+    //(recomended) to detect responses' mimetype
     Middleware::formatNegotiator(),
 
     Middleware::imageTransformer([   // The available sizes of the images.
@@ -965,7 +963,7 @@ use Psr7Middlewares\Middleware;
 
 $middlewares = [
     
-    //required to get the format of the response
+    //(recomended) to detect the mimetype of the response
     Middleware::formatNegotiator(),
 
     Middleware::Minify()
@@ -1024,7 +1022,7 @@ use Psr7Middlewares\Middleware;
 
 $middlewares = [
     
-    //required to get the format of the request
+    //(recomended) to detect html responses
     Middleware::formatNegotiator(),
     
     Middleware::Piwik()
@@ -1211,7 +1209,7 @@ $whoops = new Run();
 
 $middlewares = [
 
-    //(optional) this allows whoops to choose the best handler according with the expected format
+    //(recomended) to allows to choose the best handler according with the response mimetype
     Middleware::formatNegotiator(),
 
     Middleware::Whoops($whoops) //(optional) provide a custom whoops instance
