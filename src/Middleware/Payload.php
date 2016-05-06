@@ -25,7 +25,7 @@ class Payload
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$request->getParsedBody() && in_array($request->getMethod(), ['POST', 'PUT', 'DELETE'], true)) {
+        if (!$request->getParsedBody() && in_array($request->getMethod(), ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
             $resolver = $this->resolver ?: new Transformers\BodyParser();
             $transformer = $resolver->resolve(trim($request->getHeaderLine('Content-Type')));
 
