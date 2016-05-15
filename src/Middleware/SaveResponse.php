@@ -64,6 +64,10 @@ class SaveResponse
             return false;
         }
 
+        if ($response->hasHeader('location')) {
+            return false;
+        }
+
         $cacheControl = $response->getHeaderLine('Cache-Control');
 
         if ($cacheControl && (stripos($cacheControl, 'no-cache') !== false || stripos($cacheControl, 'no-store') !== false)) {
