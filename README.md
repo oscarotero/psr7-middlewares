@@ -29,6 +29,7 @@ So, you can use these midlewares with:
 * [Expressive](http://framework.zend.com/expressive)
 * [Slim 3](http://www.slimframework.com)
 * [Spiral](http://spiral-framework.com)
+* [Middleman](https://github.com/mindplay-dk/middleman)
 * etc...
 
 ## Installation
