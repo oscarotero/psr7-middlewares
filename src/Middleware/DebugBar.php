@@ -7,7 +7,6 @@ use DebugBar\StandardDebugBar;
 use Psr7Middlewares\Utils;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
 
 /**
  * Middleware to render a debugbar in html responses.
@@ -62,10 +61,6 @@ class DebugBar
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!self::hasAttribute($request, FormatNegotiator::KEY)) {
-            throw new RuntimeException('This middleware needs FormatNegotiator executed before');
-        }
-
         $renderer = $this->debugBar->getJavascriptRenderer();
 
         //Is an asset?
