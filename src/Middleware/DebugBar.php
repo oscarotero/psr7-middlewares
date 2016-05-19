@@ -71,10 +71,7 @@ class DebugBar
             $file = $renderer->getBasePath().substr($path, strlen($renderPath));
 
             if (file_exists($file)) {
-                $body = self::createStream();
-                $body->write(file_get_contents($file));
-
-                return $response->withBody($body);
+                return $response->withBody(self::createStream($file, 'r'));
             }
         }
 
