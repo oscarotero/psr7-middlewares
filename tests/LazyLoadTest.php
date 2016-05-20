@@ -61,10 +61,11 @@ class LazyLoadTest extends Base
     {
         return [
             ['/one', 'http://example.com/one', true],
+            ['/one', 'http://example.com/onetwo', false],
             ['/two', 'http://example.com/one', false],
             ['', 'http://example.com/one', true],
             ['/', 'http://example.com/one', true],
-            ['/one/', 'http://example.com/one', false],
+            ['/one/', 'http://example.com/one', true],
         ];
     }
 

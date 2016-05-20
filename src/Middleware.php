@@ -93,10 +93,13 @@ class Middleware
         }
 
         return function (RequestInterface $request, ResponseInterface $response, callable $next) use ($basePath, $factory) {
-            if (strlen($basePath) > 0 && strpos($request->getUri()->getPath(), $basePath) !== 0) {
-                $middleware = false;
-            } else {
+            $path = rtrim($request->getUri()->getPath(), '/');
+            $basePath = rtrim($basePath, '/');
+
+            if ($path === $basePath || strpos($path, "{$basePath}/") === 0) {
                 $middleware = $factory($request, $response);
+            } else {
+                $middleware = false;
             }
 
             if ($middleware === false) {
