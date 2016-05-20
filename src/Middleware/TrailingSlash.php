@@ -43,18 +43,15 @@ class TrailingSlash
         $path = $uri->getPath();
 
         //Add/remove slash
-        if ($this->addSlash) {
-            if (strlen($path) > 1 && substr($path, -1) !== '/' && !pathinfo($path, PATHINFO_EXTENSION)) {
-                $path .= '/';
+        if (strlen($path) > 1) {
+            if ($this->addSlash) {
+                if (substr($path, -1) !== '/' && !pathinfo($path, PATHINFO_EXTENSION)) {
+                    $path .= '/';
+                }
+            } else {
+                $path = rtrim($path, '/');
             }
-        } else {
-            if (strlen($path) > 1 && substr($path, -1) === '/') {
-                $path = substr($path, 0, -1);
-            }
-        }
-
-        //Ensure the path has one "/"
-        if ($path === '') {
+        } elseif ($path === '') {
             $path = '/';
         }
 
