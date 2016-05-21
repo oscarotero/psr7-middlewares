@@ -142,7 +142,7 @@ class FormatNegotiator
             $response->withHeader('Content-Type', $contentType)
         );
 
-        if ($format && !$response->hasHeader('Content-Type')) {
+        if (!$response->hasHeader('Content-Type')) {
             $response = $response->withHeader('Content-Type', $contentType);
         }
 

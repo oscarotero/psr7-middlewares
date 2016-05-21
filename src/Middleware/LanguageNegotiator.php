@@ -97,7 +97,7 @@ class LanguageNegotiator
             $language = $this->negotiateHeader($request->getHeaderLine('Accept-Language'), new Negotiator(), $this->languages);
 
             if (empty($language)) {
-                $language = isset($this->languages[0]) ? $this->languages[0] : null;
+                $language = isset($this->languages[0]) ? $this->languages[0] : '';
             }
 
             //Redirect to a path with the language
@@ -108,12 +108,15 @@ class LanguageNegotiator
             }
         }
 
-        $request = self::setAttribute($request, self::KEY, $language);
+        $response = $next(
+            self::setAttribute($request, self::KEY, $language),
+            $response->withHeader('Content-Language', $language)
+        );
 
-        if ($language !== null) {
+        if (!$response->hasHeader('Content-Language')) {
             $response = $response->withHeader('Content-Language', $language);
         }
 
-        return $next($request, $response);
+        return $response;
     }
 }
