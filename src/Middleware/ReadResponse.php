@@ -68,13 +68,7 @@ class ReadResponse
         }
 
         //Handle range header
-        $response = $this->range($request, $response->withBody(self::createStream($file, 'r')));
-
-        if ($this->continueOnError) {
-            return $response;
-        }
-
-        return $next($request, $response);
+        return $this->range($request, $response->withBody(self::createStream($file, 'r')));
     }
 
     /**

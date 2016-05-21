@@ -41,13 +41,14 @@ class ImageTransformerTest extends Base
                     Middleware::ImageTransformer($sizes)
                         ->cache($cache),
 
-                    Middleware::readResponse(__DIR__.'/assets'),
 
                     function ($request, $response, $next) use (&$usedAfter) {
                         ++$usedAfter;
 
                         return $next($request, $response);
                     },
+
+                    Middleware::readResponse(__DIR__.'/assets'),
                 ],
                 $url
             );
