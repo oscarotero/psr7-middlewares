@@ -74,13 +74,14 @@ class Cache
         //If it's cached
         if ($item->isHit()) {
             $headers = $item->get();
+            $cachedResponse = $response->withStatus(304);
 
             foreach ($headers as $name => $header) {
-                $response = $response->withHeader($name, $header);
+                $cachedResponse = $cachedResponse->withHeader($name, $header);
             }
 
-            if ($this->cacheUtil->isNotModified($request, $response)) {
-                return $response->withStatus(304);
+            if ($this->cacheUtil->isNotModified($request, $cachedResponse)) {
+                return $cachedResponse;
             }
 
             $this->cache->deleteItem($key);
