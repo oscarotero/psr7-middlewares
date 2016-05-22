@@ -15,6 +15,7 @@ class ErrorHandler
 
     use Utils\CallableTrait;
     use Utils\AttributeTrait;
+    use Utils\StreamTrait;
 
     /**
      * @var callable|string The handler used
@@ -99,7 +100,7 @@ class ErrorHandler
         if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
             $callable = $this->handler ?: [$this, 'defaultHandler'];
 
-            return $this->executeCallable($callable, $request, $response);
+            return $this->executeCallable($callable, $request, $response->withBody(self::createStream()));
         }
 
         return $response;

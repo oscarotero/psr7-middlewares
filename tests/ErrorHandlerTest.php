@@ -35,6 +35,7 @@ class ErrorHandlerTest extends Base
                     })
                     ->catchExceptions(),
                 function ($request, $response, $next) use ($exception) {
+                    $response->getBody()->write('not showed text');
                     throw $exception;
                 },
             ]
