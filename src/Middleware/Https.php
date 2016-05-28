@@ -84,12 +84,10 @@ class Https
             $request = $request->withUri($uri);
         }
 
-        $response = $next($request, $response);
-
         if (!empty($this->maxAge)) {
             $response = $response->withHeader(self::HEADER, sprintf('max-age=%d%s', $this->maxAge, $this->includeSubdomains ? ';includeSubDomains' : ''));
         }
 
-        return $response;
+        return $next($request, $response);
     }
 }
