@@ -23,6 +23,11 @@ class ErrorHandler
     private $handler;
 
     /**
+     * @var callable|null The status code validator
+     */
+    private $statusCodeValidator;
+
+    /**
      * @var bool Whether or not catch exceptions
      */
     private $catchExceptions = false;
@@ -64,6 +69,20 @@ class ErrorHandler
     }
 
     /**
+     * Configure the status code validator.
+     *
+     * @param callable $statusCodeValidator
+     *
+     * @return self
+     */
+    public function statusCode(callable $statusCodeValidator)
+    {
+        $this->statusCodeValidator = $statusCodeValidator;
+
+        return $this;
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -97,13 +116,29 @@ class ErrorHandler
             Utils\Helpers::getOutput($level);
         }
 
-        if ($response->getStatusCode() >= 400 && $response->getStatusCode() < 600) {
+        if ($this->isError($response->getStatusCode())) {
             $callable = $this->handler ?: [$this, 'defaultHandler'];
 
             return $this->executeCallable($callable, $request, $response->withBody(self::createStream()));
         }
 
         return $response;
+    }
+
+    /**
+     * Check whether the status code represents an error or not
+     * 
+     * @param int $statusCode
+     * 
+     * @return bool
+     */
+    private function isError($statusCode)
+    {
+        if ($this->statusCodeValidator) {
+            return call_user_func($this->statusCodeValidator, $statusCode);
+        }
+
+        return $statusCode >= 400 && $statusCode < 600;
     }
 
     /**
