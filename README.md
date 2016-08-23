@@ -64,6 +64,9 @@ $dispatcher = $relay->newInstance([
     //Calculate the response time
     Middleware::responseTime(),
 
+    //load environment variables from __DIR__/.env
+    Middleware::phpDotEnv(__DIR__),
+
     //Add an Uuid to request
     Middleware::uuid(),
 
@@ -145,6 +148,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [MethodOverride](#methodoverride)
 * [Minify](#minify)
 * [Payload](#payload)
+* [PhpDotEnv](#phpdotenv)
 * [PhpSession](#phpsession)
 * [Piwik](#piwik)
 * [ReadResponse](#readresponse)
@@ -990,6 +994,21 @@ $middlewares = [
     }
 ];
 ```
+
+### PhpDotEnv
+
+Loads Environment Variables from a file using [vlucas/phpdotenv](https://github.com/vlucas/phpdotenv)
+
+
+```php
+use Psr7Middlewares\Middleware;
+
+$middlewares = [
+    Middleware::PhpDotEnv(__DIR__ , '.env')
+];
+```
+
+this middleware should be loaded very early.
 
 ### PhpSession
 
