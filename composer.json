@@ -43,7 +43,7 @@
 		"paragonie/csp-builder": "^1.2",
 		"google/recaptcha": "^1.1",
 		"piwik/referrer-spam-blacklist": "^1.0",
-		"micheh/psr7-cache": "^0.3.0"
+		"micheh/psr7-cache": "^0.5.0"
 	},
 	"suggest": {
 		"aura/router": "To use AuraRouter",
@@ -71,5 +71,11 @@
 		"psr-4": {
 			"Psr7Middlewares\\": "src/"
 		}
+	},
+	"autoload-dev":{
+		"psr-4":{
+			"":"tests/"
+		}
 	}
+
 }

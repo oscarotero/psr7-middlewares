@@ -2,6 +2,7 @@
 
 namespace Psr7Middlewares\Middleware;
 
+use Micheh\Cache\Header\RequestCacheControl;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Cache\CacheItemPoolInterface;
@@ -49,7 +50,7 @@ class Cache
     public function cacheControl($cacheControl)
     {
         if (!($cacheControl instanceof CacheControl)) {
-            $cacheControl = CacheControl::fromString($cacheControl);
+            $cacheControl = RequestCacheControl::fromString($cacheControl);
         }
 
         $this->cacheControl = $cacheControl;

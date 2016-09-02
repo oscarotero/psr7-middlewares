@@ -11,7 +11,7 @@ class CacheTest extends Base
         $used = 0;
 
         $middlewares = [
-            Middleware::Cache(new Pool(new MemoryStore())),
+            Middleware::Cache(new Pool(new MemoryStore()))->cacheControl('max-age=3600'),
 
             function ($request, $response, $next) use (&$used) {
                 ++$used;
