@@ -445,7 +445,7 @@ $middlewares = [
 
 ### Csrf
 
-To add a protection layer agains CSRF (Cross Site Request Forgety). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not. Use `->autoInsert()` to insert automatically the token or, if you prefer, use the generator callable:
+To add a protection layer agains CSRF (Cross Site Request Forgery). The middleware injects a hidden input with a token in all POST forms and them check whether the token is valid or not. Use `->autoInsert()` to insert automatically the token or, if you prefer, use the generator callable:
 
 ```php
 
