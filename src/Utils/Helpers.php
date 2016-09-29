@@ -108,7 +108,7 @@ class Helpers
     }
 
     /**
-     * Return the output buffer.
+     * Return the mime type.
      * 
      * @param ResponseInterface $response
      * 
