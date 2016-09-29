@@ -26,6 +26,11 @@ class Https
     private $includeSubdomains = false;
 
     /**
+     * @param bool Whether check the headers "HTTP_X_FORWARDED_PROTO: https" or "HTTP_X_FORWARDED_PORT: 443"
+     */
+    private $checkHttpsForward = false;
+
+    /**
      * Set basic config.
      */
     public function __construct()
@@ -62,6 +67,22 @@ class Https
     }
 
     /**
+     * Configure whether check the following headers before redirect:
+     * HTTP_X_FORWARDED_PROTO: https
+     * HTTP_X_FORWARDED_PORT: 443
+     *
+     * @param bool $checkHttpsForward
+     * 
+     * @return self
+     */
+    public function checkHttpsForward($checkHttpsForward = true)
+    {
+        $this->checkHttpsForward = $checkHttpsForward;
+
+        return $this;
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -77,7 +98,7 @@ class Https
         if (strtolower($uri->getScheme()) !== 'https') {
             $uri = $uri->withScheme('https')->withPort(443);
 
-            if ($this->redirectStatus !== false) {
+            if ($this->redirectStatus !== false && (!$this->checkHttpsForward || ($request->getHeaderLine('HTTP_X_FORWARDED_PROTO') !== 'https' && $request->getHeaderLine('HTTP_X_FORWARDED_PORT') !== '443'))) {
                 return $this->getRedirectResponse($request, $uri, $response);
             }
 
@@ -88,6 +109,12 @@ class Https
             $response = $response->withHeader(self::HEADER, sprintf('max-age=%d%s', $this->maxAge, $this->includeSubdomains ? ';includeSubDomains' : ''));
         }
 
-        return $next($request, $response);
+        $response = $next($request, $response);
+
+        if (Utils\Helpers::isRedirect($response)) {
+            return $response->withHeader('Location', str_replace('http://', 'https://', $response->getHeaderLine('Location')));
+        }
+
+        return $response;
     }
 }

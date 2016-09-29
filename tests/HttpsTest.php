@@ -29,6 +29,7 @@ class HttpsTest extends Base
         $this->assertEquals($location, $response->getHeaderLine('Location'));
         $this->assertEquals($hsts, $response->getHeaderLine('Strict-Transport-Security'));
     }
+
     public function testRedirectSchemeMatchesPort()
     {
         $url = 'http://domain.com:80';
@@ -40,6 +41,43 @@ class HttpsTest extends Base
             $url
         );
         $expectedLocation = 'https://domain.com';
+        $location = $response->getHeaderLine('Location');
+        $this->assertEquals($expectedLocation, $location);
+    }
+
+    public function testCheckHttpsForward()
+    {
+        $url = 'http://domain.com:80';
+
+        $response = $this->execute(
+            [
+                Middleware::Https()
+                    ->includeSubdomains(false)
+                    ->checkHttpsForward(true),
+            ],
+            $url,
+            ['HTTP_X_FORWARDED_PROTO' => 'https']
+        );
+
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testRedirectScheme()
+    {
+        $url = 'https://domain.com';
+
+        $response = $this->execute(
+            [
+                Middleware::Https()
+                    ->includeSubdomains(false),
+                function ($request, $response, $next) {
+                    return $next($request, $response->withStatus(301)->withHeader('Location', 'http://domain.com/index'));
+                }
+            ],
+            $url
+        );
+
+        $expectedLocation = 'https://domain.com/index';
         $location = $response->getHeaderLine('Location');
         $this->assertEquals($expectedLocation, $location);
     }
