@@ -81,11 +81,11 @@ class Whoops
         try {
             $response = $next($request, $response);
         } catch (\Throwable $exception) {
-            $body = self::createStream();
+            $body = self::createStream($response->getBody());
             $body->write($whoops->$method($exception));
             $response = $response->withStatus(500)->withBody($body);
         } catch (\Exception $exception) {
-            $body = self::createStream();
+            $body = self::createStream($response->getBody());
             $body->write($whoops->$method($exception));
             $response = $response->withStatus(500)->withBody($body);
         } finally {

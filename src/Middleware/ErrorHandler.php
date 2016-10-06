@@ -118,8 +118,9 @@ class ErrorHandler
 
         if ($this->isError($response->getStatusCode())) {
             $callable = $this->handler ?: [$this, 'defaultHandler'];
-
-            return $this->executeCallable($callable, $request, $response->withBody(self::createStream()));
+            $body = self::createStream($response->getBody());
+            
+            return $this->executeCallable($callable, $request, $response->withBody($body));
         }
 
         return $response;

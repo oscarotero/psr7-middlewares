@@ -185,7 +185,7 @@ class ImageTransformer
 
         $image->transform($transform);
 
-        $body = self::createStream();
+        $body = self::createStream($response->getBody());
         $body->write($image->getString());
 
         return $response

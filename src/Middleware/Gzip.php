@@ -39,9 +39,11 @@ class Gzip
         $transformer = $resolver->resolve($encoding);
 
         if ($transformer) {
+            $body = $response->getBody();
+            
             return $response
                 ->withHeader('Content-Encoding', $encoding)
-                ->withBody($transformer($response->getBody(), self::createStream()));
+                ->withBody($transformer($body, self::createStream($body)));
         }
 
         return $response;
