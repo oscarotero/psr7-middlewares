@@ -26,7 +26,7 @@ class Https
     private $includeSubdomains = false;
 
     /**
-     * @param bool Whether check the headers "HTTP_X_FORWARDED_PROTO: https" or "HTTP_X_FORWARDED_PORT: 443"
+     * @param bool Whether check the headers
      */
     private $checkHttpsForward = false;
 
@@ -68,8 +68,8 @@ class Https
 
     /**
      * Configure whether check the following headers before redirect:
-     * HTTP_X_FORWARDED_PROTO: https
-     * HTTP_X_FORWARDED_PORT: 443
+     * X-Forwarded-Proto: https
+     * X-Forwarded-Port: 443
      *
      * @param bool $checkHttpsForward
      * 
@@ -98,7 +98,7 @@ class Https
         if (strtolower($uri->getScheme()) !== 'https') {
             $uri = $uri->withScheme('https')->withPort(443);
 
-            if ($this->redirectStatus !== false && (!$this->checkHttpsForward || ($request->getHeaderLine('HTTP_X_FORWARDED_PROTO') !== 'https' && $request->getHeaderLine('HTTP_X_FORWARDED_PORT') !== '443'))) {
+            if ($this->redirectStatus !== false && (!$this->checkHttpsForward || ($request->getHeaderLine('X-Forwarded-Proto') !== 'https' && $request->getHeaderLine('X-Forwarded-Port') !== '443'))) {
                 return $this->getRedirectResponse($request, $uri, $response);
             }
 

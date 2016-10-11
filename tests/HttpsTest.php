@@ -56,7 +56,7 @@ class HttpsTest extends Base
                     ->checkHttpsForward(true),
             ],
             $url,
-            ['HTTP_X_FORWARDED_PROTO' => 'https']
+            ['X-Forwarded-Proto' => 'https']
         );
 
         $this->assertEquals(200, $response->getStatusCode());
