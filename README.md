@@ -1,3 +1,5 @@
+> **NOTE:** This package is being ported to PSR-15. [Check it out here](https://github.com/middlewares/psr15-middlewares)
+
 # psr7-middlewares
 
 
@@ -7,6 +9,7 @@
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/0d91152f-1308-4709-b834-ea048afee7da/big.png)](https://insight.sensiolabs.com/projects/0d91152f-1308-4709-b834-ea048afee7da)
 
 Collection of [PSR-7](http://www.php-fig.org/psr/psr-7/) middlewares.
+
 
 ## Requirements
 
