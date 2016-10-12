@@ -63,7 +63,7 @@ class ErrorHandler
      */
     public function catchExceptions($catch = true)
     {
-        $this->catchExceptions = (boolean) $catch;
+        $this->catchExceptions = (bool) $catch;
 
         return $this;
     }
@@ -119,7 +119,7 @@ class ErrorHandler
         if ($this->isError($response->getStatusCode())) {
             $callable = $this->handler ?: [$this, 'defaultHandler'];
             $body = self::createStream($response->getBody());
-            
+
             return $this->executeCallable($callable, $request, $response->withBody($body));
         }
 
@@ -127,10 +127,10 @@ class ErrorHandler
     }
 
     /**
-     * Check whether the status code represents an error or not
-     * 
+     * Check whether the status code represents an error or not.
+     *
      * @param int $statusCode
-     * 
+     *
      * @return bool
      */
     private function isError($statusCode)
@@ -144,10 +144,10 @@ class ErrorHandler
 
     /**
      * Default handler.
-     * 
+     *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     * 
+     *
      * @return string
      */
     private function defaultHandler(ServerRequestInterface $request, ResponseInterface $response)
@@ -187,10 +187,10 @@ class ErrorHandler
 
     /**
      * Print the error as plain text.
-     * 
+     *
      * @param int    $statusCode
      * @param string $message
-     * 
+     *
      * @return string
      */
     private static function errorText($statusCode, $message)
@@ -200,10 +200,10 @@ class ErrorHandler
 
     /**
      * Print the error as svg image.
-     * 
+     *
      * @param int    $statusCode
      * @param string $message
-     * 
+     *
      * @return string
      */
     private static function errorSvg($statusCode, $message)
@@ -219,10 +219,10 @@ EOT;
 
     /**
      * Print the error as html.
-     * 
+     *
      * @param int    $statusCode
      * @param string $message
-     * 
+     *
      * @return string
      */
     private static function errorHtml($statusCode, $message)
@@ -246,11 +246,11 @@ EOT;
 
     /**
      * Print the error as image.
-     * 
+     *
      * @param int    $statusCode
      * @param string $message
      * @param string $output
-     * 
+     *
      * @return string
      */
     private static function errorImage($statusCode, $message, $output)
@@ -272,10 +272,10 @@ EOT;
 
     /**
      * Print the error as json.
-     * 
+     *
      * @param int    $statusCode
      * @param string $message
-     * 
+     *
      * @return string
      */
     private static function errorJson($statusCode, $message)
@@ -291,10 +291,10 @@ EOT;
 
     /**
      * Print the error as xml.
-     * 
+     *
      * @param int    $statusCode
      * @param string $message
-     * 
+     *
      * @return string
      */
     private static function errorXml($statusCode, $message)

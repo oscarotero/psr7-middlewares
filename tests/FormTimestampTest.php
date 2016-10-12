@@ -55,7 +55,7 @@ class FormTimestampTest extends Base
                     ->autoInsert()
                     ->key(hex2bin('000102030405060708090a0b0c0d0e0f')),
                 function ($request, $response, $next) {
-$html = <<<EOT
+                    $html = <<<'EOT'
     <html>
     <body>
         <form method="POST"><input type="submit"></form>

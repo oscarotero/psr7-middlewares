@@ -17,9 +17,9 @@ trait CacheMessageTrait
 
     /**
      * Provide the cache implementation.
-     * 
+     *
      * @param CacheItemPoolInterface $cache
-     * 
+     *
      * @return self
      */
     public function cache(CacheItemPoolInterface $cache)
@@ -31,7 +31,7 @@ trait CacheMessageTrait
 
     /**
      * Restore a message from the cache.
-     * 
+     *
      * @param string           $key     The message key
      * @param MessageInterface $message
      *
@@ -60,7 +60,7 @@ trait CacheMessageTrait
 
     /**
      * Store a message in the cache.
-     * 
+     *
      * @param string           $key     The message key
      * @param MessageInterface $message
      */

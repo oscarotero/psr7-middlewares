@@ -58,7 +58,7 @@ class MethodOverride
 
     /**
      * Configure the parameters.
-     * 
+     *
      * @param string $name
      * @param bool   $get
      *
@@ -105,9 +105,9 @@ class MethodOverride
 
     /**
      * Returns the override method.
-     * 
+     *
      * @param ServerRequestInterface $request
-     * 
+     *
      * @return string
      */
     private function getOverrideMethod(ServerRequestInterface $request)
@@ -131,9 +131,9 @@ class MethodOverride
 
     /**
      * Returns the allowed override methods.
-     * 
+     *
      * @param ServerRequestInterface $request
-     * 
+     *
      * @return array
      */
     private function getAllowedOverrideMethods(ServerRequestInterface $request)

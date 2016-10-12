@@ -40,7 +40,7 @@ class DebugBar
      * Configure whether capture ajax requests to send the data with headers.
      *
      * @param bool $captureAjax
-     * 
+     *
      * @return self
      */
     public function captureAjax($captureAjax = true)

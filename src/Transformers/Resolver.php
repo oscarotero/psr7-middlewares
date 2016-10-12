@@ -11,7 +11,7 @@ abstract class Resolver implements ResolverInterface
 
     /**
      * Add a new transformer.
-     * 
+     *
      * @param string   $id
      * @param callable $resolver
      */
@@ -22,9 +22,9 @@ abstract class Resolver implements ResolverInterface
 
     /**
      * Resolves the id and returns a transformer or null.
-     * 
+     *
      * @param string $id
-     * 
+     *
      * @return callable|null
      */
     public function resolve($id)

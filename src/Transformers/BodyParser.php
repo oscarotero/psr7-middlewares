@@ -19,7 +19,7 @@ class BodyParser extends Resolver
 
     /**
      * @param string $id
-     * 
+     *
      * @return callable|null
      */
     public function resolve($id)
@@ -33,9 +33,9 @@ class BodyParser extends Resolver
 
     /**
      * JSON parser.
-     * 
+     *
      * @param StreamInterface $body
-     * 
+     *
      * @return array
      */
     public function json(StreamInterface $body)
@@ -51,9 +51,9 @@ class BodyParser extends Resolver
 
     /**
      * Parses url-encoded strings.
-     * 
+     *
      * @param StreamInterface $body
-     * 
+     *
      * @return array
      */
     public function urlencode(StreamInterface $body)
@@ -65,9 +65,9 @@ class BodyParser extends Resolver
 
     /**
      * Parses csv strings.
-     * 
+     *
      * @param StreamInterface $body
-     * 
+     *
      * @return array
      */
     public function csv(StreamInterface $body)

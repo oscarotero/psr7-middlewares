@@ -60,9 +60,9 @@ class Geolocate
 
     /**
      * Wheter or not save the geolocation in a session variable.
-     * 
+     *
      * @param bool $save
-     * 
+     *
      * @return self
      */
     public function saveInSession($save = true)

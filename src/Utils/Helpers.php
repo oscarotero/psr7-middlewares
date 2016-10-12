@@ -33,10 +33,10 @@ class Helpers
 
     /**
      * Join several pieces into a path.
-     * 
+     *
      * @param string
      *               ...
-     * 
+     *
      * @return string
      */
     public static function joinPath()
@@ -46,9 +46,9 @@ class Helpers
 
     /**
      * Check whether a request is or not ajax.
-     * 
+     *
      * @param RequestInterface $request
-     * 
+     *
      * @return bool
      */
     public static function isAjax(RequestInterface $request)
@@ -58,9 +58,9 @@ class Helpers
 
     /**
      * Check if a request is post or any similar method.
-     * 
+     *
      * @param RequestInterface $request
-     * 
+     *
      * @return bool
      */
     public static function isPost(RequestInterface $request)
@@ -79,9 +79,9 @@ class Helpers
 
     /**
      * Check whether a response is a redirection.
-     * 
+     *
      * @param ResponseInterface $response
-     * 
+     *
      * @return bool
      */
     public static function isRedirect(ResponseInterface $response)
@@ -91,9 +91,9 @@ class Helpers
 
     /**
      * Return the output buffer.
-     * 
+     *
      * @param int $level
-     * 
+     *
      * @return string
      */
     public static function getOutput($level)
@@ -109,9 +109,9 @@ class Helpers
 
     /**
      * Return the mime type.
-     * 
+     *
      * @param ResponseInterface $response
-     * 
+     *
      * @return string
      */
     public static function getMimeType(ResponseInterface $response)
@@ -125,10 +125,10 @@ class Helpers
     /**
      * Very short timing attack safe string comparison for PHP < 5.6
      * http://php.net/manual/en/function.hash-equals.php#118384.
-     * 
+     *
      * @param string $a
      * @param string $b
-     * 
+     *
      * @return bool
      */
     public static function hashEquals($a, $b)

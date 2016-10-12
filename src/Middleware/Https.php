@@ -42,7 +42,7 @@ class Https
      * Configure the max-age HSTS in seconds.
      *
      * @param int $maxAge
-     * 
+     *
      * @return self
      */
     public function maxAge($maxAge)
@@ -56,7 +56,7 @@ class Https
      * Configure the includeSubDomains HSTS directive.
      *
      * @param bool $includeSubdomains
-     * 
+     *
      * @return self
      */
     public function includeSubdomains($includeSubdomains = true)
@@ -69,10 +69,10 @@ class Https
     /**
      * Configure whether check the following headers before redirect:
      * X-Forwarded-Proto: https
-     * X-Forwarded-Port: 443
+     * X-Forwarded-Port: 443.
      *
      * @param bool $checkHttpsForward
-     * 
+     *
      * @return self
      */
     public function checkHttpsForward($checkHttpsForward = true)

@@ -25,7 +25,7 @@ class TrailingSlash
      */
     public function __construct($addSlash = false)
     {
-        $this->addSlash = (boolean) $addSlash;
+        $this->addSlash = (bool) $addSlash;
     }
 
     /**

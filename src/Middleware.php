@@ -78,7 +78,7 @@ class Middleware
      *
      * @param callable|string $basePath The base path in which the middleware is created (optional)
      * @param callable        $factory  Takes no argument and MUST return a middleware callable or false
-     * 
+     *
      * @return callable
      */
     public static function create($basePath, callable $factory = null)

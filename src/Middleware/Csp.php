@@ -18,7 +18,7 @@ class Csp
 
     /**
      * Set CSPBuilder.
-     * 
+     *
      * @param array|null $policies
      */
     public function __construct(array $policies = null)
@@ -36,10 +36,10 @@ class Csp
 
     /**
      * Add a source to our allow whitelist.
-     * 
+     *
      * @param string $directive
      * @param string $path
-     * 
+     *
      * @return self
      */
     public function addSource($directive, $path)
@@ -52,10 +52,10 @@ class Csp
     /**
      * Add a directive if it doesn't already exist
      * If it already exists, do nothing.
-     * 
+     *
      * @param string $directive
      * @param mixed  $value
-     * 
+     *
      * @return self
      */
     public function addDirective($directive, $value)
@@ -67,9 +67,9 @@ class Csp
 
     /**
      * Whether or not support old browsers (e.g. safari).
-     * 
+     *
      * @param bool $support
-     * 
+     *
      * @return self
      */
     public function supportOldBrowsers($support = true)

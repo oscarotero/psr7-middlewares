@@ -13,8 +13,9 @@ trait StreamTrait
     /**
      * Get the stream factory.
      *
-     * @param string|StreamInterface $file  Filename or stream it's replacing
+     * @param string|StreamInterface $file Filename or stream it's replacing
      * @param string                 $mode
+     *
      * @return StreamInterface
      */
     private static function createStream($file = 'php://temp', $mode = 'r+')
@@ -35,7 +36,6 @@ trait StreamTrait
             throw new \RuntimeException('Unable to create a stream. No stream factory defined');
         }
 
-        
         return call_user_func($factory, $file, $mode, $replacing);
     }
 }

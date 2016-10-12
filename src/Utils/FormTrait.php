@@ -15,9 +15,9 @@ trait FormTrait
 
     /**
      * Configure if autoinsert or not the inputs automatically.
-     * 
+     *
      * @param bool $autoInsert
-     * 
+     *
      * @return self
      */
     public function autoInsert($autoInsert = true)
@@ -29,10 +29,10 @@ trait FormTrait
 
     /**
      * Insert content into all POST forms.
-     * 
+     *
      * @param ResponseInterface $response
      * @param callable          $replace
-     * 
+     *
      * @return ResponseInterface
      */
     private function insertIntoPostForms(ResponseInterface $response, callable $replace)

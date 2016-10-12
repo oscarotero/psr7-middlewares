@@ -49,7 +49,7 @@ class GoogleAnalytics
     /**
      * Returns the google code.
      * https://github.com/h5bp/html5-boilerplate/blob/master/src/index.html.
-     * 
+     *
      * @return string
      */
     private function getCode()

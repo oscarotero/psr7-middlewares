@@ -41,7 +41,6 @@ class ImageTransformerTest extends Base
                     Middleware::ImageTransformer($sizes)
                         ->cache($cache),
 
-
                     function ($request, $response, $next) use (&$usedAfter) {
                         ++$usedAfter;
 

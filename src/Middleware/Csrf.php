@@ -96,7 +96,7 @@ class Csrf
 
     /**
      * Generate and retrieve the tokens.
-     * 
+     *
      * @param ServerRequestInterface $request
      * @param string                 $lockTo
      * @param array                  $tokens
@@ -126,7 +126,7 @@ class Csrf
 
     /**
      * Validate the request.
-     * 
+     *
      * @param ServerRequestInterface $request
      * @param array                  &$tokens
      *

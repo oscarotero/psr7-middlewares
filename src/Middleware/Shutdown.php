@@ -25,7 +25,7 @@ class Shutdown
      */
     public function __construct($handler = null)
     {
-        $this->handler = $handler ?: self::CLASS.'::defaultHandler';
+        $this->handler = $handler ?: self::class.'::defaultHandler';
     }
 
     /**
@@ -46,7 +46,7 @@ class Shutdown
 
     public static function defaultHandler()
     {
-        return <<<EOT
+        return <<<'EOT'
 <!DOCTYPE html>
 <html>
 <head>

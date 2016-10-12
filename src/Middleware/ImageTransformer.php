@@ -48,7 +48,7 @@ class ImageTransformer
      *    'medium' => 'resize,500',
      *    'big'    => 'resize,1000',
      * ].
-     * 
+     *
      * @param array $sizes
      */
     public function __construct(array $sizes)
@@ -71,9 +71,9 @@ class ImageTransformer
 
     /**
      * To save the transformed images in the cache.
-     * 
+     *
      * @param CacheItemPoolInterface $cache
-     * 
+     *
      * @return self
      */
     public function cache(CacheItemPoolInterface $cache)
@@ -85,9 +85,9 @@ class ImageTransformer
 
     /**
      * Enable the client hints.
-     * 
+     *
      * @param array $clientHints
-     * 
+     *
      * @return self
      */
     public function clientHints($clientHints = ['Dpr', 'Viewport-Width', 'Width'])
@@ -166,11 +166,11 @@ class ImageTransformer
 
     /**
      * Transform the image.
-     * 
+     *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
      * @param string                 $transform
-     * 
+     *
      * @return ResponseInterface
      */
     private function transform(ServerRequestInterface $request, ResponseInterface $response, $transform)
@@ -197,9 +197,9 @@ class ImageTransformer
      * Parses the path and return the file and transform values.
      * For example, the path "/images/small.avatar.jpg" returns:
      * ["/images/avatar.jpg", "resizeCrop,50,50"].
-     * 
+     *
      * @param string $path
-     * 
+     *
      * @return false|array [file, transform]
      */
     private function parsePath($path)
@@ -227,9 +227,9 @@ class ImageTransformer
 
     /**
      * Returns the client hints sent.
-     * 
+     *
      * @param ServerRequestInterface $request
-     * 
+     *
      * @return array|null
      */
     private function getClientHints(ServerRequestInterface $request)
@@ -249,9 +249,9 @@ class ImageTransformer
 
     /**
      * Generates the key used to save the image in cache.
-     * 
+     *
      * @param ServerRequestInterface $request
-     * 
+     *
      * @return string
      */
     private function getCacheKey(ServerRequestInterface $request)

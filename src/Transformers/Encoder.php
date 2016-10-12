@@ -16,10 +16,10 @@ class Encoder extends Resolver
 
     /**
      * Gzip minifier using gzencode().
-     * 
+     *
      * @param StreamInterface $input
      * @param StreamInterface $output
-     * 
+     *
      * @return ResponseInterface
      */
     public static function gzip(StreamInterface $input, StreamInterface $output)
@@ -31,10 +31,10 @@ class Encoder extends Resolver
 
     /**
      * Gzip minifier using gzdeflate().
-     * 
+     *
      * @param StreamInterface $input
      * @param StreamInterface $output
-     * 
+     *
      * @return ResponseInterface
      */
     public static function deflate(StreamInterface $input, StreamInterface $output)

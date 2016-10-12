@@ -40,7 +40,7 @@ class Gzip
 
         if ($transformer) {
             $body = $response->getBody();
-            
+
             return $response
                 ->withHeader('Content-Encoding', $encoding)
                 ->withBody($transformer($body, self::createStream($body)));

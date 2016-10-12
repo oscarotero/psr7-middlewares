@@ -20,10 +20,10 @@ class Minifier extends Resolver
 
     /**
      * Javascript minifier.
-     * 
+     *
      * @param StreamInterface $input
      * @param StreamInterface $output
-     * 
+     *
      * @return StreamInterface
      */
     public static function js(StreamInterface $input, StreamInterface $output)
@@ -35,10 +35,10 @@ class Minifier extends Resolver
 
     /**
      * CSS minifier.
-     * 
+     *
      * @param StreamInterface $input
      * @param StreamInterface $output
-     * 
+     *
      * @return StreamInterface
      */
     public static function css(StreamInterface $input, StreamInterface $output)
@@ -50,10 +50,10 @@ class Minifier extends Resolver
 
     /**
      * HTML minifier.
-     * 
+     *
      * @param StreamInterface $input
      * @param StreamInterface $output
-     * 
+     *
      * @return StreamInterface
      */
     public static function html(StreamInterface $input, StreamInterface $output)

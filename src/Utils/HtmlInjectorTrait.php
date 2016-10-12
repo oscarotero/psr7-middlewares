@@ -13,11 +13,11 @@ trait HtmlInjectorTrait
 
     /**
      * Inject some code just before any tag.
-     * 
+     *
      * @param ResponseInterface $response
      * @param string            $code
      * @param string            $tag
-     * 
+     *
      * @return ResponseInterface
      */
     private function inject(ResponseInterface $response, $code, $tag = 'body')

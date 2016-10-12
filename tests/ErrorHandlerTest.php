@@ -29,10 +29,10 @@ class ErrorHandlerTest extends Base
         $response = $this->execute(
             [
                 Middleware::ErrorHandler(function ($request, $response) {
-                        $exception = ErrorHandler::getException($request);
+                    $exception = ErrorHandler::getException($request);
 
-                        $response->getBody()->write((string) $exception);
-                    })
+                    $response->getBody()->write((string) $exception);
+                })
                     ->catchExceptions(),
                 function ($request, $response, $next) use ($exception) {
                     $response->getBody()->write('not showed text');

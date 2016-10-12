@@ -42,9 +42,9 @@ class Cache
 
     /**
      * Set a cache-control header to all responses.
-     * 
+     *
      * @param string|CacheControl $cacheControl
-     * 
+     *
      * @return self
      */
     public function cacheControl($cacheControl)

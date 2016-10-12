@@ -18,9 +18,9 @@ class IncludeResponse
 
     /**
      * Configure if continue to the next middleware if the response has not found.
-     * 
+     *
      * @param bool $continueOnError
-     * 
+     *
      * @return self
      */
     public function continueOnError($continueOnError = true)
@@ -71,9 +71,9 @@ class IncludeResponse
 
     /**
      * Includes a php file from a static context.
-     * 
+     *
      * @param string $file
-     * 
+     *
      * @return string
      */
     private static function includeFile($file)

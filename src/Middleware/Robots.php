@@ -16,7 +16,7 @@ class Robots
 
     /**
      * Set whether search engines are allowed or not.
-     * 
+     *
      * @param bool $allow
      */
     public function __construct($allow = false)

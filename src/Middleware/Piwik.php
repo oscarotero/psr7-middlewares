@@ -107,7 +107,7 @@ class Piwik
 
     /**
      * Returns the piwik code.
-     * 
+     *
      * @return string
      */
     private function getCode()

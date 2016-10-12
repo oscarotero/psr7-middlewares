@@ -9,7 +9,7 @@ interface ResolverInterface
 {
     /**
      * @param string $id
-     * 
+     *
      * @return callable|null
      */
     public function resolve($id);

@@ -72,7 +72,7 @@ class HttpsTest extends Base
                     ->includeSubdomains(false),
                 function ($request, $response, $next) {
                     return $next($request, $response->withStatus(301)->withHeader('Location', 'http://domain.com/index'));
-                }
+                },
             ],
             $url
         );

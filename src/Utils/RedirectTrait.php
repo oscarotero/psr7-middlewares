@@ -13,7 +13,7 @@ use InvalidArgumentException;
  */
 trait RedirectTrait
 {
-    /** 
+    /**
      * @var int|false Redirect HTTP status code
      */
     private $redirectStatus = false;
@@ -22,7 +22,7 @@ trait RedirectTrait
      * Set HTTP redirect status code.
      *
      * @param int|false $redirectStatus Redirect HTTP status code
-     * 
+     *
      * @return self
      */
     public function redirect($redirectStatus = 302)
@@ -38,11 +38,11 @@ trait RedirectTrait
 
     /**
      * Returns a redirect response.
-     * 
+     *
      * @param ServerRequestInterface $request
      * @param UriInterface           $uri
      * @param ResponseInterface      $response
-     * 
+     *
      * @return ResponseInterface
      */
     private function getRedirectResponse(ServerRequestInterface $request, UriInterface $uri, ResponseInterface $response)

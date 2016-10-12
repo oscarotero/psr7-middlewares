@@ -6,7 +6,7 @@ class MinifyTest extends Base
 {
     public function testMinify()
     {
-        $body = <<<EOT
+        $body = <<<'EOT'
 <!DOCTYPE html>
 <html>
     <head>
@@ -18,7 +18,7 @@ class MinifyTest extends Base
     </body>
 </html>
 EOT;
-        $body_minified = <<<EOT
+        $body_minified = <<<'EOT'
 <!DOCTYPE html><html><head><title>Title</title></head><body><h1>Hello world!</h1></body></html>
 EOT;
 

@@ -40,9 +40,9 @@ class Honeypot
 
     /**
      * Set the field name.
-     * 
+     *
      * @param string $inputName
-     * 
+     *
      * @return self
      */
     public function inputName($inputName)
@@ -54,9 +54,9 @@ class Honeypot
 
     /**
      * Set the field class.
-     * 
+     *
      * @param string $inputClass
-     * 
+     *
      * @return self
      */
     public function inputClass($inputClass)
@@ -104,9 +104,9 @@ class Honeypot
 
     /**
      * Check whether the request is valid.
-     * 
+     *
      * @param ServerRequestInterface $request
-     * 
+     *
      * @return bool
      */
     private function isValid(ServerRequestInterface $request)

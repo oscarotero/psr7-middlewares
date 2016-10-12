@@ -62,7 +62,7 @@ class BasePath
      * Autodetect the basePath.
      *
      * @param bool $autodetect
-     * 
+     *
      * @return self
      */
     public function autodetect($autodetect = true)
@@ -106,10 +106,10 @@ class BasePath
      *
      * Uses a variety of criteria in order to detect the base URL of the request
      * (i.e., anything additional to the document root).
-     * 
+     *
      * This code has been adapted from the Zend implementation:
      * https://github.com/zendframework/zend-http/blob/master/src/PhpEnvironment/Request.php
-     * 
+     *
      * @param ServerRequestInterface $request
      *
      * @return string

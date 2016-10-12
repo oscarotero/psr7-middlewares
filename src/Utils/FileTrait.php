@@ -31,9 +31,9 @@ trait FileTrait
 
     /**
      * Set whether use or not the uri query to generate the filenames.
-     * 
+     *
      * @param bool $appendQuery
-     * 
+     *
      * @return self
      */
     public function appendQuery($appendQuery = true)

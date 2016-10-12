@@ -18,7 +18,7 @@ trait StorageTrait
      *
      * @param ServerRequestInterface $request
      * @param array                  $storage
-     * 
+     *
      * @return ServerRequestInterface
      */
     private static function startStorage(ServerRequestInterface $request, array $storage)
@@ -30,7 +30,7 @@ trait StorageTrait
      * Stop the storage.
      *
      * @param ServerRequestInterface $request
-     * 
+     *
      * @return array
      */
     private static function stopStorage(ServerRequestInterface $request)
@@ -46,7 +46,7 @@ trait StorageTrait
      *
      * @param ServerRequestInterface $request
      * @param string|null            $key
-     * 
+     *
      * @return array
      */
     private static function &getStorage(ServerRequestInterface $request, $key = null)

@@ -18,9 +18,9 @@ class ReadResponse
 
     /**
      * Configure if continue to the next middleware if the response has not found.
-     * 
+     *
      * @param bool $continueOnError
-     * 
+     *
      * @return self
      */
     public function continueOnError($continueOnError = true)
@@ -73,10 +73,10 @@ class ReadResponse
 
     /**
      * Handle range requests.
-     * 
+     *
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     * 
+     *
      * @return ResponseInterface
      */
     private static function range(ServerRequestInterface $request, ResponseInterface $response)

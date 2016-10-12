@@ -14,7 +14,7 @@ trait CryptTrait
 
     /**
      * Set the keys to encrypt and authenticate.
-     * 
+     *
      * @param string $key The binary key
      *
      * @return self
@@ -31,7 +31,7 @@ trait CryptTrait
      * Encrypt the given value.
      *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function encrypt($value)
@@ -49,7 +49,7 @@ trait CryptTrait
      * Decrypt the given value.
      *
      * @param string $value
-     * 
+     *
      * @return string
      */
     private function decrypt($value)
@@ -71,7 +71,7 @@ trait CryptTrait
 
     /**
      * Check whether the key exists or not.
-     * 
+     *
      * @throws RuntimeException
      */
     private function checkKey()
@@ -90,7 +90,7 @@ trait CryptTrait
 
     /**
      * Generate a secure random key.
-     * 
+     *
      * @return string|null
      */
     private static function secureRandomKey()
@@ -110,10 +110,10 @@ trait CryptTrait
     /**
      * Get derived key
      * http://tools.ietf.org/html/rfc5869.
-     * 
+     *
      * @param string $ikm  Initial Keying Material
      * @param string $info What sort of key are we deriving?
-     * 
+     *
      * @return string
      */
     private static function hkdf($ikm, $info = '')

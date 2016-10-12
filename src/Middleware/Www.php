@@ -25,7 +25,7 @@ class Www
      */
     public function __construct($addWww = false)
     {
-        $this->addWww = (boolean) $addWww;
+        $this->addWww = (bool) $addWww;
         $this->redirect(301);
     }
 
@@ -65,7 +65,7 @@ class Www
      * - the host is "localhost"
      * - the host is a ip
      * - the host has already a subdomain, for example "subdomain.example.com".
-     * 
+     *
      * @param string $host
      *
      * @return bool

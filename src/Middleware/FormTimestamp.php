@@ -47,9 +47,9 @@ class FormTimestamp
 
     /**
      * Set the field name.
-     * 
+     *
      * @param string $inputName
-     * 
+     *
      * @return self
      */
     public function inputName($inputName)
@@ -61,9 +61,9 @@ class FormTimestamp
 
     /**
      * Minimum time required.
-     * 
+     *
      * @param int $seconds
-     * 
+     *
      * @return self
      */
     public function min($seconds)
@@ -75,9 +75,9 @@ class FormTimestamp
 
     /**
      * Max time before expire the form.
-     * 
+     *
      * @param int $seconds
-     * 
+     *
      * @return self
      */
     public function max($seconds)
@@ -127,9 +127,9 @@ class FormTimestamp
 
     /**
      * Check whether the request is valid.
-     * 
+     *
      * @param ServerRequestInterface $request
-     * 
+     *
      * @return bool
      */
     private function isValid(ServerRequestInterface $request)

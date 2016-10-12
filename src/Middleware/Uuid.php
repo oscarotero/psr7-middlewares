@@ -16,7 +16,7 @@ class Uuid
     const KEY = 'UUID';
 
     /**
-     * @var string|false The header name to use 
+     * @var string|false The header name to use
      */
     private $header = 'X-Uuid';
 
