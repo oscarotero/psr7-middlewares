@@ -6,12 +6,16 @@ php:
   - 7.0
   - hhvm
 
+env:
+  - COMPOSER_OPTS=""
+  - COMPOSER_OPTS="--prefer-lowest"
+
 matrix:
   allow_failures:
     - php: hhvm
 
 before_install:
   - composer self-update
-  - composer install
+  - composer update
 
-script: phpunit
+script: phpunit --coverage-text
