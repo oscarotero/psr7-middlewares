@@ -13,7 +13,8 @@ class JsonSchema
 
     /**
      * JsonSchema constructor.
-     * @param string[] $schemas [uri => file] An associative array of HTTP URI to validation schema.
+     *
+     * @param string[] $schemas [uri => file] An associative array of HTTP URI to validation schema
      */
     public function __construct(array $schemas)
     {
@@ -66,9 +67,10 @@ class JsonSchema
 
     /**
      * @param ResponseInterface $response
-     * @param string $reason
-     * @param string[] $headers
-     * @param string|null $body
+     * @param string            $reason
+     * @param string[]          $headers
+     * @param string|null       $body
+     *
      * @return ResponseInterface
      */
     private function invalidateResponse(ResponseInterface $response, $reason, array $headers = [], $body = null)
@@ -89,6 +91,7 @@ class JsonSchema
 
     /**
      * @param ServerRequestInterface $request
+     *
      * @return object|null
      */
     private function getSchema(ServerRequestInterface $request)
@@ -111,6 +114,7 @@ class JsonSchema
 
     /**
      * @param string
+     *
      * @return string
      */
     private function normalizeFilePath($path)
@@ -120,6 +124,6 @@ class JsonSchema
             return $path;
         }
 
-        return 'file://' . $path;
+        return 'file://'.$path;
     }
 }

@@ -912,14 +912,14 @@ $middlewares = [
     // Transform `application/json` into an object, which is a requirement of `justinrainbow/json-schema`.
     Middleware::payload([
         'forceArray' => false,
-    ]);
+    ]),
 
     // Provide a map of route-prefixes to JSON schema files.
     Middleware::jsonSchema([
         '/en/v1/users' => WEB_ROOT . '/json-schema/en.v1.users.json',
         '/en/v1/posts' => WEB_ROOT . '/json-schema/en.v1.posts.json',
         '/en/v2/posts' => WEB_ROOT . '/json-schema/en.v2.posts.json',
-    ]);
+    ])
 ];
 ```
 
@@ -1008,7 +1008,9 @@ use Psr7Middlewares\Middleware;
 
 $middlewares = [
     
-    Middleware::Payload(),
+    Middleware::Payload([     // (optional) Array of parsing options:
+        'forceArray' => false // Force to use arrays instead objects in json (true by default)
+    ]),
 
     function ($request, $response, $next) {
         //Get the parsed body

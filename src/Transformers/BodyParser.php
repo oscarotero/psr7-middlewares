@@ -18,6 +18,7 @@ class BodyParser extends Resolver
 
     /**
      * BodyParser constructor.
+     *
      * @param mixed[] $options
      */
     public function __construct(array $options = [])
@@ -47,11 +48,11 @@ class BodyParser extends Resolver
      *
      * @param StreamInterface $body
      *
-     * @return array|object Returns an array when $assoc is true, and an object when $assoc is false.
+     * @return array|object Returns an array when $assoc is true, and an object when $assoc is false
      */
     public function json(StreamInterface $body)
     {
-        $assoc = (bool)$this->options['forceArray'];
+        $assoc = (bool) $this->options['forceArray'];
 
         $data = json_decode((string) $body, $assoc);
 

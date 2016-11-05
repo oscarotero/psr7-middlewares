@@ -19,6 +19,7 @@ class Payload
 
     /**
      * Payload constructor.
+     *
      * @param mixed[] $options
      */
     public function __construct(array $options = [])
