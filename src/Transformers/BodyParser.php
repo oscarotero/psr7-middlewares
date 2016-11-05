@@ -10,11 +10,22 @@ use DomainException;
  */
 class BodyParser extends Resolver
 {
-    public function __construct()
+    /** @var mixed[] */
+    private $options = [
+        // When true, returned objects will be converted into associative arrays.
+        'forceArray' => true,
+    ];
+
+    /**
+     * BodyParser constructor.
+     * @param mixed[] $options
+     */
+    public function __construct(array $options = [])
     {
         $this->add('application/json', [$this, 'json']);
         $this->add('application/x-www-form-urlencoded', [$this, 'urlencode']);
         $this->add('text/csv', [$this, 'csv']);
+        $this->options = array_merge($this->options, $options);
     }
 
     /**
@@ -36,11 +47,13 @@ class BodyParser extends Resolver
      *
      * @param StreamInterface $body
      *
-     * @return array
+     * @return array|object Returns an array when $assoc is true, and an object when $assoc is false.
      */
     public function json(StreamInterface $body)
     {
-        $data = json_decode((string) $body, true);
+        $assoc = (bool)$this->options['forceArray'];
+
+        $data = json_decode((string) $body, $assoc);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new DomainException(json_last_error_msg());

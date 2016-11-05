@@ -143,6 +143,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Honeypot](#honeypot)
 * [Https](#https)
 * [ImageTransformer](#imagetransformer)
+* [JsonSchema](#jsonschema)
 * [LanguageNegotiation](#languagenegotiation)
 * [LeagueRoute](#leagueroute)
 * [MethodOverride](#methodoverride)
@@ -895,6 +896,30 @@ $middlewares = [
 
         return $next($request, $response);
     }
+];
+```
+
+### JsonSchema
+
+Uses [justinrainbow/json-schema](https://github.com/justinrainbow/json-schema) to validate an `application/json` request body using route-matched JSON schemas:
+
+```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\JsonSchema;
+
+$middlewares = [
+
+    // Transform `application/json` into an object, which is a requirement of `justinrainbow/json-schema`.
+    Middleware::payload([
+        'forceArray' => false,
+    ]);
+
+    // Provide a map of route-prefixes to JSON schema files.
+    Middleware::jsonSchema([
+        '/en/v1/users' => WEB_ROOT . '/json-schema/en.v1.users.json',
+        '/en/v1/posts' => WEB_ROOT . '/json-schema/en.v1.posts.json',
+        '/en/v2/posts' => WEB_ROOT . '/json-schema/en.v2.posts.json',
+    ]);
 ];
 ```
 

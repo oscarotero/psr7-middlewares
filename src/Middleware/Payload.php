@@ -14,6 +14,18 @@ class Payload
 {
     use Utils\ResolverTrait;
 
+    /** @var mixed[] */
+    private $options;
+
+    /**
+     * Payload constructor.
+     * @param mixed[] $options
+     */
+    public function __construct(array $options = [])
+    {
+        $this->options = $options;
+    }
+
     /**
      * Execute the middleware.
      *
@@ -26,7 +38,7 @@ class Payload
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         if (!$request->getParsedBody() && in_array($request->getMethod(), ['POST', 'PUT', 'PATCH', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'], true)) {
-            $resolver = $this->resolver ?: new Transformers\BodyParser();
+            $resolver = $this->resolver ?: new Transformers\BodyParser($this->options);
             $transformer = $resolver->resolve(trim($request->getHeaderLine('Content-Type')));
 
             if ($transformer) {

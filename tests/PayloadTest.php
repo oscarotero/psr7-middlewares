@@ -1,5 +1,6 @@
 <?php
 
+use Psr\Http\Message\ServerRequestInterface;
 use Psr7Middlewares\Middleware;
 
 class PayloadTest extends Base
@@ -43,5 +44,31 @@ class PayloadTest extends Base
         ], $request, $this->response());
 
         $this->assertEquals(400, $response->getStatusCode());
+    }
+
+    public function testJsonObjectPayload()
+    {
+        $request = $this->request('', ['Content-Type' => 'application/json'])
+            ->withMethod('POST')
+            ->withBody($this->stream('{"foo":"bar","fiz":{"buz",true}}'));
+
+        $this->dispatch(
+            [
+                new Middleware\Payload(['forceArray' => true]),
+                function (ServerRequestInterface $request) {
+                    $result = $request->getParsedBody();
+
+                    self::assertInstanceOf(\stdClass::class, $result);
+                    self::assertObjectHasAttribute('foo', $result);
+                    self::assertEquals('bar', $result->foo);
+                    self::assertObjectHasAttribute('fiz', $result);
+                    self::assertInstanceOf(\stdClass::class, $result->fiz);
+                    self::assertObjectHasAttribute('buz', $result->fiz);
+                    self::assertTrue($result->fiz->buz);
+                }
+            ],
+            $request,
+            $this->response()
+        );
     }
 }
