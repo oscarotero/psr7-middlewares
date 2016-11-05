@@ -143,6 +143,7 @@ $response = $dispatcher(ServerRequestFactory::fromGlobals(), new Response());
 * [Honeypot](#honeypot)
 * [Https](#https)
 * [ImageTransformer](#imagetransformer)
+* [IncludeResponse](#includeresponse)
 * [JsonSchema](#jsonschema)
 * [LanguageNegotiation](#languagenegotiation)
 * [LeagueRoute](#leagueroute)
@@ -899,13 +900,25 @@ $middlewares = [
 ];
 ```
 
+### IncludeResponse
+
+Useful to include old style applications, in which each page has it's own php file. For example, let's say we have an application with paths like `/about-us.php` or `/about-us` (resolved to `/about-us/index.php`), this middleware gets the php file, include it safely, capture the output and the headers send and create a response with the results. If the file does not exits, returns a `404` response (unless `continueOnError` is true).
+
+```php
+use Psr7Middlewares\Middleware;
+
+$middlewares = [
+    Middleware::includeResponse('/doc/root'), //The path of the document root
+        ->continueOnError(true)               // (optional) to continue with the next middleware on error or not
+];
+```
+
 ### JsonSchema
 
 Uses [justinrainbow/json-schema](https://github.com/justinrainbow/json-schema) to validate an `application/json` request body using route-matched JSON schemas:
 
 ```php
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Middleware\JsonSchema;
 
 $middlewares = [
 
