@@ -36,6 +36,8 @@ class Robots
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         if ($request->getUri()->getPath() === '/robots.txt') {
+            $response = $response->withHeader('Content-Type', 'text/plain');
+
             if ($this->allow) {
                 $response->getBody()->write("User-Agent: *\nAllow: /");
 
