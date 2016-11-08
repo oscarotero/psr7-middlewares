@@ -913,6 +913,27 @@ $middlewares = [
 ];
 ```
 
+### JsonValidator
+
+Uses [justinrainbow/json-schema](https://github.com/justinrainbow/json-schema) to validate an `application/json` request body with a JSON schema:
+
+```php
+use Psr7Middlewares\Middleware;
+
+$middlewares = [
+
+    // Transform `application/json` into an object, which is a requirement of `justinrainbow/json-schema`.
+    Middleware::payload([
+        'forceArray' => false,
+    ]),
+    
+    // Specify a JSON file (publicly-accessible in this example), or a JSON string decoded into object-notation.
+    Middleware::jsonValidator((object) [
+        '$ref' => WEB_ROOT . '/json-schema/en.v1.users.json',
+    ])
+];
+```
+
 ### JsonSchema
 
 Uses [justinrainbow/json-schema](https://github.com/justinrainbow/json-schema) to validate an `application/json` request body using route-matched JSON schemas:
