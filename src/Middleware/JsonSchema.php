@@ -33,8 +33,8 @@ class JsonSchema
     {
         $schema = $this->getSchema($request);
 
-        if (is_object($schema)) {
-            $validator = new JsonValidator($schema);
+        if ($schema instanceof \SplFileObject) {
+            $validator = JsonValidator::fromFile($schema);
             return $validator($request, $response, $next);
         }
 
@@ -44,20 +44,16 @@ class JsonSchema
     /**
      * @param ServerRequestInterface $request
      *
-     * @return object|null
+     * @return \SplFileObject|null
      */
     private function getSchema(ServerRequestInterface $request)
     {
+        $uri = $request->getUri();
+        $path = $uri->getPath();
+
         foreach ($this->schemas as $pattern => $file) {
-            $uri = $request->getUri();
-            $path = $uri->getPath();
-
             if (stripos($path, $pattern) === 0) {
-                $file = $this->normalizeFilePath($file);
-
-                return (object) [
-                    '$ref' => $file,
-                ];
+                return new \SplFileObject($this->normalizeFilePath($file));
             }
         }
 

@@ -52,7 +52,7 @@ class JsonValidatorTest extends Base
     {
         parent::setUp();
 
-        $this->validator = new JsonValidator(json_decode(json_encode(self::$schema)));
+        $this->validator = JsonValidator::fromArray(self::$schema);
     }
 
     public function testInvalidJson()
@@ -123,9 +123,7 @@ class JsonValidatorTest extends Base
 
         file_put_contents($file->url(), json_encode(self::$schema));
 
-        $this->validator = new JsonValidator((object) [
-            '$ref' => $file->url(),
-        ]);
+        $this->validator = JsonValidator::fromFile(new \SplFileObject($file->url()));
 
         $request = $this->request('/en/v1/users')
             ->withParsedBody(json_decode(json_encode([

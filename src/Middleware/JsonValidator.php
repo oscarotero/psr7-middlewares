@@ -13,12 +13,57 @@ class JsonValidator
 
     /**
      * JsonSchema constructor.
+     * Consider using one of the following factories instead of invoking the controller directly:
+     *  - JsonValidator::fromFile()
+     *  - JsonValidator::fromEncodedString()
+     *  - JsonValidator::fromDecodedObject()
+     *  - JsonValidator::fromArray()
      *
      * @param \stdClass $schema A JSON-decoded object-representation of the schema.
      */
     public function __construct(\stdClass $schema)
     {
         $this->schema = $schema;
+    }
+
+    /**
+     * @param \stdClass $schema
+     * @return static|callable
+     */
+    public static function fromDecodedObject(\stdClass $schema)
+    {
+        return new static($schema);
+    }
+
+    /**
+     * @param \SplFileObject $file
+     * @return static|callable
+     */
+    public static function fromFile(\SplFileObject $file)
+    {
+        $schema = (object)[
+            '$ref' => $file->getPathname(),
+        ];
+
+        return new static($schema);
+    }
+
+    /**
+     * @param string $json
+     * @return static|callable
+     */
+    public static function fromEncodedString($json)
+    {
+        return static::fromDecodedObject(json_decode($json, false));
+    }
+
+    /**
+     * @param array $json
+     * @return static|callable
+     */
+    public static function fromArray(array $json)
+    {
+        return static::fromEncodedString(json_encode($json, JSON_UNESCAPED_SLASHES));
     }
 
     /**
