@@ -29,7 +29,7 @@ function (RequestInterface $request, ResponseInterface $response, callable $next
 So, you can use these midlewares with:
 
 * [Relay](https://github.com/relayphp/Relay.Relay)
-* [Expressive](http://framework.zend.com/expressive)
+* [Expressive](https://docs.zendframework.com/zend-expressive/)
 * [Slim 3](http://www.slimframework.com)
 * [Spiral](http://spiral-framework.com)
 * [Middleman](https://github.com/mindplay-dk/middleman)
