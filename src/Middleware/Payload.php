@@ -18,6 +18,11 @@ class Payload
     private $options;
 
     /**
+     * @var bool Whether or not Middleware\Payload has precedence over existing parsed bodies.
+     */
+    private $overrideExistingParsedBody = false;
+
+    /**
      * Payload constructor.
      *
      * @param mixed[] $options
@@ -25,6 +30,15 @@ class Payload
     public function __construct(array $options = [])
     {
         $this->options = $options;
+    }
+
+    /**
+     * If the Request object already has a parsedBody, normally Payload will skip parsing. This is not always
+     * desirable behavior. Calling this setter allows you to override this behavior.
+     */
+    public function overrideExistingParsedBody()
+    {
+        $this->overrideExistingParsedBody = true;
     }
 
     /**
@@ -38,10 +52,14 @@ class Payload
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if (!$request->getParsedBody() && in_array($request->getMethod(), ['POST', 'PUT', 'PATCH', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'], true)) {
+        $parsableMethods = ['POST', 'PUT', 'PATCH', 'DELETE', 'COPY', 'LOCK', 'UNLOCK'];
+
+        if (
+            ($this->overrideExistingParsedBody || !$request->getParsedBody()) &&
+            in_array($request->getMethod(), $parsableMethods, true)
+        ) {
             $resolver = $this->resolver ?: new Transformers\BodyParser($this->options);
             $transformer = $resolver->resolve(trim($request->getHeaderLine('Content-Type')));
-
             if ($transformer) {
                 try {
                     $request = $request->withParsedBody($transformer($request->getBody()));

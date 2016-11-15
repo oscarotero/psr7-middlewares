@@ -25,12 +25,16 @@ class PayloadTest extends Base
             ->withMethod('POST')
             ->withBody($this->stream($body));
 
-        $response = $this->dispatch([
-            Middleware::Payload(),
-            function ($request, $response, $next) use ($result) {
-                $this->assertEquals($result, $request->getParsedBody());
-            },
-        ], $request, $this->response());
+        $response = $this->dispatch(
+            [
+                Middleware::Payload(),
+                function ($request, $response, $next) use ($result) {
+                    $this->assertEquals($result, $request->getParsedBody());
+                },
+            ],
+            $request,
+            $this->response()
+        );
     }
 
     public function testError()
@@ -39,9 +43,13 @@ class PayloadTest extends Base
             ->withMethod('POST')
             ->withBody($this->stream('{invalid:"json"}'));
 
-        $response = $this->dispatch([
-            Middleware::Payload(),
-        ], $request, $this->response());
+        $response = $this->dispatch(
+            [
+                Middleware::Payload(),
+            ],
+            $request,
+            $this->response()
+        );
 
         $this->assertEquals(400, $response->getStatusCode());
     }
@@ -50,21 +58,63 @@ class PayloadTest extends Base
     {
         $request = $this->request('', ['Content-Type' => 'application/json'])
             ->withMethod('POST')
-            ->withBody($this->stream('{"foo":"bar","fiz":{"buz",true}}'));
+            ->withBody($this->stream('{"foo":"bar","fiz":{"buz":true}}'));
 
         $this->dispatch(
             [
-                new Middleware\Payload(['forceArray' => true]),
+                new Middleware\Payload(['forceArray' => false]),
                 function (ServerRequestInterface $request) {
                     $result = $request->getParsedBody();
+                    $this->assertInstanceOf(\stdClass::class, $result);
+                    $this->assertObjectHasAttribute('foo', $result);
+                    $this->assertEquals('bar', $result->foo);
+                    $this->assertObjectHasAttribute('fiz', $result);
+                    $this->assertInstanceOf(\stdClass::class, $result->fiz);
+                    $this->assertObjectHasAttribute('buz', $result->fiz);
+                    $this->assertTrue($result->fiz->buz);
+                }
+            ],
+            $request,
+            $this->response()
+        );
+    }
 
-                    self::assertInstanceOf(\stdClass::class, $result);
-                    self::assertObjectHasAttribute('foo', $result);
-                    self::assertEquals('bar', $result->foo);
-                    self::assertObjectHasAttribute('fiz', $result);
-                    self::assertInstanceOf(\stdClass::class, $result->fiz);
-                    self::assertObjectHasAttribute('buz', $result->fiz);
-                    self::assertTrue($result->fiz->buz);
+    public function testParsingIsSkippedIfBodyAlreadyParsed()
+    {
+        $request = $this->request('', ['Content-Type' => 'application/json'])
+            ->withMethod('POST')
+            ->withBody($this->stream('{"foo":"bar"}'))
+            ->withParsedBody(['other body']);
+
+        $this->dispatch(
+            [
+                new Middleware\Payload(),
+                function (ServerRequestInterface $request) {
+                    $result = $request->getParsedBody();
+                    $this->assertEquals(['other body'], $result);
+                }
+            ],
+            $request,
+            $this->response()
+        );
+    }
+
+    public function testParsingIsNotSkippedIfForceOverrideInEffect()
+    {
+        $request = $this->request('', ['Content-Type' => 'application/json'])
+            ->withMethod('POST')
+            ->withBody($this->stream('{"foo":"bar"}'))
+            ->withParsedBody(['other body']);
+
+        $payloadMiddleware = new Middleware\Payload();
+        $payloadMiddleware->overrideExistingParsedBody();
+
+        $this->dispatch(
+            [
+                $payloadMiddleware,
+                function (ServerRequestInterface $request) {
+                    $result = $request->getParsedBody();
+                    $this->assertEquals(['foo' => 'bar'], $result);
                 }
             ],
             $request,
