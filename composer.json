@@ -21,6 +21,7 @@
 		"php": ">=5.5.0"
 	},
 	"require-dev": {
+		"ext-mcrypt": "*",
 		"zendframework/zend-diactoros": "1.*",
 		"relay/relay": "1.*",
 		"nikic/fast-route": "0.*",
