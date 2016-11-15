@@ -23,7 +23,7 @@
 	"require-dev": {
 		"zendframework/zend-diactoros": "1.*",
 		"relay/relay": "1.*",
-		"nikic/fast-route": "0.*",
+		"nikic/fast-route": "^0.7",
 		"aura/router": "^3.0",
 		"aura/session": "2.*",
 		"phpunit/phpunit": ">=4.8",
