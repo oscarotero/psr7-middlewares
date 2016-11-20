@@ -10,6 +10,9 @@ class JsonSchema
     /** @var string[] */
     private $schemas;
 
+    /** @var callable|null */
+    private $errorHandler;
+
     /**
      * JsonSchema constructor.
      *
@@ -35,6 +38,10 @@ class JsonSchema
 
         if ($schema instanceof \SplFileObject) {
             $validator = JsonValidator::fromFile($schema);
+            if (is_callable($this->errorHandler)) {
+                $validator->errorHandler($this->errorHandler);
+            }
+
             return $validator($request, $response, $next);
         }
 
@@ -73,5 +80,20 @@ class JsonSchema
         }
 
         return 'file://'.$path;
+    }
+
+    /**
+     * Has the following method signature:
+     * function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {}
+     *
+     * Validation errors are stored in a middleware attribute:
+     * $request->getAttribute(Middleware::KEY, [])[JsonValidator::KEY];
+     *
+     * @param callable $errorHandler
+     * @return void
+     */
+    public function errorHandler(callable $errorHandler)
+    {
+        $this->errorHandler = $errorHandler;
     }
 }

@@ -2,12 +2,11 @@
 
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamFile;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr7Middlewares\Middleware\JsonSchema;
+use Psr7Middlewares\Middleware\JsonValidator;
 use Zend\Diactoros\Response;
-use Zend\Diactoros\ServerRequest;
-use Zend\Diactoros\Stream;
 
 /**
  * @covers \Psr7Middlewares\Middleware\JsonSchema
@@ -205,5 +204,26 @@ JSON
 
         self::assertInstanceOf(ResponseInterface::class, $response);
         self::assertGreaterThanOrEqual(400, $response->getStatusCode(), $response->getReasonPhrase());
+    }
+
+    public function testCustomErrorHandler()
+    {
+        $request = $this->request('/en/v1/users')
+            ->withParsedBody(json_decode(json_encode([
+                'foo' => 'bar',
+            ])));
+
+        $wasCalled = false;
+        $this->validator->errorHandler(
+            function (ServerRequestInterface $request, ResponseInterface $response) use (&$wasCalled) {
+                self::assertNotCount(0, $middleware = $request->getAttribute(\Psr7Middlewares\Middleware::class));
+                self::assertNotCount(0, $middleware[JsonValidator::KEY]);
+
+                $wasCalled = true;
+            }
+        );
+
+        $this->dispatch([$this->validator], $request, new Response());
+        self::assertTrue($wasCalled);
     }
 }
