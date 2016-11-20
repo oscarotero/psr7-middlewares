@@ -216,8 +216,7 @@ JSON
         $wasCalled = false;
         $this->validator->errorHandler(
             function (ServerRequestInterface $request, ResponseInterface $response) use (&$wasCalled) {
-                self::assertNotCount(0, $middleware = $request->getAttribute(\Psr7Middlewares\Middleware::class));
-                self::assertNotCount(0, $middleware[JsonValidator::KEY]);
+                self::assertNotCount(0, JsonValidator::getErrors($request));
 
                 $wasCalled = true;
             }

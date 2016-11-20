@@ -79,6 +79,18 @@ class JsonValidator
     }
 
     /**
+     * Returns the request's JSON validation errors.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return array|null
+     */
+    public static function getErrors(ServerRequestInterface $request)
+    {
+        return self::getAttribute($request, self::KEY);
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
