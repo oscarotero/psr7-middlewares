@@ -32,16 +32,19 @@ trait AttributeTrait
      *
      * @param ServerRequestInterface $request
      * @param string                 $name
+     * @param mixed|null             $default
      *
-     * @return mixed
+     * @return mixed|null
      */
-    private static function getAttribute(ServerRequestInterface $request, $name)
+    private static function getAttribute(ServerRequestInterface $request, $name, $default = null)
     {
-        $attributes = $request->getAttribute(Middleware::KEY);
+        $attributes = $request->getAttribute(Middleware::KEY, []);
 
         if (isset($attributes[$name])) {
             return $attributes[$name];
         }
+
+        return $default;
     }
 
     /**
