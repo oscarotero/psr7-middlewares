@@ -61,7 +61,7 @@ class BasicAuthentication
      *
      * @return bool
      */
-    private function checkUserPassword($username, $password)
+    protected function checkUserPassword($username, $password)
     {
         if (!isset($this->users[$username]) || $this->users[$username] !== $password) {
             return false;
