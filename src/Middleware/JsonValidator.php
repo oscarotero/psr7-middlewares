@@ -5,11 +5,22 @@ namespace Psr7Middlewares\Middleware;
 use JsonSchema\Validator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Utils\AttributeTrait;
+use Psr7Middlewares\Utils\CallableTrait;
 
 class JsonValidator
 {
+    const KEY = 'JSON_VALIDATION_ERRORS';
+
+    use AttributeTrait;
+    use CallableTrait;
+
     /** @var \stdClass */
     private $schema;
+
+    /** @var callable */
+    private $errorHandler;
 
     /**
      * JsonSchema constructor.
@@ -24,6 +35,7 @@ class JsonValidator
     public function __construct(\stdClass $schema)
     {
         $this->schema = $schema;
+        $this->errorHandler = [$this, 'defaultErrorHandler'];
     }
 
     /**
@@ -67,6 +79,18 @@ class JsonValidator
     }
 
     /**
+     * Returns the request's JSON validation errors.
+     *
+     * @param ServerRequestInterface $request
+     *
+     * @return array|null
+     */
+    public static function getErrors(ServerRequestInterface $request)
+    {
+        return self::getAttribute($request, self::KEY);
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -82,52 +106,62 @@ class JsonValidator
     {
         $value = $request->getParsedBody();
         if (!is_object($value)) {
-            return $this->invalidateResponse(
-                $response,
-                sprintf('Parsed body must be an object. Type %s is invalid.', gettype($value))
-            );
+            $request = self::setAttribute($request, self::KEY, [
+                sprintf('Parsed body must be an object. Type %s is invalid.', gettype($value)),
+            ]);
+
+            return $this->executeCallable($this->errorHandler, $request, $response);
         }
 
         $validator = new Validator();
         $validator->check($value, $this->schema);
 
         if (!$validator->isValid()) {
-            return $this->invalidateResponse(
-                $response,
-                'Unprocessable Entity',
-                [
-                    'Content-Type' => 'application/json',
-                ],
-                json_encode($validator->getErrors(), JSON_UNESCAPED_SLASHES)
-            );
+            $request = self::setAttribute($request, self::KEY, $validator->getErrors());
+
+            return $this->executeCallable($this->errorHandler, $request, $response);
         }
 
         return $next($request, $response);
     }
 
     /**
+     * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @param string $reason
-     * @param string[] $headers
-     * @param string|null $body
-     *
      * @return ResponseInterface
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
-    private function invalidateResponse(ResponseInterface $response, $reason, array $headers = [], $body = null)
-    {
-        $response = $response->withStatus(422, $reason);
+    private function defaultErrorHandler(
+        ServerRequestInterface $request,
+        ResponseInterface $response
+    ) {
+        $response = $response->withStatus(422, 'Unprocessable Entity')
+            ->withHeader('Content-Type', 'application/json');
 
-        foreach ($headers as $name => $value) {
-            $response = $response->withHeader($name, $value);
-        }
+        $middlewareAttribute = $request->getAttribute(Middleware::KEY, []);
 
-        if ($body !== null) {
+        if (isset($middlewareAttribute[self::KEY])) {
+            /** @var ResponseInterface $response */
             $stream = $response->getBody();
-            $stream->write($body);
+            $stream->write(json_encode($middlewareAttribute[self::KEY], JSON_UNESCAPED_SLASHES));
         }
 
         return $response;
+    }
+
+    /**
+     * Has the following method signature:
+     * function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {}
+     *
+     * Validation errors are stored in a middleware attribute:
+     * $request->getAttribute(Middleware::KEY, [])[JsonValidator::KEY];
+     *
+     * @param callable $errorHandler
+     * @return void
+     */
+    public function errorHandler(callable $errorHandler)
+    {
+        $this->errorHandler = $errorHandler;
     }
 }
