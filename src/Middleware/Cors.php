@@ -29,12 +29,10 @@ class Cors
      * Defines the settings used.
      *
      * @param SettingsStrategyInterface|null $settings
-     * @paramm LoggerInterface|null $logger
      */
-    public function __construct(SettingsStrategyInterface $settings = null, LoggerInterface $logger = null)
+    public function __construct(SettingsStrategyInterface $settings = null)
     {
         $this->settings = $settings ?: new Settings();
-        $this->logger = $logger;
     }
 
     /**
@@ -168,6 +166,19 @@ class Cors
     {
         $this->settings->setCheckHost($checkHost);
 
+        return $this;
+    }
+    
+    /**
+     * Set the logger used by the Analyzer for debugging purposes
+     * 
+     * @param LoggerInterface
+     *
+     * @return self
+     */
+    public function logger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
         return $this;
     }
 
