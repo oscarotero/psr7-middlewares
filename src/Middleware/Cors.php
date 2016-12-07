@@ -4,6 +4,7 @@ namespace Psr7Middlewares\Middleware;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Neomerx\Cors\Analyzer;
 use Neomerx\Cors\Contracts\AnalysisResultInterface;
 use Neomerx\Cors\Contracts\Strategies\SettingsStrategyInterface;
@@ -18,15 +19,22 @@ class Cors
      * @var SettingsStrategyInterface The settings used by the Analyzer
      */
     private $settings;
+    
+    /**
+     * @var LoggerInterface|null The logger used by the Analyzer for debugging
+     */
+    private $logger;
 
     /**
      * Defines the settings used.
      *
      * @param SettingsStrategyInterface|null $settings
+     * @paramm LoggerInterface|null $logger
      */
-    public function __construct(SettingsStrategyInterface $settings = null)
+    public function __construct(SettingsStrategyInterface $settings = null, LoggerInterface $logger = null)
     {
         $this->settings = $settings ?: new Settings();
+        $this->logger = $logger;
     }
 
     /**
@@ -174,7 +182,13 @@ class Cors
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $cors = Analyzer::instance($this->settings)->analyze($request);
+        $analyzer = Analyzer::instance($this->settings);
+        
+        if ($this->logger instanceof LoggerInterface) {
+            $analyzer->setLogger($this->logger);
+        }
+        
+        $cors = $analyzer->analyze($request);
 
         switch ($cors->getRequestType()) {
             case AnalysisResultInterface::ERR_NO_HOST_HEADER:
