@@ -105,8 +105,8 @@ class Csrf
      */
     private function generateTokens(ServerRequestInterface $request, $lockTo, array &$tokens)
     {
-        $index = self::encode(random_bytes(18));
-        $token = self::encode(random_bytes(32));
+        $index = self::encode(randomToken(18));
+        $token = self::encode(randomToken(32));
 
         $tokens[$index] = [
             'uri' => $request->getUri()->getPath(),
@@ -172,5 +172,29 @@ class Csrf
     private static function encode($value)
     {
         return rtrim(base64_encode($value), '=');
+    }
+
+    /**
+     * Return a random token.
+     *
+     * @param int $length The length of the random string that should be returned in bytes.
+     *
+     * @return string
+     */
+    private function randomToken($length = 32)
+    {
+        if (!isset($length) || intval($length) <= 8) {
+            $length = 32;
+        }
+        if (function_exists('random_bytes')) {
+            return random_bytes($length);
+        }
+        if (function_exists('mcrypt_create_iv')) {
+            return mcrypt_create_iv($length, MCRYPT_DEV_URANDOM);
+        }
+        if (function_exists('openssl_random_pseudo_bytes')) {
+            return openssl_random_pseudo_bytes($length);
+        }
+        return @crypt(uniqid());
     }
 }
