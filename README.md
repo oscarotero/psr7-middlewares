@@ -1067,7 +1067,8 @@ $middlewares = [
     
     Middleware::Payload([     // (optional) Array of parsing options:
         'forceArray' => false // Force to use arrays instead objects in json (true by default)
-    ]),
+    ])
+    ->override(),             // (optional) To override the existing parsed body if exists (false by default)
 
     function ($request, $response, $next) {
         //Get the parsed body
