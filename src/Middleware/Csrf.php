@@ -177,7 +177,7 @@ class Csrf
     /**
      * Return a random token.
      *
-     * @param int $length The length of the random string that should be returned in bytes.
+     * @param int $length The length of the random string that should be returned in bytes
      *
      * @return string
      */
@@ -195,6 +195,7 @@ class Csrf
         if (function_exists('openssl_random_pseudo_bytes')) {
             return openssl_random_pseudo_bytes($length);
         }
+
         return @crypt(uniqid());
     }
 }

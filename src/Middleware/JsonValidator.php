@@ -28,9 +28,9 @@ class JsonValidator
      *  - JsonValidator::fromFile()
      *  - JsonValidator::fromEncodedString()
      *  - JsonValidator::fromDecodedObject()
-     *  - JsonValidator::fromArray()
+     *  - JsonValidator::fromArray().
      *
-     * @param \stdClass $schema A JSON-decoded object-representation of the schema.
+     * @param \stdClass $schema A JSON-decoded object-representation of the schema
      */
     public function __construct(\stdClass $schema)
     {
@@ -40,6 +40,7 @@ class JsonValidator
 
     /**
      * @param \stdClass $schema
+     *
      * @return static|callable
      */
     public static function fromDecodedObject(\stdClass $schema)
@@ -49,11 +50,12 @@ class JsonValidator
 
     /**
      * @param \SplFileObject $file
+     *
      * @return static|callable
      */
     public static function fromFile(\SplFileObject $file)
     {
-        $schema = (object)[
+        $schema = (object) [
             '$ref' => $file->getPathname(),
         ];
 
@@ -62,6 +64,7 @@ class JsonValidator
 
     /**
      * @param string $json
+     *
      * @return static|callable
      */
     public static function fromEncodedString($json)
@@ -71,6 +74,7 @@ class JsonValidator
 
     /**
      * @param array $json
+     *
      * @return static|callable
      */
     public static function fromArray(array $json)
@@ -94,10 +98,11 @@ class JsonValidator
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
+     * @param ResponseInterface      $response
+     * @param callable               $next
      *
      * @return ResponseInterface
+     *
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      * @throws \JsonSchema\Exception\ExceptionInterface
@@ -127,8 +132,10 @@ class JsonValidator
 
     /**
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
+     * @param ResponseInterface      $response
+     *
      * @return ResponseInterface
+     *
      * @throws \RuntimeException
      * @throws \InvalidArgumentException
      */
@@ -152,13 +159,12 @@ class JsonValidator
 
     /**
      * Has the following method signature:
-     * function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {}
+     * function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {}.
      *
      * Validation errors are stored in a middleware attribute:
      * $request->getAttribute(Middleware::KEY, [])[JsonValidator::KEY];
      *
      * @param callable $errorHandler
-     * @return void
      */
     public function errorHandler(callable $errorHandler)
     {

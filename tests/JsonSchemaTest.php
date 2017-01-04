@@ -97,6 +97,7 @@ JSON
 
     /**
      * @dataProvider dataInvalidParsedBody
+     *
      * @param mixed $parsedBody
      */
     public function testInvalidParsedBody($parsedBody)
@@ -117,7 +118,7 @@ JSON
                 'id' => '1234',
                 'name' => [
                     'given' => 'Foo',
-                    'family' => 'Bar'
+                    'family' => 'Bar',
                 ],
                 'email' => 'foo.bar@example.com',
             ])));
@@ -164,7 +165,7 @@ JSON
                 'id' => '1234',
                 'name' => [
                     'given' => 'Foo',
-                    'family' => 'Bar'
+                    'family' => 'Bar',
                 ],
                 'email' => 'foo.bar@example.com',
             ])));

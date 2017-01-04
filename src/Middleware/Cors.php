@@ -19,7 +19,7 @@ class Cors
      * @var SettingsStrategyInterface The settings used by the Analyzer
      */
     private $settings;
-    
+
     /**
      * @var LoggerInterface|null The logger used by the Analyzer for debugging
      */
@@ -168,10 +168,10 @@ class Cors
 
         return $this;
     }
-    
+
     /**
-     * Set the logger used by the Analyzer for debugging purposes
-     * 
+     * Set the logger used by the Analyzer for debugging purposes.
+     *
      * @param LoggerInterface
      *
      * @return self
@@ -179,6 +179,7 @@ class Cors
     public function logger(LoggerInterface $logger)
     {
         $this->logger = $logger;
+
         return $this;
     }
 
@@ -194,11 +195,11 @@ class Cors
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $analyzer = Analyzer::instance($this->settings);
-        
+
         if ($this->logger instanceof LoggerInterface) {
             $analyzer->setLogger($this->logger);
         }
-        
+
         $cors = $analyzer->analyze($request);
 
         switch ($cors->getRequestType()) {

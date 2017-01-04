@@ -20,33 +20,33 @@ class JsonValidatorTest extends Base
         'type' => 'object',
         'properties' => [
             'id' => [
-                'type' => 'string'
+                'type' => 'string',
             ],
             'name' => [
                 'type' => 'object',
                 'properties' => [
                     'given' => [
-                        'type' => 'string'
+                        'type' => 'string',
                     ],
                     'family' => [
-                        'type' => 'string'
-                    ]
+                        'type' => 'string',
+                    ],
                 ],
                 'required' => [
                     'given',
-                    'family'
-                ]
+                    'family',
+                ],
             ],
             'email' => [
                 'type' => 'string',
-                'format' => 'email'
-            ]
+                'format' => 'email',
+            ],
         ],
         'required' => [
             'id',
             'name',
-            'email'
-        ]
+            'email',
+        ],
     ];
 
     protected function setUp()
@@ -84,6 +84,7 @@ class JsonValidatorTest extends Base
 
     /**
      * @dataProvider dataInvalidParsedBody
+     *
      * @param mixed $parsedBody
      */
     public function testInvalidParsedBody($parsedBody)
@@ -104,7 +105,7 @@ class JsonValidatorTest extends Base
                 'id' => '1234',
                 'name' => [
                     'given' => 'Foo',
-                    'family' => 'Bar'
+                    'family' => 'Bar',
                 ],
                 'email' => 'foo.bar@example.com',
             ])));
@@ -131,7 +132,7 @@ class JsonValidatorTest extends Base
                 'id' => '1234',
                 'name' => [
                     'given' => 'Foo',
-                    'family' => 'Bar'
+                    'family' => 'Bar',
                 ],
                 'email' => 'foo.bar@example.com',
             ])));
@@ -151,7 +152,7 @@ class JsonValidatorTest extends Base
                 'id' => '1234',
                 'name' => [
                     'given' => 'Foo',
-                    'family' => 'Bar'
+                    'family' => 'Bar',
                 ],
                 'email' => 'foo.bar@example.com',
             ])));

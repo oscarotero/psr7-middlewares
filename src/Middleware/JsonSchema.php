@@ -84,13 +84,12 @@ class JsonSchema
 
     /**
      * Has the following method signature:
-     * function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {}
+     * function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {}.
      *
      * Validation errors are stored in a middleware attribute:
      * $request->getAttribute(Middleware::KEY, [])[JsonValidator::KEY];
      *
      * @param callable $errorHandler
-     * @return void
      */
     public function errorHandler(callable $errorHandler)
     {

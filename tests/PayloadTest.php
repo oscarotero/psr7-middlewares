@@ -31,6 +31,7 @@ class PayloadTest extends Base
                 function ($request, $response, $next) use ($result) {
                     $this->assertEquals($result, $request->getParsedBody());
                     $response->getBody()->write('OK');
+
                     return $response;
                 },
             ],
@@ -65,7 +66,7 @@ class PayloadTest extends Base
 
         $this->dispatch(
             [
-                new Middleware\Payload(['forceArray' => false]),
+                Middleware::Payload(['forceArray' => false]),
                 function (ServerRequestInterface $request) {
                     $result = $request->getParsedBody();
                     $this->assertInstanceOf(\stdClass::class, $result);
@@ -75,7 +76,7 @@ class PayloadTest extends Base
                     $this->assertInstanceOf(\stdClass::class, $result->fiz);
                     $this->assertObjectHasAttribute('buz', $result->fiz);
                     $this->assertTrue($result->fiz->buz);
-                }
+                },
             ],
             $request,
             $this->response()
@@ -91,11 +92,11 @@ class PayloadTest extends Base
 
         $this->dispatch(
             [
-                new Middleware\Payload(),
+                Middleware::Payload(),
                 function (ServerRequestInterface $request) {
                     $result = $request->getParsedBody();
                     $this->assertEquals(['other body'], $result);
-                }
+                },
             ],
             $request,
             $this->response()
@@ -109,16 +110,13 @@ class PayloadTest extends Base
             ->withBody($this->stream('{"foo":"bar"}'))
             ->withParsedBody(['other body']);
 
-        $payloadMiddleware = new Middleware\Payload();
-        $payloadMiddleware->overrideExistingParsedBody();
-
         $this->dispatch(
             [
-                $payloadMiddleware,
+                Middleware::Payload()->override(),
                 function (ServerRequestInterface $request) {
                     $result = $request->getParsedBody();
                     $this->assertEquals(['foo' => 'bar'], $result);
-                }
+                },
             ],
             $request,
             $this->response()

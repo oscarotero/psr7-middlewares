@@ -109,4 +109,3 @@ CSV
         self::assertInternalType('array', $actual);
     }
 }
-
