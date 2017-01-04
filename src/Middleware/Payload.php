@@ -42,7 +42,7 @@ class Payload
      */
     public function override($override = true)
     {
-        $this->override = true;
+        $this->override = $override;
 
         return $this;
     }
