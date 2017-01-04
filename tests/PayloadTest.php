@@ -37,7 +37,6 @@ class PayloadTest extends Base
             $request,
             $this->response()
         );
-
         $this->assertEquals('OK', (string) $response->getBody());
     }
 
@@ -96,6 +95,29 @@ class PayloadTest extends Base
                 function (ServerRequestInterface $request) {
                     $result = $request->getParsedBody();
                     $this->assertEquals(['other body'], $result);
+                }
+            ],
+            $request,
+            $this->response()
+        );
+    }
+
+    public function testParsingIsNotSkippedIfForceOverrideInEffect()
+    {
+        $request = $this->request('', ['Content-Type' => 'application/json'])
+            ->withMethod('POST')
+            ->withBody($this->stream('{"foo":"bar"}'))
+            ->withParsedBody(['other body']);
+
+        $payloadMiddleware = new Middleware\Payload();
+        $payloadMiddleware->overrideExistingParsedBody();
+
+        $this->dispatch(
+            [
+                $payloadMiddleware,
+                function (ServerRequestInterface $request) {
+                    $result = $request->getParsedBody();
+                    $this->assertEquals(['foo' => 'bar'], $result);
                 }
             ],
             $request,
