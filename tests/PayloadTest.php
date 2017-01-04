@@ -30,11 +30,14 @@ class PayloadTest extends Base
                 Middleware::Payload(),
                 function ($request, $response, $next) use ($result) {
                     $this->assertEquals($result, $request->getParsedBody());
+                    $response->getBody()->write('OK');
+                    return $response;
                 },
             ],
             $request,
             $this->response()
         );
+        $this->assertEquals('OK', (string) $response->getBody());
     }
 
     public function testError()

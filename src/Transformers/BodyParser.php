@@ -54,7 +54,13 @@ class BodyParser extends Resolver
     {
         $assoc = (bool) $this->options['forceArray'];
 
-        $data = json_decode((string) $body, $assoc);
+        $string = (string) $body;
+
+        if ($string === '') {
+            return [];
+        }
+
+        $data = json_decode($string, $assoc);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new DomainException(json_last_error_msg());

@@ -913,6 +913,50 @@ $middlewares = [
 ];
 ```
 
+### JsonValidator
+
+Uses [justinrainbow/json-schema](https://github.com/justinrainbow/json-schema) to validate an `application/json` request body with a JSON schema:
+
+```php
+use Psr7Middlewares\Middleware;
+use Psr7Middlewares\Middleware\JsonValidator;
+
+// Validate using a file:
+$middlewares = [
+    Middleware::payload(['forceArray' => false]),
+    JsonValidator::fromFile(new \SplFileObject(WEB_ROOT . '/json-schema/en.v1.users.json')),
+];
+
+// Validate using an array:
+$middlewares = [
+    Middleware::payload(['forceArray' => false]),
+    JsonValidator::fromArray([
+        '$schema' => 'http://json-schema.org/draft-04/schema#',
+        'type' => 'object',
+        'properties' => [
+            'id' => [
+                'type' => 'string'
+            ],
+        ],
+        'required' => [
+            'id',
+        ]
+    ]);
+];
+
+// Override the default error handler, which responds with a 422 status code and application/json Content-Type:
+$middlewares = [
+    Middleware::payload(['forceArray' => false]),
+    JsonValidator::fromFile(new \SplFileObject('schema.json'))
+        ->setErrorHandler(function ($request, $response, array $errors) {
+            $response->getBody()->write('Failed JSON validation.');
+            
+            return $response->withStatus(400, 'Oops')
+                ->withHeader('Content-Type', 'text/plain');
+        }),
+];
+```
+
 ### JsonSchema
 
 Uses [justinrainbow/json-schema](https://github.com/justinrainbow/json-schema) to validate an `application/json` request body using route-matched JSON schemas:

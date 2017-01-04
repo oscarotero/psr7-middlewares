@@ -2,7 +2,6 @@
 
 namespace Psr7Middlewares\Middleware;
 
-use JsonSchema\Validator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -10,6 +9,9 @@ class JsonSchema
 {
     /** @var string[] */
     private $schemas;
+
+    /** @var callable|null */
+    private $errorHandler;
 
     /**
      * JsonSchema constructor.
@@ -34,78 +36,31 @@ class JsonSchema
     {
         $schema = $this->getSchema($request);
 
-        if (is_object($schema)) {
-            $value = $request->getParsedBody();
-            if (!is_object($value)) {
-                return $this->invalidateResponse(
-                    $response,
-                    sprintf('Parsed body must be an object. Type %s is invalid.', gettype($value))
-                );
+        if ($schema instanceof \SplFileObject) {
+            $validator = JsonValidator::fromFile($schema);
+            if (is_callable($this->errorHandler)) {
+                $validator->errorHandler($this->errorHandler);
             }
 
-            $validator = new Validator();
-            $validator->check($value, $schema);
-
-            if (!$validator->isValid()) {
-                return $this->invalidateResponse(
-                    $response,
-                    'Unprocessable Entity',
-                    [
-                        'Content-Type' => 'application/json',
-                    ],
-                    json_encode($validator->getErrors(), JSON_UNESCAPED_SLASHES)
-                );
-            }
+            return $validator($request, $response, $next);
         }
 
-        if ($next) {
-            return $next($request, $response);
-        }
-
-        return $response;
-    }
-
-    /**
-     * @param ResponseInterface $response
-     * @param string            $reason
-     * @param string[]          $headers
-     * @param string|null       $body
-     *
-     * @return ResponseInterface
-     */
-    private function invalidateResponse(ResponseInterface $response, $reason, array $headers = [], $body = null)
-    {
-        $response = $response->withStatus(422, $reason);
-
-        foreach ($headers as $name => $value) {
-            $response = $response->withHeader($name, $value);
-        }
-
-        if ($body !== null) {
-            $stream = $response->getBody();
-            $stream->write($body);
-        }
-
-        return $response;
+        return $next($request, $response);
     }
 
     /**
      * @param ServerRequestInterface $request
      *
-     * @return object|null
+     * @return \SplFileObject|null
      */
     private function getSchema(ServerRequestInterface $request)
     {
+        $uri = $request->getUri();
+        $path = $uri->getPath();
+
         foreach ($this->schemas as $pattern => $file) {
-            $uri = $request->getUri();
-            $path = $uri->getPath();
-
             if (stripos($path, $pattern) === 0) {
-                $file = $this->normalizeFilePath($file);
-
-                return (object) [
-                    '$ref' => $file,
-                ];
+                return new \SplFileObject($this->normalizeFilePath($file));
             }
         }
 
@@ -125,5 +80,20 @@ class JsonSchema
         }
 
         return 'file://'.$path;
+    }
+
+    /**
+     * Has the following method signature:
+     * function (ServerRequestInterface $request, ResponseInterface $response): ResponseInterface {}
+     *
+     * Validation errors are stored in a middleware attribute:
+     * $request->getAttribute(Middleware::KEY, [])[JsonValidator::KEY];
+     *
+     * @param callable $errorHandler
+     * @return void
+     */
+    public function errorHandler(callable $errorHandler)
+    {
+        $this->errorHandler = $errorHandler;
     }
 }

@@ -1,72 +1,59 @@
 <?php
 
 use org\bovigo\vfs\vfsStream;
-use org\bovigo\vfs\vfsStreamFile;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr7Middlewares\Middleware\JsonSchema;
 use Psr7Middlewares\Middleware\JsonValidator;
 use Zend\Diactoros\Response;
 
 /**
- * @covers \Psr7Middlewares\Middleware\JsonSchema
+ * @covers \Psr7Middlewares\Middleware\JsonValidator
  */
-class JsonSchemaTest extends Base
+class JsonValidatorTest extends Base
 {
-    /** @var JsonSchema */
+    /** @var JsonValidator */
     private $validator;
 
-    /** @var vfsStreamFile */
-    private $schema;
+    /** @var [] */
+    private static $schema = [
+        '$schema' => 'http://json-schema.org/draft-04/schema#',
+        'type' => 'object',
+        'properties' => [
+            'id' => [
+                'type' => 'string'
+            ],
+            'name' => [
+                'type' => 'object',
+                'properties' => [
+                    'given' => [
+                        'type' => 'string'
+                    ],
+                    'family' => [
+                        'type' => 'string'
+                    ]
+                ],
+                'required' => [
+                    'given',
+                    'family'
+                ]
+            ],
+            'email' => [
+                'type' => 'string',
+                'format' => 'email'
+            ]
+        ],
+        'required' => [
+            'id',
+            'name',
+            'email'
+        ]
+    ];
 
     protected function setUp()
     {
         parent::setUp();
 
-        $root = vfsStream::setup('test');
-        $this->schema = vfsStream::newFile('schema.json');
-        $root->addChild($this->schema);
-
-        $this->validator = new JsonSchema([
-            '/en/v1/users' => $this->schema->url(),
-        ]);
-
-        file_put_contents($this->schema->url(), <<<'JSON'
-{
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "id": {
-      "type": "string"
-    },
-    "name": {
-      "type": "object",
-      "properties": {
-        "given": {
-          "type": "string"
-        },
-        "family": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "given",
-        "family"
-      ]
-    },
-    "email": {
-        "type": "string",
-        "format": "email"
-    }
-  },
-  "required": [
-    "id",
-    "name",
-    "email"
-  ]
-}
-JSON
-        );
+        $this->validator = JsonValidator::fromArray(self::$schema);
     }
 
     public function testInvalidJson()
@@ -125,35 +112,35 @@ JSON
         $response = $this->dispatch([$this->validator], $request, new Response());
 
         self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertGreaterThanOrEqual(200, $response->getStatusCode(), $response->getBody());
-        self::assertLessThan(300, $response->getStatusCode(), $response->getBody());
+        self::assertGreaterThanOrEqual(200, $response->getStatusCode(), $response->getReasonPhrase());
+        self::assertLessThan(300, $response->getStatusCode(), $response->getReasonPhrase());
     }
 
-    public function testUnmatchedRouteBypassesValidation()
+    public function testValidJsonFromFileReference()
     {
-        $request = $this->request('/en/v1/posts')
-            ->withParsedBody(json_decode(json_encode([
-                'foo' => 'bar',
-            ])));
+        $root = vfsStream::setup('test');
+        $file = vfsStream::newFile('schema.json');
+        $root->addChild($file);
 
-        $response = $this->dispatch([$this->validator], $request, new Response());
+        file_put_contents($file->url(), json_encode(self::$schema));
 
-        self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertGreaterThanOrEqual(200, $response->getStatusCode(), $response->getBody());
-        self::assertLessThan(300, $response->getStatusCode(), $response->getBody());
-    }
+        $this->validator = JsonValidator::fromFile(new \SplFileObject($file->url()));
 
-    public function testSubRouteMatchesValidator()
-    {
         $request = $this->request('/en/v1/users')
             ->withParsedBody(json_decode(json_encode([
-                'foo' => 'bar',
+                'id' => '1234',
+                'name' => [
+                    'given' => 'Foo',
+                    'family' => 'Bar'
+                ],
+                'email' => 'foo.bar@example.com',
             ])));
 
         $response = $this->dispatch([$this->validator], $request, new Response());
 
         self::assertInstanceOf(ResponseInterface::class, $response);
-        self::assertGreaterThanOrEqual(400, $response->getStatusCode(), $response->getBody());
+        self::assertGreaterThanOrEqual(200, $response->getStatusCode(), $response->getReasonPhrase());
+        self::assertLessThan(300, $response->getStatusCode(), $response->getReasonPhrase());
     }
 
     public function testPayloadCollaborationWithValidJson()
@@ -182,7 +169,7 @@ JSON
 
         self::assertInstanceOf(ResponseInterface::class, $response);
         self::assertGreaterThanOrEqual(200, $response->getStatusCode(), $response->getReasonPhrase());
-        self::assertLessThan(300, $response->getStatusCode(), $response->getBody());
+        self::assertLessThan(300, $response->getStatusCode(), $response->getReasonPhrase());
     }
 
     public function testPayloadCollaborationWithInvalidJson()
