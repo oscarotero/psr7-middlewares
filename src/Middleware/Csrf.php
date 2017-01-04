@@ -105,8 +105,8 @@ class Csrf
      */
     private function generateTokens(ServerRequestInterface $request, $lockTo, array &$tokens)
     {
-        $index = self::encode(randomToken(18));
-        $token = self::encode(randomToken(32));
+        $index = self::encode($this->randomToken(18));
+        $token = self::encode($this->randomToken(32));
 
         $tokens[$index] = [
             'uri' => $request->getUri()->getPath(),
