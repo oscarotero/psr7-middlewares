@@ -19,6 +19,11 @@ class AuraRouter
      * @var RouterContainer The router container
      */
     private $router;
+    
+    /**
+     * @var array 
+     */
+    private $rules = [];
 
     /**
      * Returns the route instance.
@@ -36,10 +41,41 @@ class AuraRouter
      * Set the RouterContainer instance.
      *
      * @param RouterContainer $router
+     * @throws InvalidArgumentException if the rules array does not consist of a 
+     * key/callable pair of values
      */
-    public function __construct(RouterContainer $router)
+    public function __construct(RouterContainer $router, array $rules = null)
     {
         $this->router = $router;
+
+        $this->addRule('Aura\Router\Rule\Allows', function($request, $response) {
+            return $response->withStatus(405); // 405 METHOD NOT ALLOWED
+        });
+
+        $this->addRule('Aura\Router\Rule\Accepts', function($request, $response) {
+            return $response->withStatus(406); // 406 NOT ACCEPTABLE
+        });
+        
+        if ($rules !== null) {
+            foreach ($rules as $name => $callback) {
+                if (!is_string($name) || !is_callable($callback)) {
+                    $message = 'Invalid rule given. Expected a valid key/callable '
+                        . 'pair value';
+                    throw \InvalidArgumentException($message);
+                }
+                
+                $this->addRule($name, $callback);
+            }
+        }
+    }
+    
+    /**
+     * Adds a new rule
+     */
+    public function addRule(string $name, callable $callback)
+    {
+        $this->rules[$name] = $callback;
+        return $this;
     }
 
     /**
@@ -58,17 +94,14 @@ class AuraRouter
 
         if (!$route) {
             $failedRoute = $matcher->getFailedRoute();
-
-            switch ($failedRoute->failedRule) {
-                case 'Aura\Router\Rule\Allows':
-                    return $response->withStatus(405); // 405 METHOD NOT ALLOWED
-
-                case 'Aura\Router\Rule\Accepts':
-                    return $response->withStatus(406); // 406 NOT ACCEPTABLE
-
-                default:
-                    return $response->withStatus(404); // 404 NOT FOUND
+            
+            foreach($this->rules as $name => $callback) {
+                if ($failedRoute->failedRule === $name) {
+                    return $callback($request, $response);
+                }
             }
+            
+            return $response->withStatus(404); // 404 NOT FOUND
         }
 
         $request = self::setAttribute($request, self::KEY, $route);
