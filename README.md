@@ -395,6 +395,8 @@ $middlewares = [
 ];
 ```
 
+To change order or add more server variables to be checked, use `serverOptions` method.
+
 ### Cors
 
 To use the [neomerx/cors-psr7](https://github.com/neomerx/cors-psr7) library:
