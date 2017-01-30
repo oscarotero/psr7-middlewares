@@ -23,14 +23,7 @@ class ClientIp
     /**
      * @var array The trusted headers
      */
-    private $headers = [
-        'Forwarded',
-        'Forwarded-For',
-        'Client-Ip',
-        'X-Forwarded',
-        'X-Forwarded-For',
-        'X-Cluster-Client-Ip',
-    ];
+    private $headers = [];
 
     /**
      * Returns all ips found.
@@ -77,7 +70,7 @@ class ClientIp
      *
      * @return self
      */
-    public function headers(array $headers)
+    public function headers(array $headers = ['Forwarded', 'Forwarded-For', 'Client-Ip', 'X-Forwarded', 'X-Forwarded-For', 'X-Cluster-Client-Ip'])
     {
         $this->headers = $headers;
 
@@ -131,10 +124,6 @@ class ClientIp
             $ips[] = file_get_contents('http://ipecho.net/plain');
         }
 
-        if (!empty($server['REMOTE_ADDR']) && filter_var($server['REMOTE_ADDR'], FILTER_VALIDATE_IP)) {
-            $ips[] = $server['REMOTE_ADDR'];
-        }
-
         foreach ($this->headers as $name) {
             $header = $request->getHeaderLine($name);
 
@@ -145,6 +134,10 @@ class ClientIp
                     }
                 }
             }
+        }
+
+        if (!empty($server['REMOTE_ADDR']) && filter_var($server['REMOTE_ADDR'], FILTER_VALIDATE_IP)) {
+            $ips[] = $server['REMOTE_ADDR'];
         }
 
         return $ips;
