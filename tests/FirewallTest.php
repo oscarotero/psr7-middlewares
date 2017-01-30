@@ -58,7 +58,7 @@ class FirewallTest extends Base
     {
         $response = $this->execute(
             [
-                Middleware::ClientIp(),
+                (Middleware::ClientIp())->headers(),
                 Middleware::Firewall()
                     ->trusted($trusted)
                     ->untrusted($untrusted),
