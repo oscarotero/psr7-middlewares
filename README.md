@@ -204,16 +204,16 @@ $middlewares = [
         'username1' => 'password1',
         'username2' => 'password2'
     ]),
-    
+
     //Map the key used by this middleware
     Middleware::attributeMapper([
         Middleware\BasicAuthentication::KEY => 'auth:username'
     ]),
-        
+
     function ($request, $response, $next) {
         //We can get the username as usual
         $username = BasicAuthentication::getUsername($request);
-    
+
         //But also using the "auth:username" attribute name.
         assert($username === $request->getAttribute('auth:username'));
 
@@ -329,7 +329,7 @@ $middlewares = [
             'username2' => 'password2'
         ])
         ->realm('My realm'), //(optional) change the realm value
-        
+
     function ($request, $response, $next) {
         $username = BasicAuthentication::getUsername($request);
 
@@ -481,7 +481,7 @@ $middlewares = [
             '<input type="submit">'.
             '</form>'
         );
-        
+
         return $next($request, $response);
     }
 ];
@@ -489,7 +489,7 @@ $middlewares = [
 
 ### DebugBar
 
-Inserts the [PHP debug bar 1.x](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses. 
+Inserts the [PHP debug bar 1.x](http://phpdebugbar.com/) in the html body. This middleware requires `Middleware::formatNegotiator` executed before, to insert the debug bar only in Html responses.
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -567,7 +567,7 @@ $middlewares = [
         ])
         ->realm('My realm') //(optional) custom realm value
         ->nonce(uniqid()),   //(optional) custom nonce value
-        
+
     function ($request, $response, $next) {
         $username = DigestAuthentication::getUsername($request);
 
@@ -627,6 +627,9 @@ $middlewares = [
     Middleware::ErrorHandler('handler') //(optional) The error handler
         ->arguments($myApp)             //(optional) extra arguments to the handler
         ->catchExceptions()             //(optional) to catch exceptions
+        ->statusCode(function ($code) { //(optional) configure which status codes you want to handle with the errorHandler
+            return $code >= 400 && $code < 600 && $code != 422; // you can bypass some status codes in case you want to handle it
+        })
 ];
 ```
 
@@ -739,7 +742,7 @@ $middlewares = [
             '<input type="submit">'.
             '</form>'
         );
-        
+
         return $next($request, $response);
     }
 ];
@@ -754,7 +757,7 @@ use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Middleware\Geolocate;
 
 $middlewares = [
-    
+
     //(optional) only if you want to save the result in the user session
     Middleware::PhpSession(),
     //or
@@ -789,10 +792,10 @@ Inject the Google Analytics code in all html pages.
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
-    
+
     //(recomended) to detect html responses
     Middleware::formatNegotiator(),
-    
+
     Middleware::GoogleAnalytics('UA-XXXXX-X') //The site id
 ];
 ```
@@ -821,10 +824,10 @@ Implements a honeypot spam prevention. This technique is based on creating a inp
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
-    
+
     //(recomended) to detect html responses
     Middleware::formatNegotiator(),
-    
+
     Middleware::Honeypot()
         ->inputName('my_name') //(optional) The name of the input field (by default "hpt_name")
         ->inputClass('hidden') //(optional) The class of the input field (by default "hpt_input")
@@ -841,7 +844,7 @@ $middlewares = [
             '<input type="submit">'.
             '</form>'
         );
-        
+
         return $next($request, $response);
     }
 ];
@@ -876,7 +879,7 @@ If you want to save the transformed images in the cache, provide a library compa
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
-    
+
     //(recomended) to detect responses' mimetype
     Middleware::formatNegotiator(),
 
@@ -950,7 +953,7 @@ $middlewares = [
     JsonValidator::fromFile(new \SplFileObject('schema.json'))
         ->setErrorHandler(function ($request, $response, array $errors) {
             $response->getBody()->write('Failed JSON validation.');
-            
+
             return $response->withStatus(400, 'Oops')
                 ->withHeader('Content-Type', 'text/plain');
         }),
@@ -1048,7 +1051,7 @@ Uses [mrclay/minify](https://github.com/mrclay/minify) to minify the html, css a
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
-    
+
     //(recomended) to detect the mimetype of the response
     Middleware::formatNegotiator(),
 
@@ -1064,7 +1067,7 @@ Parses the body of the request if it's not parsed and the method is POST, PUT or
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
-    
+
     Middleware::Payload([     // (optional) Array of parsing options:
         'forceArray' => false // Force to use arrays instead objects in json (true by default)
     ])
@@ -1088,7 +1091,7 @@ Initializes a [php session](http://php.net/manual/en/book.session.php) using the
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
-    
+
     Middleware::PhpSession()
         ->name('SessionId') //(optional) Name of the session
         ->id('ABC123')      //(optional) Id of the session
@@ -1110,10 +1113,10 @@ To use the [Piwik](https://piwik.org/) analytics platform. Injects the javascrip
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
-    
+
     //(recomended) to detect html responses
     Middleware::formatNegotiator(),
-    
+
     Middleware::Piwik()
         ->piwikUrl('//example.com/piwik')    // The url of the installed piwik
         ->siteId(1)                          // (optional) The site id (1 by default)
@@ -1144,10 +1147,10 @@ To use the [google recaptcha](https://github.com/google/recaptcha) library for s
 use Psr7Middlewares\Middleware;
 
 $middlewares = [
-    
+
     //required to get the user IP
     Middleware::ClientIp(),
-    
+
     Middleware::Recapcha('secret') //The secret key
 ];
 ```
