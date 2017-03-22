@@ -16,6 +16,11 @@ class Https
     const HEADER = 'Strict-Transport-Security';
 
     /**
+     * @var bool Add or remove https
+     */
+    private $addHttps;
+
+    /**
      * @param int One year by default
      */
     private $maxAge = 31536000;
@@ -32,9 +37,12 @@ class Https
 
     /**
      * Set basic config.
+     *
+     * @param bool $addHttps
      */
-    public function __construct()
+    public function __construct($addHttps = true)
     {
+        $this->addHttps = (bool) $addHttps;
         $this->redirect(301);
     }
 
@@ -95,24 +103,40 @@ class Https
     {
         $uri = $request->getUri();
 
-        if (strtolower($uri->getScheme()) !== 'https') {
-            $uri = $uri->withScheme('https')->withPort(443);
+        if ($this->addHttps) {
+            if (strtolower($uri->getScheme()) !== 'https') {
+                $uri = $uri->withScheme('https')->withPort(443);
 
-            if ($this->redirectStatus !== false && (!$this->checkHttpsForward || ($request->getHeaderLine('X-Forwarded-Proto') !== 'https' && $request->getHeaderLine('X-Forwarded-Port') !== '443'))) {
-                return $this->getRedirectResponse($request, $uri, $response);
+                if ($this->redirectStatus !== false && (!$this->checkHttpsForward || ($request->getHeaderLine('X-Forwarded-Proto') !== 'https' && $request->getHeaderLine('X-Forwarded-Port') !== '443'))) {
+                    return $this->getRedirectResponse($request, $uri, $response);
+                }
+
+                $request = $request->withUri($uri);
             }
 
-            $request = $request->withUri($uri);
-        }
+            if (!empty($this->maxAge)) {
+                $response = $response->withHeader(self::HEADER, sprintf('max-age=%d%s', $this->maxAge, $this->includeSubdomains ? ';includeSubDomains' : ''));
+            }
+        } else {
+            if (strtolower($uri->getScheme()) !== 'http') {
+                $uri = $uri->withScheme('http')->withPort(80);
 
-        if (!empty($this->maxAge)) {
-            $response = $response->withHeader(self::HEADER, sprintf('max-age=%d%s', $this->maxAge, $this->includeSubdomains ? ';includeSubDomains' : ''));
+                if ($this->redirectStatus !== false && (!$this->checkHttpsForward || ($request->getHeaderLine('X-Forwarded-Proto') !== 'http' && $request->getHeaderLine('X-Forwarded-Port') !== '80'))) {
+                    return $this->getRedirectResponse($request, $uri, $response);
+                }
+
+                $request = $request->withUri($uri);
+            }
         }
 
         $response = $next($request, $response);
 
         if (Utils\Helpers::isRedirect($response)) {
-            return $response->withHeader('Location', str_replace('http://', 'https://', $response->getHeaderLine('Location')));
+            if ($this->addHttps) {
+                return $response->withHeader('Location', str_replace('http://', 'https://', $response->getHeaderLine('Location')));
+            }
+
+            return $response->withHeader('Location', str_replace('https://', 'http://', $response->getHeaderLine('Location')));
         }
 
         return $response;

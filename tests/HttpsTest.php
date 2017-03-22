@@ -7,20 +7,22 @@ class HttpsTest extends Base
     public function HttpsProvider()
     {
         return [
-            ['http://localhost', true, 301, 'https://localhost', ''],
-            ['https://localhost', false, 200, '', 'max-age=31536000'],
-            ['https://localhost', true, 200, '', 'max-age=31536000;includeSubDomains'],
+            [true, 'http://localhost', true, 301, 'https://localhost', ''],
+            [true, 'https://localhost', false, 200, '', 'max-age=31536000'],
+            [true, 'https://localhost', true, 200, '', 'max-age=31536000;includeSubDomains'],
+            [false, 'http://localhost', true, 200, '', ''],
+            [false, 'https://localhost', true, 301, 'http://localhost', ''],
         ];
     }
 
     /**
      * @dataProvider HttpsProvider
      */
-    public function testHttps($url, $includeSubdomains, $status, $location, $hsts)
+    public function testHttps($add, $url, $includeSubdomains, $status, $location, $hsts)
     {
         $response = $this->execute(
             [
-                Middleware::Https()->includeSubdomains($includeSubdomains),
+                Middleware::Https($add)->includeSubdomains($includeSubdomains),
             ],
             $url
         );
