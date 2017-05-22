@@ -19,10 +19,15 @@ class Middleware
      * Register a new namespace.
      *
      * @param string $namespace
+     * @param bool   $prepend
      */
-    public static function registerNamespace($namespace)
+    public static function registerNamespace($namespace, $prepend = false)
     {
-        self::$namespaces[] = $namespace;
+        if (false === $prepend) {
+            self::$namespaces[] = $namespace;
+        } else {
+            array_unshift(self::$namespaces, $namespace);
+        }
     }
 
     /**
