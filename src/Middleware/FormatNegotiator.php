@@ -23,6 +23,11 @@ class FormatNegotiator
     private $default = 'html';
 
     /**
+     * @var string[] Formats which the server supports
+     */
+    private $priorities = array();
+
+    /**
      * @var array Available formats with the mime types
      */
     private $formats = [
@@ -124,6 +129,20 @@ class FormatNegotiator
     }
 
     /**
+     * Sets the formats which the server supports.
+     *
+     * @param string[] $priorities
+     *
+     * @return self
+     */
+    public function setPriorities($priorities)
+    {
+        $this->priorities = $priorities;
+
+        return $this;
+    }
+
+    /**
      * Execute the middleware.
      *
      * @param ServerRequestInterface $request
@@ -176,8 +195,26 @@ class FormatNegotiator
      */
     private function getFromHeader(ServerRequestInterface $request)
     {
-        $headers = call_user_func_array('array_merge', array_column($this->formats, 1));
-        $mime = $this->negotiateHeader($request->getHeaderLine('Accept'), new Negotiator(), $headers);
+        $accept = $request->getHeaderLine('Accept');
+
+        //If the client accepts everything, then return null and allow the default to be used.
+        if (empty($accept) || $accept === "*" || $accept === "*/*") {
+            return null;
+        }
+
+        if (empty($this->priorities)) {
+            $formats = $this->formats;
+        } else {
+            //Filter the list of formats.
+            $formats = [];
+            foreach ($this->priorities as $priority) {
+                if (isset($this->formats[$priority])) {
+                    $formats[$priority] = $this->formats[$priority];
+                }
+            }
+        }
+        $headers = call_user_func_array('array_merge', array_column($formats, 1));
+        $mime = $this->negotiateHeader($accept, new Negotiator(), $headers);
 
         if ($mime !== null) {
             foreach ($this->formats as $format => $data) {
