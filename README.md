@@ -171,7 +171,6 @@ To generate access logs for each request using the [Apache's access log format](
 
 ```php
 use Psr7Middlewares\Middleware;
-use Psr7Middlewares\Middleware\AuraRouter;
 use Monolog\Logger;
 use Monolog\Handler\ErrorLogHandler;
 
@@ -340,7 +339,7 @@ $middlewares = [
 
 ### BlockSpam
 
-To block referral spam usin the [piwik/referrer-spam-blacklist](https://github.com/piwik/referrer-spam-blacklist) list
+To block referral spam using the [piwik/referrer-spam-blacklist](https://github.com/piwik/referrer-spam-blacklist) list
 
 ```php
 use Psr7Middlewares\Middleware;
@@ -1387,6 +1386,7 @@ Some middleware pieces use different functions to change the http messages, depe
 The interface `Psr7Middlewares\Transformers\ResolverInterface` provides a way to resolve and returns the apropiate "transformer" in each case. The transformer is just a callable with a specific signature. You can create custom resolvers or extend the included in this package to add your owns. Let's see an example:
 
 ```php
+use Psr7Middlewares\Middleware;
 use Psr7Middlewares\Transformers\BodyParser;
 use Psr\Http\Message\ServerRequestInterface;
 
