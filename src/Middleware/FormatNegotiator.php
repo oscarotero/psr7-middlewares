@@ -129,17 +129,11 @@ class FormatNegotiator
     }
 
     /**
-     * Sets the formats which the server supports.
-     *
-     * @param string[] $priorities
-     *
-     * @return self
+     * @param string[]|null $priorities Formats which the server supports, in priority order.
      */
-    public function setPriorities($priorities)
+    public function __construct($priorities = null)
     {
         $this->priorities = $priorities;
-
-        return $this;
     }
 
     /**

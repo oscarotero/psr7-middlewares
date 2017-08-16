@@ -698,8 +698,7 @@ use Psr7Middlewares\Middleware\FormatNegotiator;
 
 $middlewares = [
 
-    Middleware::FormatNegotiator()
-        ->setPriorities(['html', 'pdf', 'xml']) //(optional) specify formats which your server accepts. (by default is everything)
+    Middleware::FormatNegotiator(['html', 'pdf', 'xml']) //(optional param) specify formats which your server accepts, in priority order. (by default is everything)
         ->defaultFormat('html') //(optional) default format if it's unable to detect. (by default is "html")
         ->addFormat('tiff', ['image/tiff', 'image/x-tiff']), //(optional) add a new format associated with mimetypes
 
