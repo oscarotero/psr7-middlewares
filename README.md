@@ -714,13 +714,11 @@ $middlewares = [
 You can optionally specify the formats which your server supports. In the following example, the FormatNegotiator will only negotiate html, pdf and xml.
 
 ```php
-Middleware::FormatNegotiator(
-    [
-        'html' => [['html', 'htm', 'php'], ['text/html', 'application/xhtml+xml']],
-        'pdf' => [['pdf'], ['application/pdf', 'application/x-download']],
-        'xml' => [['xml'], ['text/xml', 'application/xml', 'application/x-xml']]
-    ]
-)
+Middleware::FormatNegotiator([
+    'html' => [['html', 'htm', 'php'], ['text/html', 'application/xhtml+xml']],
+    'pdf' => [['pdf'], ['application/pdf', 'application/x-download']],
+    'xml' => [['xml'], ['text/xml', 'application/xml', 'application/x-xml']]
+])
 ```
 
 ### FormTimestamp
