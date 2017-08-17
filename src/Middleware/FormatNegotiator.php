@@ -23,11 +23,6 @@ class FormatNegotiator
     private $default = 'html';
 
     /**
-     * @var string[] Formats which the server supports
-     */
-    private $priorities = array();
-
-    /**
      * @var array Available formats with the mime types
      */
     private $formats = [
@@ -129,11 +124,13 @@ class FormatNegotiator
     }
 
     /**
-     * @param string[]|null $priorities Formats which the server supports, in priority order.
+     * @param array|null $formats Formats which the server supports, in priority order.
      */
-    public function __construct($priorities = null)
+    public function __construct($formats = null)
     {
-        $this->priorities = $priorities;
+        if (!empty($formats)) {
+            $this->formats = $formats;
+        }
     }
 
     /**
@@ -196,18 +193,7 @@ class FormatNegotiator
             return null;
         }
 
-        if (empty($this->priorities)) {
-            $formats = $this->formats;
-        } else {
-            //Filter the list of formats.
-            $formats = [];
-            foreach ($this->priorities as $priority) {
-                if (isset($this->formats[$priority])) {
-                    $formats[$priority] = $this->formats[$priority];
-                }
-            }
-        }
-        $headers = call_user_func_array('array_merge', array_column($formats, 1));
+        $headers = call_user_func_array('array_merge', array_column($this->formats, 1));
         $mime = $this->negotiateHeader($accept, new Negotiator(), $headers);
 
         if ($mime !== null) {

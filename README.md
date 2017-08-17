@@ -698,7 +698,7 @@ use Psr7Middlewares\Middleware\FormatNegotiator;
 
 $middlewares = [
 
-    Middleware::FormatNegotiator(['html', 'pdf', 'xml']) //(optional param) specify formats which your server accepts, in priority order. (by default is everything)
+    Middleware::FormatNegotiator()
         ->defaultFormat('html') //(optional) default format if it's unable to detect. (by default is "html")
         ->addFormat('tiff', ['image/tiff', 'image/x-tiff']), //(optional) add a new format associated with mimetypes
 
@@ -709,6 +709,18 @@ $middlewares = [
         return $next($request, $response);
     }
 ];
+```
+
+You can optionally specify the formats which your server supports. In the following example, the FormatNegotiator will only negotiate html, pdf and xml.
+
+```php
+Middleware::FormatNegotiator(
+    [
+        'html' => [['html', 'htm', 'php'], ['text/html', 'application/xhtml+xml']],
+        'pdf' => [['pdf'], ['application/pdf', 'application/x-download']],
+        'xml' => [['xml'], ['text/xml', 'application/xml', 'application/x-xml']]
+    ]
+)
 ```
 
 ### FormTimestamp
