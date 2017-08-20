@@ -1,5 +1,6 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\Response;
@@ -7,7 +8,7 @@ use Zend\Diactoros\Stream;
 use Zend\Diactoros\Uri;
 use Relay\RelayBuilder;
 
-abstract class Base extends PHPUnit_Framework_TestCase
+abstract class Base extends TestCase
 {
     /**
      * @param string $uri
