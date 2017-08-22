@@ -711,6 +711,27 @@ $middlewares = [
 ];
 ```
 
+You can optionally specify the formats which your server supports, in priority order, with the first element being the default.
+
+```php
+//This will only negotiate html, pdf and xml. html is the default.
+Middleware::FormatNegotiator([
+    'html' => [['html', 'htm', 'php'], ['text/html', 'application/xhtml+xml']],
+    'pdf' => [['pdf'], ['application/pdf', 'application/x-download']],
+    'xml' => [['xml'], ['text/xml', 'application/xml', 'application/x-xml']]
+])
+```
+
+If the client requests a format which is not supported by the server, then the default format will be used. If you wish to generate a 406 Not Acceptable response instead, set the default format to null.
+
+```php
+//This will generate a 406 Not Acceptable response if the client requests anything other than html.
+Middleware::FormatNegotiator([
+        'html' => [['html', 'htm', 'php'], ['text/html', 'application/xhtml+xml']]
+    ])
+    ->defaultFormat(null)
+```
+
 ### FormTimestamp
 
 Simple spam protection based on injecting a hidden input in all post forms with the current timestamp. On submit the form, check the time value. If it's less than (for example) 3 seconds ago, assumes it's a bot, so returns a 403 response. You can also set a max number of seconds before the form expires.
