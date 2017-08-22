@@ -20,7 +20,7 @@ class FormatNegotiator
     /**
      * @var string Default format
      */
-    private $default = 'html';
+    private $default;
 
     /**
      * @var array Available formats with the mime types
@@ -111,14 +111,20 @@ class FormatNegotiator
 
     /**
      * Set the default format.
+     * Set this to null if you want a 406 Not Acceptable response to be generated if no valid format was found.
      *
-     * @param string $format
+     * @param string|null $format
      *
      * @return self
      */
     public function defaultFormat($format)
     {
         $this->default = $format;
+
+        if (isset($this->formats[$format])) {
+            $item = $this->formats[$format];
+            $this->formats = [$format => $item] + $this->formats;
+        }
 
         return $this;
     }
@@ -131,6 +137,7 @@ class FormatNegotiator
         if (!empty($formats)) {
             $this->formats = $formats;
         }
+        $this->default = key($this->formats);
     }
 
     /**
@@ -145,15 +152,20 @@ class FormatNegotiator
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $format = $this->getFromExtension($request) ?: $this->getFromHeader($request) ?: $this->default;
-        $contentType = $this->formats[$format][1][0].'; charset=utf-8';
+        if (empty($format)) {
+            //If no valid accept type was found, and no default was specified, then return 406 Not Acceptable.
+            $response = $response->withStatus(406);
+        } else {
+            $contentType = $this->formats[$format][1][0].'; charset=utf-8';
 
-        $response = $next(
-            self::setAttribute($request, self::KEY, $format),
-            $response->withHeader('Content-Type', $contentType)
-        );
+            $response = $next(
+                self::setAttribute($request, self::KEY, $format),
+                $response->withHeader('Content-Type', $contentType)
+            );
 
-        if (!$response->hasHeader('Content-Type')) {
-            $response = $response->withHeader('Content-Type', $contentType);
+            if (!$response->hasHeader('Content-Type')) {
+                $response = $response->withHeader('Content-Type', $contentType);
+            }
         }
 
         return $response;
@@ -186,15 +198,8 @@ class FormatNegotiator
      */
     private function getFromHeader(ServerRequestInterface $request)
     {
-        $accept = $request->getHeaderLine('Accept');
-
-        //If the client accepts everything, then return null and allow the default to be used.
-        if (empty($accept) || $accept === "*" || $accept === "*/*") {
-            return null;
-        }
-
         $headers = call_user_func_array('array_merge', array_column($this->formats, 1));
-        $mime = $this->negotiateHeader($accept, new Negotiator(), $headers);
+        $mime = $this->negotiateHeader($request->getHeaderLine('Accept'), new Negotiator(), $headers);
 
         if ($mime !== null) {
             foreach ($this->formats as $format => $data) {
