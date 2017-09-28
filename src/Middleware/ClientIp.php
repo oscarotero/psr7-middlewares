@@ -60,6 +60,8 @@ class ClientIp
     {
         if ($headers !== null) {
             $this->headers($headers);
+        } else {
+            $this->headers();
         }
     }
 
