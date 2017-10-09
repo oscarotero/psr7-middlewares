@@ -19,7 +19,7 @@ class BlockSpam
         if ($spammers === null) {
             if ( file_exists( ' __DIR__.'/../../../../vendor/piwik/referrer-spam-blacklist/spammers.txt' ) ) { 
                 $spammers = __DIR__.'/../../../../vendor/piwik/referrer-spam-blacklist/spammers.txt';
-            } else if ( file_exists( ' __DIR__.'/../../../../piwik/referrer-spam-blacklist/spammers.txt' ) ) { 
+            } else if ( file_exists(  __DIR__.'/../../../../piwik/referrer-spam-blacklist/spammers.txt' ) ) { 
                  $spammers = __DIR__.'/../../../../piwik/referrer-spam-blacklist/spammers.txt';
             } else {
                 $spammers  =  null;
