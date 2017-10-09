@@ -75,7 +75,7 @@ class Middleware
             }
         }
 
-        throw new RuntimeException("The middleware {$name} does not exits");
+        throw new RuntimeException("The middleware {$name} does not exist");
     }
 
     /**
