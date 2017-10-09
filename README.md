@@ -1171,7 +1171,7 @@ $middlewares = [
     //required to get the user IP
     Middleware::ClientIp(),
 
-    Middleware::Recapcha('secret') //The secret key
+    Middleware::Recaptcha('secret') //The secret key
 ];
 ```
 
