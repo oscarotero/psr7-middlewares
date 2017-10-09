@@ -17,8 +17,14 @@ class BlockSpam
     public function __construct($spammers = null)
     {
         if ($spammers === null) {
-            $spammers = __DIR__.'/../../../../vendor/piwik/referrer-spam-blacklist/spammers.txt';
-        }
+            if ( file_exists( ' __DIR__.'/../../../../vendor/piwik/referrer-spam-blacklist/spammers.txt' ) ) { 
+                $spammers = __DIR__.'/../../../../vendor/piwik/referrer-spam-blacklist/spammers.txt';
+            } else if ( file_exists( ' __DIR__.'/../../../../piwik/referrer-spam-blacklist/spammers.txt' ) ) { 
+                 $spammers = __DIR__.'/../../../../piwik/referrer-spam-blacklist/spammers.txt';
+            } else {
+                $spammers  =  null;
+            }
+        } 
 
         $this->spammers = $spammers;
     }
