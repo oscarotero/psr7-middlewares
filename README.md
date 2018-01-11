@@ -669,7 +669,7 @@ $middlewares = [
 
 ### Firewall
 
-Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide an IP filtering. This middleware deppends of **ClientIp** (to extract the ips from the headers).
+Uses [M6Web/Firewall](https://github.com/M6Web/Firewall) to provide an IP filtering. This middleware depends on [ClientIp](#clientip) (to extract the ips from the headers).
 
 [See the ip formats allowed](https://github.com/M6Web/Firewall#entries-formats) for trusted/untrusted options:
 
@@ -770,7 +770,7 @@ $middlewares = [
 
 ### Geolocate
 
-Uses [Geocoder library](https://github.com/geocoder-php/Geocoder) to geolocate the client using the ip. This middleware deppends of **ClientIp** (to extract the ips from the headers).
+Uses [Geocoder library](https://github.com/geocoder-php/Geocoder) to geolocate the client using the ip. This middleware depends on [ClientIp](#clientip) (to extract the ips from the headers).
 
 ```php
 use Psr7Middlewares\Middleware;
