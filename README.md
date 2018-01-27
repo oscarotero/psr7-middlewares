@@ -1,7 +1,6 @@
-> **NOTE:** This package is being ported to PSR-15. [Check it out here](https://github.com/middlewares/psr15-middlewares)
+# This package is deprecated in favor of the new PSR-15 standard. [Check it out here](https://github.com/middlewares/psr15-middlewares)
 
-# psr7-middlewares
-
+## psr7-middlewares
 
 [![Build Status](https://travis-ci.org/oscarotero/psr7-middlewares.svg)](https://travis-ci.org/oscarotero/psr7-middlewares)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/oscarotero/psr7-middlewares/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/oscarotero/psr7-middlewares/?branch=master)
